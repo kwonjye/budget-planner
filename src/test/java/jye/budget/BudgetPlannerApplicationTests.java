@@ -1,4 +1,4 @@
-package kwonjye.budget_planner;
+package jye.budget;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

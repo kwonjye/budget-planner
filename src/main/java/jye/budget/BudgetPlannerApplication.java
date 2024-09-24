@@ -1,4 +1,4 @@
-package kwonjye.budget_planner;
+package jye.budget;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
