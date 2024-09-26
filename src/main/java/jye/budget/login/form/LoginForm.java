@@ -1,11 +1,11 @@
-package jye.budget.login.dto;
+package jye.budget.login.form;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
-public class LoginDto {
+public class LoginForm {
 
     @NotBlank
     @Email

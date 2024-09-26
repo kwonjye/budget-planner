@@ -4,9 +4,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import jye.budget.login.SessionConst;
-import jye.budget.login.dto.LoginDto;
-import jye.budget.login.service.LoginService;
+import jye.budget.login.form.LoginForm;
 import jye.budget.user.entity.User;
+import jye.budget.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -20,29 +20,29 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequiredArgsConstructor
 public class LoginController {
 
-    private final LoginService loginService;
+    private final UserService userService;
 
     @PostMapping("/login")
-    public String login(@Valid @ModelAttribute("login") LoginDto loginDto, BindingResult bindingResult,
+    public String login(@Valid @ModelAttribute("loginForm") LoginForm loginForm, BindingResult bindingResult,
                         @RequestParam(defaultValue = "/") String redirectURL,
                         HttpServletRequest request) {
         if (bindingResult.hasErrors()) {
             return "login";
         }
 
-        User loginUser = loginService.login(loginDto.getEmail());
+        User loginUser = userService.findByEmail(loginForm.getEmail());
         log.info("login? {}", loginUser);
 
         if(loginUser == null) {
-            bindingResult.rejectValue("email", "error","이메일이 존재하지 않습니다.");
+            bindingResult.rejectValue("email", "email.notFound");
             return "login";
         }
-        if(!loginUser.getPassword().equals(loginDto.getPassword())) {
-            bindingResult.rejectValue("password","error", "비밀번호가 일치하지 않습니다.");
+        if(!loginUser.getPassword().equals(loginForm.getPassword())) {
+            bindingResult.rejectValue("password","password.mismatch");
             return "login";
         }
         if(!loginUser.isVerified()) {
-            bindingResult.reject("loginFail", "인증되지 않은 이메일입니다.");
+            bindingResult.reject("email.notVerified");
             return "login";
         }
 
