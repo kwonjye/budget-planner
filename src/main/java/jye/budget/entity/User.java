@@ -1,4 +1,4 @@
-package jye.budget.user.entity;
+package jye.budget.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

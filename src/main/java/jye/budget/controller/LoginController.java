@@ -1,12 +1,12 @@
-package jye.budget.login.controller;
+package jye.budget.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import jye.budget.login.SessionConst;
-import jye.budget.login.form.LoginForm;
-import jye.budget.user.entity.User;
-import jye.budget.user.service.UserService;
+import jye.budget.form.LoginForm;
+import jye.budget.entity.User;
+import jye.budget.service.UserService;
 import jye.budget.util.PasswordUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

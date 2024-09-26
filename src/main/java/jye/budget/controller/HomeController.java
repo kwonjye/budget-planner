@@ -1,8 +1,8 @@
-package jye.budget.login.controller;
+package jye.budget.controller;
 
 import jye.budget.login.argumentresolver.Login;
-import jye.budget.login.form.LoginForm;
-import jye.budget.user.entity.User;
+import jye.budget.form.LoginForm;
+import jye.budget.entity.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;

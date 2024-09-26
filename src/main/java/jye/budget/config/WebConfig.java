@@ -1,4 +1,4 @@
-package jye.budget.login;
+package jye.budget.config;
 
 import jye.budget.login.argumentresolver.LoginUserArgumentResolver;
 import jye.budget.login.interceptor.LogInterceptor;
@@ -28,7 +28,7 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addInterceptor(new LoginCheckInterceptor())
                 .order(2)
                 .addPathPatterns("/**")
-                .excludePathPatterns("/", "/user/join", "/login", "logout",
+                .excludePathPatterns("/", "/user/join", "/email/verify", "/login", "logout",
                         "/css/**", "/*.ico", "/error");
     }
 }

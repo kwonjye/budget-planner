@@ -1,9 +1,10 @@
-package jye.budget.user.controller;
+package jye.budget.controller;
 
 import jakarta.validation.Valid;
-import jye.budget.user.entity.User;
-import jye.budget.user.form.UserForm;
-import jye.budget.user.service.UserService;
+import jye.budget.form.EmailForm;
+import jye.budget.entity.User;
+import jye.budget.form.UserForm;
+import jye.budget.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Slf4j
 @Controller
@@ -27,7 +29,8 @@ public class UserController {
     }
 
     @PostMapping("/join")
-    public String join(@Valid @ModelAttribute("userForm") UserForm userForm, BindingResult bindingResult) {
+    public String join(@Valid @ModelAttribute("userForm") UserForm userForm, BindingResult bindingResult,
+                       RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             return "user/join";
         }
@@ -46,6 +49,8 @@ public class UserController {
         }
 
         userService.save(userForm);
-        return "redirect:/";
+
+        redirectAttributes.addFlashAttribute("emailForm", EmailForm.builder().email(userForm.getEmail()).build());
+        return "redirect:/email/verify";
     }
 }

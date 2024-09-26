@@ -3,7 +3,7 @@ package jye.budget.login.argumentresolver;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jye.budget.login.SessionConst;
-import jye.budget.user.entity.User;
+import jye.budget.entity.User;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.MethodParameter;
