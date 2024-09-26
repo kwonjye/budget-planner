@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jye.budget.user.entity.User;
 import jye.budget.user.form.UserForm;
 import jye.budget.user.mapper.UserMapper;
+import jye.budget.util.PasswordUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -28,7 +29,7 @@ public class UserService {
 
         User user = User.builder()
                 .email(userForm.getEmail())
-                .password(userForm.getPassword())
+                .password(PasswordUtil.hashPassword(userForm.getPassword()))
                 .build();
         userMapper.save(user);
     }

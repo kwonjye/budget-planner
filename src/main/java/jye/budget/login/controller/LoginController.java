@@ -7,6 +7,7 @@ import jye.budget.login.SessionConst;
 import jye.budget.login.form.LoginForm;
 import jye.budget.user.entity.User;
 import jye.budget.user.service.UserService;
+import jye.budget.util.PasswordUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -37,7 +38,7 @@ public class LoginController {
             bindingResult.rejectValue("email", "email.notFound");
             return "login";
         }
-        if(!loginUser.getPassword().equals(loginForm.getPassword())) {
+        if(!PasswordUtil.verifyPassword(loginForm.getPassword(), loginUser.getPassword())) {
             bindingResult.rejectValue("password","password.mismatch");
             return "login";
         }
