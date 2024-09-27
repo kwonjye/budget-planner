@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>나만의 가계부</title>
+</head>
+<body>
+<div>
+    <div>
+        <h2>회원 정보</h2>
+    </div>
+    <div>
+        <div>
+            <span>이메일</span>
+            <span th:text="${user.email}"></span>
+        </div>
+        <button type="button" th:onclick="">비밀번호 변경</button>
+        <button type="button" th:onclick="">탈퇴하기</button>
+    </div>
+</div>
+</body>
+</html>

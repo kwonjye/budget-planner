@@ -34,4 +34,9 @@ public class UserService {
                 .build();
         userMapper.save(user);
     }
+
+    @Transactional(readOnly = true)
+    public User findById(Long userId) {
+        return userMapper.findById(userId);
+    }
 }

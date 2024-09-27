@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="jye.budget.mapper.UserMapper">
-    <select id="findByEmail" resultType="jye.budget.entity.User">
+    <sql id="user">
         SELECT user_id,
                email,
                password,
@@ -9,6 +9,9 @@
                created_at,
                updated_at
         FROM user
+    </sql>
+    <select id="findByEmail" resultType="jye.budget.entity.User">
+        <include refid="user"/>
         WHERE email = #{email}
     </select>
     <insert id="save" useGeneratedKeys="true" keyColumn="user_id" keyProperty="userId">
@@ -34,4 +37,8 @@
                         updated_at = NOW()
         WHERE email = #{email}
     </update>
+    <select id="findById" resultType="jye.budget.entity.User">
+        <include refid="user"/>
+        WHERE user_id = #{userId}
+    </select>
 </mapper>
