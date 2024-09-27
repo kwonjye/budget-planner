@@ -5,15 +5,9 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
-public class UserForm {
+public class FindPasswordForm {
 
     @NotBlank
     @Email
     private String email;
-
-    @NotBlank
-    private String password;
-
-    @NotBlank
-    private String passwordConfirm;
 }

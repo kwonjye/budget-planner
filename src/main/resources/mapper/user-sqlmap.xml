@@ -29,4 +29,9 @@
                         updated_at = NOW()
         WHERE email = #{email}
     </update>
+    <update id="updatePassword">
+        UPDATE user SET password = #{password},
+                        updated_at = NOW()
+        WHERE email = #{email}
+    </update>
 </mapper>

@@ -11,5 +11,8 @@ public interface UserMapper {
 
     void save(User user);
 
-    void updateVerified(@Param("email") String email);
+    void updateVerified(@NotBlank @Param("email") String email);
+
+    void updatePassword(@NotBlank @Param("email") String email,
+                        @Param("password") String password);
 }

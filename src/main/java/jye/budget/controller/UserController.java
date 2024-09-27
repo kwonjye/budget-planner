@@ -1,9 +1,9 @@
 package jye.budget.controller;
 
 import jakarta.validation.Valid;
-import jye.budget.form.EmailForm;
+import jye.budget.form.VerifyEmailForm;
 import jye.budget.entity.User;
-import jye.budget.form.UserForm;
+import jye.budget.form.JoinUserForm;
 import jye.budget.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,33 +24,33 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/join")
-    public String joinForm(@ModelAttribute("userForm") UserForm userForm) {
+    public String joinForm(@ModelAttribute("joinUserForm") JoinUserForm joinUserForm) {
         return "user/join";
     }
 
     @PostMapping("/join")
-    public String join(@Valid @ModelAttribute("userForm") UserForm userForm, BindingResult bindingResult,
+    public String join(@Valid @ModelAttribute("joinUserForm") JoinUserForm joinUserForm, BindingResult bindingResult,
                        RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             return "user/join";
         }
 
-        log.info("join user : {}", userForm);
+        log.info("join user : {}", joinUserForm);
 
-        User user = userService.findByEmail(userForm.getEmail());
+        User user = userService.findByEmail(joinUserForm.getEmail());
         if(user != null) {
             bindingResult.rejectValue("email", "email.exists");
             return "user/join";
         }
 
-        if(!userForm.getPassword().equals(userForm.getPasswordConfirm())) {
+        if(!joinUserForm.getPassword().equals(joinUserForm.getPasswordConfirm())) {
             bindingResult.rejectValue("passwordConfirm", "password.mismatch");
             return "user/join";
         }
 
-        userService.save(userForm);
+        userService.save(joinUserForm);
 
-        redirectAttributes.addFlashAttribute("emailForm", EmailForm.builder().email(userForm.getEmail()).build());
+        redirectAttributes.addFlashAttribute("verifyEmailForm", VerifyEmailForm.builder().email(joinUserForm.getEmail()).build());
         return "redirect:/email/verify";
     }
 }

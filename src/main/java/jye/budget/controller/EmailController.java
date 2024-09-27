@@ -1,7 +1,7 @@
 package jye.budget.controller;
 
 import jakarta.validation.Valid;
-import jye.budget.form.EmailForm;
+import jye.budget.form.VerifyEmailForm;
 import jye.budget.service.EmailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -16,16 +16,17 @@ public class EmailController {
     private final EmailService emailService;
 
     @GetMapping("/verify")
-    public String verifyForm(@ModelAttribute("emailForm") EmailForm emailForm) {
-        return "user/verify";
+    public String verifyForm(@ModelAttribute("verifyEmailForm") VerifyEmailForm verifyEmailForm) {
+        emailService.verifyEmail(verifyEmailForm.getEmail());
+        return "email/verify";
     }
 
     @PostMapping("/verify")
-    public String verify(@Valid @ModelAttribute("emailForm") EmailForm emailForm, BindingResult bindingResult) {
-        boolean isVerified = emailService.verifyCode(emailForm.getEmail(), emailForm.getCode());
+    public String verify(@Valid @ModelAttribute("verifyEmailForm") VerifyEmailForm verifyEmailForm, BindingResult bindingResult) {
+        boolean isVerified = emailService.verifyCode(verifyEmailForm.getEmail(), verifyEmailForm.getCode());
         if(!isVerified) {
             bindingResult.rejectValue("code", "email.code.mismatch");
-            return "user/verify";
+            return "email/verify";
         }
         return "redirect:/";
     }
