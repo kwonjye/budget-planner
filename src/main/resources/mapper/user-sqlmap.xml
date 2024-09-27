@@ -37,8 +37,4 @@
                         updated_at = NOW()
         WHERE email = #{email}
     </update>
-    <select id="findById" resultType="jye.budget.entity.User">
-        <include refid="user"/>
-        WHERE user_id = #{userId}
-    </select>
 </mapper>

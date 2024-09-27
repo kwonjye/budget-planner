@@ -10,7 +10,7 @@
     <h2>비밀번호 찾기</h2>
   </div>
   <div>
-    <button type="button" th:onclick="|location.href='@{/}'|">로그인</button>
+    <button type="button" th:onclick="|location.href='@{/login}'|">로그인</button>
   </div>
   <form th:action="@{/email/verify}" th:object="${findPasswordForm}" method="get">
     <label for="email"></label>

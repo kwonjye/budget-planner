@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,6 +23,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class LoginController {
 
     private final UserService userService;
+
+    @GetMapping("/login")
+    public String loginForm(@ModelAttribute("loginForm") LoginForm loginForm) {
+        return "login";
+    }
 
     @PostMapping("/login")
     public String login(@Valid @ModelAttribute("loginForm") LoginForm loginForm, BindingResult bindingResult,
@@ -54,12 +60,12 @@ public class LoginController {
         return "redirect:" + redirectURL;
     }
 
-    @PostMapping("/logout")
+    @GetMapping("/logout")
     public String logout(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         if(session != null) {
             session.invalidate();
         }
-        return "redirect:/";
+        return "redirect:/login";
     }
 }

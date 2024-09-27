@@ -1,9 +1,11 @@
 package jye.budget.controller;
 
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import jye.budget.form.VerifyEmailForm;
 import jye.budget.entity.User;
 import jye.budget.form.JoinUserForm;
+import jye.budget.login.SessionConst;
 import jye.budget.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -52,9 +54,9 @@ public class UserController {
         return "redirect:/email/verify";
     }
 
-    @GetMapping("/{userId}")
-    public String info(@PathVariable Long userId, Model model) {
-        User user = userService.findById(userId);
+    @GetMapping("/info")
+    public String info(Model model, HttpSession session) {
+        User user = (User) session.getAttribute(SessionConst.LOGIN_USER);
         model.addAttribute("user", user);
         return "user/info";
     }
