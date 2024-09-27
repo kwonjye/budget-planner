@@ -32,6 +32,9 @@ public class EmailConfig {
     @Value("${spring.mail.properties.mail.smtp.starttls.enable}")
     private boolean starttlsEnable;
 
+    @Value("${spring.mail.properties.mail.smtp.ssl.enable}")
+    private boolean sslEnable;
+
     @Bean
     public JavaMailSender javaMailSender() {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
@@ -50,6 +53,7 @@ public class EmailConfig {
         properties.put("mail.smtp.auth", auth);
         properties.put("mail.smtp.timeout", timeout);
         properties.put("mail.smtp.starttls.enable", starttlsEnable);
+        properties.put("mail.smtp.ssl.enable", sslEnable);
 
         return properties;
     }

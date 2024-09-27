@@ -24,7 +24,7 @@ public class EmailController {
     public String verify(@Valid @ModelAttribute("emailForm") EmailForm emailForm, BindingResult bindingResult) {
         boolean isVerified = emailService.verifyCode(emailForm.getEmail(), emailForm.getCode());
         if(!isVerified) {
-            bindingResult.reject("code", "email.code.mismatch");
+            bindingResult.rejectValue("code", "email.code.mismatch");
             return "user/verify";
         }
         return "redirect:/";

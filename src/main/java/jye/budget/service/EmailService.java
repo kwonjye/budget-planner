@@ -5,6 +5,7 @@ import jakarta.mail.internet.MimeMessage;
 import jye.budget.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -17,6 +18,9 @@ import org.thymeleaf.spring6.SpringTemplateEngine;
 @Service
 @RequiredArgsConstructor
 public class EmailService {
+
+    @Value("${spring.mail.username}")
+    private String from;
 
     private final JavaMailSender mailSender;
     private final SpringTemplateEngine templateEngine;
@@ -35,6 +39,7 @@ public class EmailService {
         try {
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
             helper.setTo(to);
+            helper.setFrom(from); // 구글은 from 설정하지 않아도 properties username 이 기본값으로 설정되지만, 네이버는 직접 설정해줘야 함
             helper.setSubject("이메일 인증");
             helper.setText(process, true); // HTML 본문 설정
             mailSender.send(mimeMessage);
