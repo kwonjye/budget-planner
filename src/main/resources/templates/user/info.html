@@ -14,7 +14,7 @@
             <span>이메일</span>
             <span th:text="${user.email}"></span>
         </div>
-        <button type="button" th:onclick="">비밀번호 변경</button>
+        <button type="button" th:onclick="|location.href='@{/password/change}'|">비밀번호 변경</button>
         <button type="button" th:onclick="">탈퇴하기</button>
     </div>
 </div>

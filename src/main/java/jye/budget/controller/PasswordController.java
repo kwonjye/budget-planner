@@ -1,9 +1,13 @@
 package jye.budget.controller;
 
+import jakarta.servlet.http.HttpSession;
 import jye.budget.entity.User;
+import jye.budget.form.ChangePasswordForm;
 import jye.budget.form.FindPasswordForm;
+import jye.budget.login.SessionConst;
 import jye.budget.service.PasswordService;
 import jye.budget.service.UserService;
+import jye.budget.util.PasswordUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -44,5 +48,31 @@ public class PasswordController {
 
         passwordService.issueTemp(findPasswordForm.getEmail());
         return "password/temp-issue";
+    }
+
+    @GetMapping("/change")
+    public String changeForm(@ModelAttribute("changePasswordForm") ChangePasswordForm changePasswordForm) {
+        return "password/change";
+    }
+
+    @PostMapping("/change")
+    public String change(@ModelAttribute("changePasswordForm") ChangePasswordForm changePasswordForm, BindingResult bindingResult,
+                         HttpSession session) {
+
+        log.info("change password : {}", changePasswordForm);
+
+        User user = (User) session.getAttribute(SessionConst.LOGIN_USER);
+        if(!PasswordUtil.verifyPassword(changePasswordForm.getPassword(), user.getPassword())) {
+            bindingResult.rejectValue("password","password.mismatch");
+            return "password/change";
+        }
+        if(!changePasswordForm.getChangePassword().equals(changePasswordForm.getChangePasswordConfirm())) {
+            bindingResult.rejectValue("changePasswordConfirm", "password.change.mismatch");
+            return "password/change";
+        }
+
+        passwordService.change(user.getEmail(), changePasswordForm.getChangePassword());
+        session.invalidate();
+        return "password/change-success";
     }
 }

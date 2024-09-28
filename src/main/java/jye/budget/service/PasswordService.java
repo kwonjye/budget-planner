@@ -56,4 +56,14 @@ public class PasswordService {
 
         return tempPassword.toString();
     }
+
+    /**
+     * 비밀번호 변경
+     * @param email 이메일
+     * @param changePassword 변경 비밀번호
+     */
+    @Transactional
+    public void change(@NotBlank @Email String email, @NotBlank String changePassword) {
+        userMapper.updatePassword(email, PasswordUtil.hashPassword(changePassword));
+    }
 }

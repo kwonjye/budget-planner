@@ -5,29 +5,32 @@
   <title>나만의 가계부</title>
 </head>
 <body>
-<h1>이메일 인증</h1>
-
-<form th:action="@{/email/verify}" th:object="${verifyEmailForm}" method="post">
+<div>
   <div>
-    <label for="email"></label>
-    <input type="hidden" id="email"
-           th:field="*{email}"
-           th:value="*{email}"
-           readonly />
-    <p><span th:text="*{email}"></span>으로 인증 메일이 발송되었습니다.</p>
-    <p>메일에 있는 인증 코드를 아래에 입력해주세요.</p>
+    <h2>이메일 인증</h2>
   </div>
-  <div>
-    <label for="code"></label>
-    <input type="text" id="code"
-           th:field="*{code}"
-           th:errorclass="field-error"
-           placeholder="인증 코드"
-           required /><br/>
-    <div class="field-error" th:errors="*{code}"></div>
-  </div>
+  <form th:action="@{/email/verify}" th:object="${verifyEmailForm}" method="post">
+    <div>
+      <label for="email"></label>
+      <input type="hidden" id="email"
+             th:field="*{email}"
+             th:value="*{email}"
+             readonly />
+      <p><span th:text="*{email}"></span>으로 인증 메일이 발송되었습니다.</p>
+      <p>메일에 있는 인증 코드를 아래에 입력해주세요.</p>
+    </div>
+    <div>
+      <label for="code"></label>
+      <input type="text" id="code"
+             th:field="*{code}"
+             th:errorclass="field-error"
+             placeholder="인증 코드"
+             required /><br/>
+      <div class="field-error" th:errors="*{code}"></div>
+    </div>
 
-  <button type="submit">인증하기</button>
-</form>
+    <button type="submit">인증하기</button>
+  </form>
+</div>
 </body>
 </html>

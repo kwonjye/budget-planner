@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>나만의 가계부</title>
+</head>
+<body>
+<div>
+    <div>
+        <h2>비밀번호 변경</h2>
+    </div>
+    <div>
+        <p>비밀번호 변경이 완료되었습니다</p>
+        <p>새 비밀번호로 로그인해주세요.</p>
+    </div>
+    <div>
+        <div>
+            <button type="button" th:onclick="|location.href='@{/login}'|">로그인</button>
+        </div>
+    </div>
+</div>
+</body>
+</html>
