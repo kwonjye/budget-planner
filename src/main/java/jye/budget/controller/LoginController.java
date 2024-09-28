@@ -44,7 +44,7 @@ public class LoginController {
             bindingResult.rejectValue("email", "email.notFound");
             return "login";
         }
-        if(!PasswordUtil.verifyPassword(loginForm.getPassword(), loginUser.getPassword())) {
+        if(PasswordUtil.isPasswordMismatch(loginForm.getPassword(), loginUser.getPassword())) {
             bindingResult.rejectValue("password","password.mismatch");
             return "login";
         }

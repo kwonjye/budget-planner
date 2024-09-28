@@ -10,8 +10,8 @@ public class PasswordUtil {
         return passwordEncoder.encode(password);
     }
 
-    // 비밀번호 검증
-    public static boolean verifyPassword(String password, String hashedPassword) {
-        return passwordEncoder.matches(password, hashedPassword);
+    // 비밀번호 불일치 여부
+    public static boolean isPasswordMismatch(String password, String hashedPassword) {
+        return !passwordEncoder.matches(password, hashedPassword);
     }
 }

@@ -1,6 +1,7 @@
 package jye.budget.mapper;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jye.budget.entity.User;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -15,4 +16,6 @@ public interface UserMapper {
 
     void updatePassword(@NotBlank @Param("email") String email,
                         @Param("password") String password);
+
+    void delete(@NotNull @Param("userId") Long userId);
 }

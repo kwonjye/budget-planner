@@ -37,4 +37,8 @@
                         updated_at = NOW()
         WHERE email = #{email}
     </update>
+    <delete id="delete">
+        DELETE FROM user
+        WHERE user_id = #{userId}
+    </delete>
 </mapper>

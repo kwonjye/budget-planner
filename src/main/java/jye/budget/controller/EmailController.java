@@ -28,6 +28,6 @@ public class EmailController {
             bindingResult.rejectValue("code", "email.code.mismatch");
             return "email/verify";
         }
-        return "redirect:/";
+        return "email/verify-success";
     }
 }

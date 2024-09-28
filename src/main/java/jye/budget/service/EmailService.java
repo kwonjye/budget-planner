@@ -65,8 +65,8 @@ public class EmailService {
         context.setVariable("verificationCode", verificationCode);
 
         // 템플릿을 기반으로 이메일 콘텐츠 생성
-        String process = templateEngine.process("email/template/verification", context);
-        sendMail(to, "이메일 인증", process);
+        String process = templateEngine.process("email/template/verification-code", context);
+        sendMail(to, "[나만의 가계부] 이메일 인증", process);
     }
 
     /**
@@ -100,7 +100,7 @@ public class EmailService {
 
         // 템플릿을 기반으로 이메일 콘텐츠 생성
         String process = templateEngine.process("email/template/temp-password", context);
-        sendMail(to, "임시 비밀번호 발급", process);
+        sendMail(to, "[나만의 가계부] 임시 비밀번호 발급", process);
     }
 
     /**

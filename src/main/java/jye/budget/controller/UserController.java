@@ -2,11 +2,13 @@ package jye.budget.controller;
 
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
+import jye.budget.form.DeleteUserForm;
 import jye.budget.form.VerifyEmailForm;
 import jye.budget.entity.User;
 import jye.budget.form.JoinUserForm;
 import jye.budget.login.SessionConst;
 import jye.budget.service.UserService;
+import jye.budget.util.PasswordUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -59,5 +61,25 @@ public class UserController {
         User user = (User) session.getAttribute(SessionConst.LOGIN_USER);
         model.addAttribute("user", user);
         return "user/info";
+    }
+
+    @GetMapping("/delete")
+    public String deleteForm(@ModelAttribute("deleteUserForm") DeleteUserForm deleteUserForm) {
+        return "user/delete";
+    }
+
+    @PostMapping("/delete")
+    public String delete(@ModelAttribute("deleteUserForm") DeleteUserForm deleteUserForm, BindingResult bindingResult,
+                         HttpSession session) {
+
+        User user = (User) session.getAttribute(SessionConst.LOGIN_USER);
+        if(PasswordUtil.isPasswordMismatch(deleteUserForm.getPassword(), user.getPassword())) {
+            bindingResult.rejectValue("password","password.mismatch");
+            return "user/delete";
+        }
+
+        userService.delete(user.getUserId());
+        session.invalidate();
+        return "user/delete-success";
     }
 }

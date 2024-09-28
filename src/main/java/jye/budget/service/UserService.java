@@ -34,4 +34,10 @@ public class UserService {
                 .build();
         userMapper.save(user);
     }
+
+    @Transactional
+    public void delete(Long userId) {
+        log.info("delete user: {}", userId);
+        userMapper.delete(userId);
+    }
 }

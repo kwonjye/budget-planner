@@ -62,7 +62,7 @@ public class PasswordController {
         log.info("change password : {}", changePasswordForm);
 
         User user = (User) session.getAttribute(SessionConst.LOGIN_USER);
-        if(!PasswordUtil.verifyPassword(changePasswordForm.getPassword(), user.getPassword())) {
+        if(PasswordUtil.isPasswordMismatch(changePasswordForm.getPassword(), user.getPassword())) {
             bindingResult.rejectValue("password","password.mismatch");
             return "password/change";
         }
