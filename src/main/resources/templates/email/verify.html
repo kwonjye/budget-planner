@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <link th:href="@{/css/common.css}" href="/css/common.css" rel="stylesheet">
+  <title>나만의 가계부</title>
+</head>
+<body>
+<div class="container">
+  <div class="content-01 w600">
+    <div class="header-01">
+      <h2>이메일 인증</h2>
+    </div>
+    <form th:action="@{/email/verify}" th:object="${verifyEmailForm}" method="post">
+      <label for="email"></label>
+      <input type="hidden" id="email"
+             th:field="*{email}"
+             th:value="*{email}"
+             readonly />
+      <div class="mb15">
+        <p class="mtb05"><span th:text="*{email}"></span>으로 인증 메일이 발송되었습니다.</p>
+        <p class="mtb05">메일에 있는 인증 코드를 아래에 입력해주세요.</p>
+      </div>
+      <div class="mb05">
+        <label for="code"></label>
+        <input type="text" id="code" class="input-border"
+               th:field="*{code}"
+               th:errorclass="input-border-error"
+               placeholder="인증 코드"
+               required /><br/>
+        <div class="field-error" th:errors="*{code}"></div>
+      </div>
+      <button class="btn-gradient w100p" type="submit">인증하기</button>
+    </form>
+  </div>
+</div>
+</body>
+</html>

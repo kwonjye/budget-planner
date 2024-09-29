@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>나만의 가계부</title>
+</head>
+<body style="margin: 0; padding: 0; color: #292931;">
+    <div>
+        <p style="margin: 5px 0;">안녕하세요, 나만의 가계부입니다.</p>
+        <p style="margin: 5px 0;">아래의 인증코드를 입력하여 이메일 인증을 완료해 주세요.</p>
+
+        <h3 style="margin: 15px 0; color: #5170ff; font-size: 24px; font-weight: 800;" th:text="${verificationCode}"></h3>
+
+        <p style="margin: 5px 0;">이 요청을 하지 않으셨다면 이 이메일을 무시해 주세요.</p>
+    </div>
+</body>
+</html>

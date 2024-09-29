@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <link th:href="@{/css/common.css}" href="/css/common.css" rel="stylesheet">
+  <title>나만의 가계부</title>
+</head>
+<body>
+<div class="container">
+  <div class="content-01 w500">
+    <div class="right fix-top-right">
+      <i class="fi fi-rr-sign-in-alt" th:onclick="|location.href='@{/login}'|"></i>
+    </div>
+    <div class="header-01">
+      <h2>회원가입</h2>
+    </div>
+    <form th:action th:object="${joinUserForm}" method="post">
+      <div class="global-error" th:if="${#fields.hasGlobalErrors()}">
+        <p th:each="err : ${#fields.globalErrors()}"
+           th:text="${err}">전체 오류 메시지</p>
+      </div>
+      <div>
+        <label for="email"></label>
+        <input type="text" id="email" class="input-border"
+               th:field="*{email}"
+               th:errorclass="input-border-error"
+               placeholder="이메일">
+        <div class="field-error" th:errors="*{email}"></div>
+      </div>
+      <div>
+        <label for="password"></label>
+        <input type="password" id="password" class="input-border"
+               th:field="*{password}"
+               th:errorclass="input-border-error"
+               placeholder="비밀번호">
+        <div class="field-error" th:errors="*{password}"></div>
+      </div>
+      <div>
+        <label for="passwordConfirm"></label>
+        <input type="password" id="passwordConfirm" class="input-border"
+               th:field="*{passwordConfirm}"
+               th:errorclass="input-border-error"
+               placeholder="비밀번호 재입력">
+        <div class="field-error" th:errors="*{passwordConfirm}"></div>
+      </div>
+      <div class="center">
+        <button class="btn-gradient w100p" type="submit">가입하기</button>
+      </div>
+    </form>
+  </div>
+</div>
+</body>
+</html>

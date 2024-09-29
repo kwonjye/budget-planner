@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <link th:href="@{/css/common.css}" href="/css/common.css" rel="stylesheet">
+    <title>나만의 가계부</title>
+</head>
+<body>
+<div class="container">
+    <div class="content-01 w500">
+        <div class="header-01">
+            <h2>비밀번호 변경</h2>
+        </div>
+        <div class="mb30">
+            <p class="mtb05">비밀번호 변경이 완료되었습니다.</p>
+            <p class="mtb05">새 비밀번호로 로그인해주세요.</p>
+        </div>
+        <div class="center">
+            <button class="btn-gradient w100p" type="button" th:onclick="|location.href='@{/login}'|">로그인</button>
+        </div>
+    </div>
+</div>
+</body>
+</html>
