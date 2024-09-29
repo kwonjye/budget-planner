@@ -49,8 +49,7 @@ public class LoginController {
             return "login";
         }
         if(!loginUser.isVerified()) {
-            bindingResult.reject("email.notVerified");
-            return "login";
+            return "email/error/login";
         }
 
         // 로그인 성공

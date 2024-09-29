@@ -43,7 +43,7 @@ public class PasswordController {
         }
         if(!loginUser.isVerified()) {
             bindingResult.rejectValue("email", "email.notVerified");
-            return "password/verify-email";
+            return "email/error/password";
         }
 
         passwordService.issueTemp(findPasswordForm.getEmail());
