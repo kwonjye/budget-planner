@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jye.budget.mapper.AssetMapper">
+    <select id="findByUserId" resultType="jye.budget.entity.Asset">
+        SELECT asset_id,
+               user_id,
+               asset_name,
+               initial_amount,
+               current_amount,
+               is_allocated,
+               created_at,
+               updated_at
+        FROM asset
+        WHERE user_id = #{userId}
+    </select>
+</mapper>
