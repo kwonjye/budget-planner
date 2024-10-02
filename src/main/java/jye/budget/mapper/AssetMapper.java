@@ -15,5 +15,10 @@ public interface AssetMapper {
     void save(Asset asset);
 
     boolean existsByAssetName(@Param("userId") Long userId,
-                              @Param("assetName") @NotBlank String assetName);
+                              @Param("assetName") @NotBlank String assetName,
+                              @Param("assetId") Long assetId);
+
+    Asset findById(@Param("assetId") Long assetId);
+
+    void update(Asset asset);
 }

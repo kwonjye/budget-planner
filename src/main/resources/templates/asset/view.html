@@ -11,7 +11,7 @@
     <span>총 자산</span>
     <span th:text="${#numbers.formatInteger(totalAmount, 1, 'COMMA')}"></span>
   </div>
-  <div th:each="asset : ${assets}">
+  <div th:each="asset : ${assets}" th:onclick="">
     <span th:text="${asset.assetName}">자산명</span>
     <span th:if="${asset.allocated}">*</span>
     <span th:text="${#numbers.formatInteger(asset.currentAmount, 1, 'COMMA')}">현재 금액</span>

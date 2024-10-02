@@ -4,7 +4,7 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import jye.budget.entity.Asset;
 import jye.budget.entity.User;
-import jye.budget.form.AddAssetForm;
+import jye.budget.form.AssetForm;
 import jye.budget.login.SessionConst;
 import jye.budget.service.AssetService;
 import lombok.RequiredArgsConstructor;
@@ -12,10 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -42,27 +39,71 @@ public class AssetController {
     }
 
     @GetMapping("/add")
-    public String addForm(@ModelAttribute("addAssetForm") AddAssetForm addAssetForm) {
+    public String addForm(@ModelAttribute("assetForm") AssetForm assetForm) {
         return "/asset/add";
     }
 
     @PostMapping("/add")
-    public String add(@Valid @ModelAttribute("addAssetForm") AddAssetForm addAssetForm, BindingResult bindingResult,
+    public String add(@Valid @ModelAttribute("assetForm") AssetForm assetForm, BindingResult bindingResult,
                       HttpSession session) {
 
-        log.info("add asset : {}", addAssetForm);
+        log.info("add asset : {}", assetForm);
 
         User user = (User) session.getAttribute(SessionConst.LOGIN_USER);
 
-        boolean existsByAssetName = assetService.existsByAssetName(user.getUserId(), addAssetForm.getAssetName());
+        boolean existsByAssetName = assetService.existsByAssetName(user.getUserId(), assetForm.getAssetName(), null);
         if(existsByAssetName) {
-            log.error("existsByAssetName : {}", addAssetForm.getAssetName());
+            log.error("existsByAssetName : {}", assetForm.getAssetName());
             bindingResult.rejectValue("assetName", "asset.exists");
             return "/asset/add";
         }
 
-        assetService.save(user.getUserId(), addAssetForm);
+        assetService.save(user.getUserId(), assetForm);
 
+        return "redirect:/asset";
+    }
+
+    @GetMapping("/edit/{assetId}")
+    public String editForm(@PathVariable Long assetId,
+                           HttpSession session, Model model) {
+
+        User user = (User) session.getAttribute(SessionConst.LOGIN_USER);
+
+        Asset asset = assetService.findById(assetId);
+        if(asset == null) {
+            return "redirect:/asset";
+        }
+        if(!asset.getUserId().equals(user.getUserId())) {
+            return "redirect:/asset";
+        }
+        model.addAttribute("asset", asset);
+        return "/asset/edit";
+    }
+
+    @PostMapping("/edit/{assetId}")
+    public String edit(@PathVariable Long assetId, @ModelAttribute("assetForm") AssetForm assetForm, BindingResult bindingResult,
+                       HttpSession session) {
+
+        log.info("edit asset : {}", assetForm);
+
+        User user = (User) session.getAttribute(SessionConst.LOGIN_USER);
+
+        Asset asset = assetService.findById(assetId);
+        if(asset == null) {
+            return "redirect:/asset";
+        }
+        if(!asset.getUserId().equals(user.getUserId())) {
+            return "redirect:/asset";
+        }
+
+        boolean existsByAssetName = assetService.existsByAssetName(user.getUserId(), assetForm.getAssetName(), assetId);
+        if(existsByAssetName) {
+            log.error("existsByAssetName : {}", assetForm.getAssetName());
+            bindingResult.rejectValue("assetName", "asset.exists");
+            return "/asset/edit";
+        }
+
+        assetService.update(assetId, assetForm);
         return "redirect:/asset";
     }
 }

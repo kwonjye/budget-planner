@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="jye.budget.mapper.AssetMapper">
-    <select id="findByUserId" resultType="jye.budget.entity.Asset">
+    <sql id="asset">
         SELECT asset_id,
                user_id,
                asset_name,
@@ -11,6 +11,9 @@
                created_at,
                updated_at
         FROM asset
+    </sql>
+    <select id="findByUserId" resultType="jye.budget.entity.Asset">
+        <include refid="asset"/>
         WHERE user_id = #{userId}
     </select>
     <insert id="save" useGeneratedKeys="true" keyColumn="asset_id" keyProperty="assetId">
@@ -37,6 +40,22 @@
             SELECT 1
             FROM asset
             WHERE user_id = #{userId} AND asset_name = #{assetName}
+            <if test="assetId != null">
+                AND asset_id != #{assetId}
+            </if>
         )
     </select>
+    <select id="findById" resultType="jye.budget.entity.Asset">
+        <include refid="asset"/>
+        WHERE asset_id = #{assetId}
+    </select>
+    <update id="update">
+        UPDATE asset
+        SET asset_name = #{assetName},
+            initial_amount = #{initialAmount},
+            current_amount = #{currentAmount},
+            is_allocated = #{isAllocated},
+            updated_at = NOW()
+        WHERE asset_id = #{assetId}
+    </update>
 </mapper>

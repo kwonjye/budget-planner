@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
-public class AddAssetForm {
+public class AssetForm {
 
     @NotBlank
     private String assetName;
