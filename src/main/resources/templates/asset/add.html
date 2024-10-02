@@ -4,8 +4,53 @@
   <meta charset="UTF-8">
   <link th:href="@{/css/common.css}" href="/css/common.css" rel="stylesheet">
   <title>나만의 가계부</title>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 </head>
+<script>
+  function changeAllocatedValue() {
+    const allocatedInput = $("#allocated");
+    const isAllocated = allocatedInput.val() === '1';
+
+    allocatedInput.val(isAllocated ? '0' : '1');
+    $("#allocatedText").text(isAllocated ? 'N' : 'Y');
+  }
+</script>
 <body>
   <div th:insert="~{header :: header}"></div>
+  <div>
+    <button type="button" th:onclick="|location.href='@{/asset}'|">목록</button>
+  </div>
+  <div>
+    <h2>자산 추가</h2>
+  </div>
+  <div>
+    <form th:action th:object="${addAssetForm}" method="post">
+      <div>
+        <label for="assetName">자산명</label>
+        <input type="text" id="assetName" class=""
+               th:field="*{assetName}"
+               th:errorclass="input-border-error">
+        <div class="field-error" th:errors="*{assetName}"></div>
+      </div>
+      <div>
+        <label for="initialAmount">초기 금액</label>
+        <input type="number" id="initialAmount" min="0" class=""
+               th:field="*{initialAmount}"
+               th:errorclass="input-border-error">원
+        <div class="field-error" th:errors="*{initialAmount}"></div>
+      </div>
+      <div onclick="changeAllocatedValue();">
+        <label for="allocated">예산 배분 여부</label>
+        <input type="hidden" id="allocated" class=""
+               th:field="*{allocated}"
+               th:errorclass="input-border-error" readonly>
+        <span id="allocatedText">N</span>
+        <div class="field-error" th:errors="*{allocated}"></div>
+      </div>
+      <div>
+        <button type="submit">저장</button>
+      </div>
+    </form>
+  </div>
 </body>
 </html>

@@ -13,4 +13,30 @@
         FROM asset
         WHERE user_id = #{userId}
     </select>
+    <insert id="save" useGeneratedKeys="true" keyColumn="asset_id" keyProperty="assetId">
+        INSERT INTO asset (
+                           user_id,
+                           asset_name,
+                           initial_amount,
+                           current_amount,
+                           is_allocated,
+                           created_at,
+                           updated_at
+        ) VALUES (
+                  #{userId},
+                  #{assetName},
+                  #{initialAmount},
+                  #{currentAmount},
+                  #{isAllocated},
+                  NOW(),
+                  NOW()
+                         )
+    </insert>
+    <select id="existsByAssetName" resultType="boolean">
+        SELECT EXISTS(
+            SELECT 1
+            FROM asset
+            WHERE user_id = #{userId} AND asset_name = #{assetName}
+        )
+    </select>
 </mapper>

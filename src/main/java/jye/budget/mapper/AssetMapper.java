@@ -1,5 +1,6 @@
 package jye.budget.mapper;
 
+import jakarta.validation.constraints.NotBlank;
 import jye.budget.entity.Asset;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -10,4 +11,9 @@ import java.util.List;
 public interface AssetMapper {
 
     List<Asset> findByUserId(@Param("userId") Long userId);
+
+    void save(Asset asset);
+
+    boolean existsByAssetName(@Param("userId") Long userId,
+                              @Param("assetName") @NotBlank String assetName);
 }
