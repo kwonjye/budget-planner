@@ -69,31 +69,32 @@ public class AssetController {
 
         User user = (User) session.getAttribute(SessionConst.LOGIN_USER);
 
-        Asset asset = assetService.findById(assetId);
+        Asset asset = checkAsset(assetId, user.getUserId());
         if(asset == null) {
-            return "redirect:/asset";
+            return "/error";
         }
-        if(!asset.getUserId().equals(user.getUserId())) {
-            return "redirect:/asset";
-        }
-        model.addAttribute("asset", asset);
+
+        AssetForm assetForm = AssetForm.builder()
+                .assetName(asset.getAssetName())
+                .initialAmount(asset.getInitialAmount())
+                .isAllocated(asset.isAllocated())
+                .build();
+
+        model.addAttribute("assetForm", assetForm);
         return "/asset/edit";
     }
 
     @PostMapping("/edit/{assetId}")
-    public String edit(@PathVariable Long assetId, @ModelAttribute("assetForm") AssetForm assetForm, BindingResult bindingResult,
+    public String edit(@PathVariable Long assetId, @Valid @ModelAttribute("assetForm") AssetForm assetForm, BindingResult bindingResult,
                        HttpSession session) {
 
         log.info("edit asset : {}", assetForm);
 
         User user = (User) session.getAttribute(SessionConst.LOGIN_USER);
 
-        Asset asset = assetService.findById(assetId);
+        Asset asset = checkAsset(assetId, user.getUserId());
         if(asset == null) {
-            return "redirect:/asset";
-        }
-        if(!asset.getUserId().equals(user.getUserId())) {
-            return "redirect:/asset";
+            return "/error";
         }
 
         boolean existsByAssetName = assetService.existsByAssetName(user.getUserId(), assetForm.getAssetName(), assetId);
@@ -105,5 +106,19 @@ public class AssetController {
 
         assetService.update(assetId, assetForm);
         return "redirect:/asset";
+    }
+
+    private Asset checkAsset(Long assetId, Long userId) {
+        Asset asset = assetService.findById(assetId);
+        if(asset == null) {
+            log.error("asset not found: {}", assetId);
+            return null;
+        }
+        if(!asset.getUserId().equals(userId)) {
+            log.error("asset userId mismatch: assetId - {}, assetUserId - {}, userId - {}",
+                    asset.getAssetId(), asset.getUserId(), userId);
+            return null;
+        }
+        return asset;
     }
 }

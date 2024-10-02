@@ -9,7 +9,7 @@
 <script>
     function changeAllocatedValue() {
         const allocatedInput = $("#allocated");
-        const isAllocated = allocatedInput.val() === '1';
+        const isAllocated = ['1', 'true'].includes(allocatedInput.val());
 
         allocatedInput.val(isAllocated ? '0' : '1');
         $("#allocatedText").text(isAllocated ? 'N' : 'Y');
@@ -24,7 +24,7 @@
     <h2>자산 추가</h2>
 </div>
 <div>
-    <form th:action th:object="${asset}" method="post">
+    <form th:action th:object="${assetForm}" method="post">
         <div>
             <label for="assetName">자산명</label>
             <input type="text" id="assetName" class=""
@@ -44,7 +44,7 @@
             <input type="hidden" id="allocated" class=""
                    th:field="*{allocated}"
                    th:errorclass="input-border-error" readonly>
-            <span id="allocatedText" th:text="${asset.allocated ? 'Y' : 'N'}"></span>
+            <span id="allocatedText" th:text="${assetForm.allocated ? 'Y' : 'N'}"></span>
             <div class="field-error" th:errors="*{allocated}"></div>
         </div>
         <div>
