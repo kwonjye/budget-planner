@@ -59,4 +59,9 @@ public class AssetService {
         log.info("update asset : {}", asset);
         assetMapper.update(asset);
     }
+
+    @Transactional
+    public void delete(Long assetId) {
+        assetMapper.delete(assetId);
+    }
 }

@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 <html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <link th:href="@{/css/common.css}" href="/css/common.css" rel="stylesheet">
+<head th:replace="fragment/head :: head">
     <title>나만의 가계부</title>
 </head>
 <body>
+<div th:insert="~{fragment/header :: header}"></div>
 <div class="container">
     <div class="content-01 w500">
         <div class="header-01">

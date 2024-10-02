@@ -9,6 +9,7 @@ import jye.budget.login.SessionConst;
 import jye.budget.service.AssetService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -120,5 +121,21 @@ public class AssetController {
             return null;
         }
         return asset;
+    }
+
+    @DeleteMapping("/{assetId}")
+    public ResponseEntity<Void> delete(@PathVariable Long assetId, HttpSession session) {
+
+        log.info("delete asset : {}", assetId);
+
+        User user = (User) session.getAttribute(SessionConst.LOGIN_USER);
+
+        Asset asset = checkAsset(assetId, user.getUserId());
+        if(asset == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        assetService.delete(assetId);
+        return ResponseEntity.noContent().build();
     }
 }

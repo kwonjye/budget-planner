@@ -21,4 +21,6 @@ public interface AssetMapper {
     Asset findById(@Param("assetId") Long assetId);
 
     void update(Asset asset);
+
+    void delete(@Param("assetId") Long assetId);
 }

@@ -58,4 +58,8 @@
             updated_at = NOW()
         WHERE asset_id = #{assetId}
     </update>
+    <delete id="delete">
+        DELETE FROM asset
+        WHERE asset_id = #{assetId}
+    </delete>
 </mapper>

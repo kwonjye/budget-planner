@@ -1,17 +1,43 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="ko">
-<head>
-  <meta charset="UTF-8">
-  <link th:href="@{/css/common.css}" href="/css/common.css" rel="stylesheet">
+<head th:replace="fragment/head :: head">
   <title>나만의 가계부</title>
 </head>
+<script>
+  $(document).ready(function() {
+    $(".asset").on('contextmenu', function(e) {
+      e.preventDefault(); // 기본 우클릭 메뉴 방지
+
+      const assetId = $(this).data('asset-id');
+      const assetName = $(this).data('asset-name');
+
+      if (confirm("'" + assetName + "' 자산을 삭제하시겠습니까?")) {
+        $.ajax({
+          url: '/asset/' + assetId,
+          type: 'DELETE',
+          success: function() {
+            alert("삭제되었습니다.");
+            location.reload();
+          },
+          error: function() {
+            alert("삭제할 수 없습니다.");
+          }
+        });
+      }
+    });
+  });
+</script>
 <body>
-  <div th:insert="~{header :: header}"></div>
+  <div th:insert="~{fragment/header :: header}"></div>
   <div>
     <span>총 자산</span>
     <span th:text="${#numbers.formatInteger(totalAmount, 1, 'COMMA')}"></span>
   </div>
-  <div th:each="asset : ${assets}" th:onclick="|location.href='@{/asset/edit/}| + ${asset.assetId} + |'|">
+  <div class="asset"
+       th:data-asset-id="${asset.assetId}"
+       th:data-asset-name="${asset.assetName}"
+       th:each="asset : ${assets}"
+       th:onclick="|location.href='@{/asset/edit/}| + ${asset.assetId} + |'|">
     <span th:text="${asset.assetName}">자산명</span>
     <span th:if="${asset.allocated}">*</span>
     <span th:text="${#numbers.formatInteger(asset.currentAmount, 1, 'COMMA')}">현재 금액</span>
