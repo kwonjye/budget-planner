@@ -2,6 +2,8 @@ package jye.budget.mapper;
 
 import jakarta.validation.constraints.NotBlank;
 import jye.budget.entity.Asset;
+import jye.budget.entity.AssetChange;
+import jye.budget.req.AssetChangeReq;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -23,4 +25,7 @@ public interface AssetMapper {
     void update(Asset asset);
 
     void delete(@Param("assetId") Long assetId);
+
+    List<AssetChange> findChange(@Param("req") AssetChangeReq req,
+                                 @Param("userId") Long userId);
 }

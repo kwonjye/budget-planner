@@ -3,8 +3,10 @@ package jye.budget.service;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jye.budget.entity.Asset;
+import jye.budget.entity.AssetChange;
 import jye.budget.form.AssetForm;
 import jye.budget.mapper.AssetMapper;
+import jye.budget.req.AssetChangeReq;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -63,5 +65,10 @@ public class AssetService {
     @Transactional
     public void delete(Long assetId) {
         assetMapper.delete(assetId);
+    }
+
+    @Transactional(readOnly = true)
+    public List<AssetChange> findChange(AssetChangeReq req, Long userId) {
+        return assetMapper.findChange(req, userId);
     }
 }

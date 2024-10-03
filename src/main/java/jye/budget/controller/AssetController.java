@@ -1,12 +1,16 @@
 package jye.budget.controller;
 
+import io.micrometer.common.util.StringUtils;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import jye.budget.entity.Asset;
+import jye.budget.entity.AssetChange;
 import jye.budget.entity.User;
 import jye.budget.form.AssetForm;
 import jye.budget.login.SessionConst;
+import jye.budget.req.AssetChangeReq;
 import jye.budget.service.AssetService;
+import jye.budget.type.CalcType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +19,11 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Controller
@@ -137,5 +145,26 @@ public class AssetController {
 
         assetService.delete(assetId);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/change")
+    public String changeView(@ModelAttribute("req") AssetChangeReq req, HttpSession session, Model model) {
+        User user = (User) session.getAttribute(SessionConst.LOGIN_USER);
+
+        log.info("asset change view : {}", user);
+
+        if(StringUtils.isBlank(req.getSearchDate())) {
+            req.setSearchDate(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM")));
+        }
+        List<AssetChange> assetChanges = assetService.findChange(req, user.getUserId());
+        Map<LocalDate, List<AssetChange>> groupedByChangeDate = assetChanges.stream()
+                .collect(Collectors.groupingBy(AssetChange::getChangeDate));
+        model.addAttribute("groupedByChangeDate", groupedByChangeDate);
+
+        List<Asset> assets = assetService.findByUserId(user.getUserId());
+        model.addAttribute("assets", assets);
+
+        model.addAttribute("calcTypeValues", CalcType.values());
+        return "/asset/change/view";
     }
 }

@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="jye.budget.mapper.AssetMapper">
+    <resultMap id="asset" type="jye.budget.entity.Asset">
+        <id column="asset_id" property="assetId" />
+        <result column="user_id" property="userId" />
+        <result column="asset_name" property="assetName" />
+        <result column="initial_amount" property="initialAmount" />
+        <result column="current_amount" property="currentAmount" />
+        <result column="is_allocated" property="allocated" />
+        <result column="created_at" property="createdAt" />
+        <result column="updated_at" property="updatedAt" />
+    </resultMap>
     <sql id="asset">
         SELECT asset_id,
                user_id,
@@ -12,7 +22,7 @@
                updated_at
         FROM asset
     </sql>
-    <select id="findByUserId" resultType="jye.budget.entity.Asset">
+    <select id="findByUserId" resultMap="asset">
         <include refid="asset"/>
         WHERE user_id = #{userId}
     </select>
@@ -45,7 +55,7 @@
             </if>
         )
     </select>
-    <select id="findById" resultType="jye.budget.entity.Asset">
+    <select id="findById" resultMap="asset">
         <include refid="asset"/>
         WHERE asset_id = #{assetId}
     </select>
@@ -62,4 +72,43 @@
         DELETE FROM asset
         WHERE asset_id = #{assetId}
     </delete>
+    <resultMap id="assetChange" type="jye.budget.entity.AssetChange">
+        <id column="change_id" property="changeId" />
+        <result column="calc_type" property="calcType" />
+        <result column="amount" property="amount" />
+        <result column="change_detail" property="changeDetail" />
+        <result column="change_date" property="changeDate" />
+        <result column="created_at" property="createdAt" />
+        <association property="asset" resultMap="asset" columnPrefix="a_"/>
+    </resultMap>
+    <select id="findChange" resultMap="assetChange">
+        SELECT ac.change_id,
+               ac.calc_type,
+               ac.amount,
+               ac.change_detail,
+               ac.change_date,
+               ac.created_at,
+               a.asset_id AS a_asset_id,
+               a.user_id AS a_user_id,
+               a.asset_name AS a_asset_name,
+               a.initial_amount AS a_initial_amount,
+               a.current_amount AS a_current_amount,
+               a.is_allocated AS a_is_allocated,
+               a.created_at AS a_created_at,
+               a.updated_at AS a_updated_at
+        FROM asset_change ac
+        JOIN asset a ON ac.asset_id = a.asset_id
+        WHERE a.user_id = #{userId}
+            AND DATE_FORMAT(ac.change_date, '%Y-%m') = #{req.searchDate}
+        <if test="req.assetId != null">
+            AND a.asset_id = #{req.assetId}
+        </if>
+        <if test="req.calcType != null">
+            AND ac.calc_type = #{req.calcType}
+        </if>
+        <if test='req.searchText != null and req.searchText != ""'>
+            AND ac.change_detail LIKE CONCAT('%', #{req.searchText}, '%')
+        </if>
+        ORDER BY ac.change_date DESC
+    </select>
 </mapper>
