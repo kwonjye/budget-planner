@@ -2,6 +2,7 @@ package jye.budget.form;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import jye.budget.entity.AssetChange;
 import jye.budget.type.CalcType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,4 +31,12 @@ public class AssetChangeForm {
     @NotNull
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate changeDate = LocalDate.now();
+
+    public AssetChangeForm(AssetChange assetChange) {
+        this.assetId = assetChange.getAsset().getAssetId();
+        this.calcType = assetChange.getCalcType();
+        this.amount = assetChange.getAmount();
+        this.changeDetail = assetChange.getChangeDetail();
+        this.changeDate = assetChange.getChangeDate();
+    }
 }

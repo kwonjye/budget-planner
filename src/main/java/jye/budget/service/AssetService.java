@@ -8,13 +8,13 @@ import jye.budget.form.AssetChangeForm;
 import jye.budget.form.AssetForm;
 import jye.budget.mapper.AssetMapper;
 import jye.budget.req.AssetChangeReq;
-import jye.budget.type.CalcType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
 @Service
@@ -70,8 +70,8 @@ public class AssetService {
     }
 
     @Transactional(readOnly = true)
-    public List<AssetChange> findChange(AssetChangeReq req, Long userId) {
-        return assetMapper.findChange(req, userId);
+    public List<AssetChange> findChangeByReqAndUserId(AssetChangeReq req, Long userId) {
+        return assetMapper.findChangeByReqAndUserId(req, userId);
     }
 
     @Transactional
@@ -88,13 +88,48 @@ public class AssetService {
         log.info("save assetChange : {}", assetChange);
         assetMapper.change(assetChange);
 
-        int currentAmount = asset.getCurrentAmount();
-        if(assetChangeForm.getCalcType() == CalcType.ADD) {
-            currentAmount += assetChangeForm.getAmount();
-        } else if(assetChangeForm.getCalcType() == CalcType.SUB) {
-            currentAmount -= assetChangeForm.getAmount();
-        }
+        int currentAmount = assetChangeForm.getCalcType().apply(asset.getCurrentAmount(), assetChange.getAmount());
         log.info("update asset {} currentAmount : {}", asset, currentAmount);
         assetMapper.updateCurrentAmount(asset.getAssetId(), currentAmount);
+    }
+
+    @Transactional(readOnly = true)
+    public AssetChange findChangeById(Long changeId) {
+        return assetMapper.findChangeById(changeId);
+    }
+
+    @Transactional
+    public void updateChange(Long changeId, @Valid AssetChangeForm assetChangeForm,
+                             Asset asset) {
+
+        AssetChange assetChange = AssetChange.builder()
+                .changeId(changeId)
+                .asset(asset)
+                .calcType(assetChangeForm.getCalcType())
+                .amount(assetChangeForm.getAmount())
+                .changeDetail(assetChangeForm.getChangeDetail())
+                .changeDate(assetChangeForm.getChangeDate())
+                .build();
+        log.info("update assetChange : {}", assetChange);
+        assetMapper.updateChange(assetChange);
+
+        updateCurrentAmount(asset);
+    }
+
+    /**
+     * 현재 금액 업데이트
+     * @param asset 자산
+     */
+    private void updateCurrentAmount(Asset asset) {
+        log.info("update currentAmount : {}", asset);
+
+        AtomicInteger currentAmount = new AtomicInteger(asset.getInitialAmount());
+        log.info("initialAmount : {}", currentAmount.get());
+
+        List<AssetChange> assetChanges = assetMapper.findChangeByAssetId(asset.getAssetId());
+        assetChanges.forEach(change -> currentAmount.set(change.getCalcType().apply(currentAmount.get(), change.getAmount())));
+
+        log.info("currentAmount : {}", currentAmount.get());
+        assetMapper.updateCurrentAmount(asset.getAssetId(), currentAmount.get());
     }
 }

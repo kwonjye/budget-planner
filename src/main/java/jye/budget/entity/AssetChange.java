@@ -21,4 +21,5 @@ public class AssetChange {
     private String changeDetail;
     private LocalDate changeDate;
     private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }

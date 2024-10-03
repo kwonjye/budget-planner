@@ -2,6 +2,7 @@ package jye.budget.form;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jye.budget.entity.Asset;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,4 +21,10 @@ public class AssetForm {
     private int initialAmount;
 
     private boolean isAllocated;
+
+    public AssetForm(Asset asset) {
+        this.assetName = asset.getAssetName();
+        this.initialAmount = asset.getInitialAmount();
+        this.isAllocated = asset.isAllocated();
+    }
 }

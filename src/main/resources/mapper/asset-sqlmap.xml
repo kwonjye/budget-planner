@@ -81,7 +81,7 @@
         <result column="created_at" property="createdAt" />
         <association property="asset" resultMap="asset" columnPrefix="a_"/>
     </resultMap>
-    <select id="findChange" resultMap="assetChange">
+    <sql id="assetChange">
         SELECT ac.change_id,
                ac.calc_type,
                ac.amount,
@@ -98,6 +98,9 @@
                a.updated_at AS a_updated_at
         FROM asset_change ac
         JOIN asset a ON ac.asset_id = a.asset_id
+    </sql>
+    <select id="findChangeByReqAndUserId" resultMap="assetChange">
+        <include refid="assetChange"/>
         WHERE a.user_id = #{userId}
             AND DATE_FORMAT(ac.change_date, '%Y-%m') = #{req.searchDate}
         <if test="req.assetId != null">
@@ -118,13 +121,15 @@
                                   amount,
                                   change_detail,
                                   change_date,
-                                  created_at
+                                  created_at,
+                                  updated_at
         ) VALUES (
                   #{asset.assetId},
                   #{calcType},
                   #{amount},
                   #{changeDetail},
                   #{changeDate},
+                  NOW(),
                   NOW()
                          )
     </insert>
@@ -133,4 +138,22 @@
         SET current_amount = #{currentAmount}
         WHERE asset_id = #{assetId}
     </update>
+    <select id="findChangeById" resultMap="assetChange">
+        <include refid="assetChange"/>
+        WHERE change_id = #{changeId}
+    </select>
+    <update id="updateChange">
+        UPDATE asset_change
+        SET asset_id = #{asset.assetId},
+            calc_type = #{calcType},
+            amount = #{amount},
+            change_detail = #{changeDetail},
+            change_date = #{changeDate},
+            updated_at = NOW()
+        WHERE change_id = #{changeId}
+    </update>
+    <select id="findChangeByAssetId" resultMap="assetChange">
+        <include refid="assetChange"/>
+        WHERE a.asset_id = #{assetId}
+    </select>
 </mapper>

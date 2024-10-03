@@ -57,10 +57,11 @@
           </select>
         </label>
       </div>
-      <div th:each="groupedByChangeDate : ${groupedByChangeDate}">
-        <div>
+      <div>
+        <div th:each="groupedByChangeDate : ${groupedByChangeDate}">
           <div th:text="${T(jye.budget.util.DateFormatterUtil).formatLocalDate(groupedByChangeDate.key)}"></div>
-          <div th:each="assetChange : ${groupedByChangeDate.value}">
+          <div th:each="assetChange : ${groupedByChangeDate.value}"
+               th:onclick="|location.href='@{/asset/change/}| + ${assetChange.changeId} + |'|">
             <span th:text="${assetChange.asset.assetName}"></span>
             <span th:text="${assetChange.changeDetail}"></span>
             <span th:text="${assetChange.calcType.symbol}"></span>

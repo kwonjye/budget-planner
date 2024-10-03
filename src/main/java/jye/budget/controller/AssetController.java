@@ -84,13 +84,7 @@ public class AssetController {
             return "/error";
         }
 
-        AssetForm assetForm = AssetForm.builder()
-                .assetName(asset.getAssetName())
-                .initialAmount(asset.getInitialAmount())
-                .isAllocated(asset.isAllocated())
-                .build();
-
-        model.addAttribute("assetForm", assetForm);
+        model.addAttribute("assetForm", new AssetForm(asset));
         return "/asset/edit";
     }
 
@@ -160,7 +154,7 @@ public class AssetController {
         if(StringUtils.isBlank(req.getSearchDate())) {
             req.setSearchDate(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM")));
         }
-        List<AssetChange> assetChanges = assetService.findChange(req, user.getUserId());
+        List<AssetChange> assetChanges = assetService.findChangeByReqAndUserId(req, user.getUserId());
         Map<LocalDate, List<AssetChange>> groupedByChangeDate = assetChanges.stream()
                 .collect(Collectors.groupingBy(AssetChange::getChangeDate));
         model.addAttribute("groupedByChangeDate", groupedByChangeDate);
@@ -196,6 +190,48 @@ public class AssetController {
         }
         assetService.change(assetChangeForm, asset);
 
+        return "redirect:/asset/change";
+    }
+
+    @GetMapping("/change/{changeId}")
+    public String changeEditForm(@PathVariable Long changeId, HttpSession session, Model model) {
+        User user = (User) session.getAttribute(SessionConst.LOGIN_USER);
+
+        AssetChange assetChange = assetService.findChangeById(changeId);
+        if(assetChange == null) {
+            return "/error";
+        }
+
+        Asset asset = checkAsset(assetChange.getAsset().getAssetId(), user.getUserId());
+        if(asset == null) {
+            return "/error";
+        }
+
+        model.addAttribute("asset", asset);
+        model.addAttribute("calcTypeValues", CalcType.values());
+        model.addAttribute("assetChangeForm", new AssetChangeForm(assetChange));
+        return "/asset/change/edit";
+    }
+
+    @PostMapping("/change/{changeId}")
+    public String changeEdit(@PathVariable Long changeId,
+                             @Valid @ModelAttribute("assetChangeForm") AssetChangeForm assetChangeForm, BindingResult bindingResult,
+                             HttpSession session) {
+
+        User user = (User) session.getAttribute(SessionConst.LOGIN_USER);
+
+        AssetChange assetChange = assetService.findChangeById(changeId);
+        if(assetChange == null) {
+            return "/error";
+        }
+
+        Asset asset = checkAsset(assetChangeForm.getAssetId(), user.getUserId());
+        if(asset == null) {
+            bindingResult.rejectValue("assetId", "asset.notFound");
+            return "/asset/change/edit";
+        }
+
+        assetService.updateChange(changeId, assetChangeForm, asset);
         return "redirect:/asset/change";
     }
 }

@@ -26,11 +26,17 @@ public interface AssetMapper {
 
     void delete(@Param("assetId") Long assetId);
 
-    List<AssetChange> findChange(@Param("req") AssetChangeReq req,
-                                 @Param("userId") Long userId);
+    List<AssetChange> findChangeByReqAndUserId(@Param("req") AssetChangeReq req,
+                                               @Param("userId") Long userId);
 
     void change(AssetChange assetChange);
 
     void updateCurrentAmount(@Param("assetId") Long assetId,
                              @Param("currentAmount") int currentAmount);
+
+    AssetChange findChangeById(@Param("changeId") Long changeId);
+
+    void updateChange(AssetChange assetChange);
+
+    List<AssetChange> findChangeByAssetId(@Param("assetId") Long assetId);
 }
