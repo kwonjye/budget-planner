@@ -28,4 +28,9 @@ public interface AssetMapper {
 
     List<AssetChange> findChange(@Param("req") AssetChangeReq req,
                                  @Param("userId") Long userId);
+
+    void change(AssetChange assetChange);
+
+    void updateCurrentAmount(@Param("assetId") Long assetId,
+                             @Param("currentAmount") int currentAmount);
 }

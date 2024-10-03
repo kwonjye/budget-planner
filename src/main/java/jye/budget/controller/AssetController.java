@@ -6,6 +6,7 @@ import jakarta.validation.Valid;
 import jye.budget.entity.Asset;
 import jye.budget.entity.AssetChange;
 import jye.budget.entity.User;
+import jye.budget.form.AssetChangeForm;
 import jye.budget.form.AssetForm;
 import jye.budget.login.SessionConst;
 import jye.budget.req.AssetChangeReq;
@@ -147,6 +148,9 @@ public class AssetController {
         return ResponseEntity.noContent().build();
     }
 
+    /**
+     * 자산 변동 내역
+     */
     @GetMapping("/change")
     public String changeView(@ModelAttribute("req") AssetChangeReq req, HttpSession session, Model model) {
         User user = (User) session.getAttribute(SessionConst.LOGIN_USER);
@@ -166,5 +170,32 @@ public class AssetController {
 
         model.addAttribute("calcTypeValues", CalcType.values());
         return "/asset/change/view";
+    }
+
+    @GetMapping("/change/add")
+    public String changeAddForm(@ModelAttribute("assetChangeForm") AssetChangeForm assetChangeForm, HttpSession session, Model model) {
+        User user = (User) session.getAttribute(SessionConst.LOGIN_USER);
+
+        List<Asset> assets = assetService.findByUserId(user.getUserId());
+        model.addAttribute("assets", assets);
+
+        model.addAttribute("calcTypeValues", CalcType.values());
+        return "/asset/change/add";
+    }
+
+    @PostMapping("/change/add")
+    public String changeAdd(@Valid @ModelAttribute("assetChangeForm") AssetChangeForm assetChangeForm, BindingResult bindingResult,
+                            HttpSession session) {
+
+        User user = (User) session.getAttribute(SessionConst.LOGIN_USER);
+
+        Asset asset = checkAsset(assetChangeForm.getAssetId(), user.getUserId());
+        if(asset == null) {
+            bindingResult.rejectValue("assetId", "asset.notFound");
+            return "/asset/change/add";
+        }
+        assetService.change(assetChangeForm, asset);
+
+        return "redirect:/asset/change";
     }
 }

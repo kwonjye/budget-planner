@@ -4,9 +4,11 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jye.budget.entity.Asset;
 import jye.budget.entity.AssetChange;
+import jye.budget.form.AssetChangeForm;
 import jye.budget.form.AssetForm;
 import jye.budget.mapper.AssetMapper;
 import jye.budget.req.AssetChangeReq;
+import jye.budget.type.CalcType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -70,5 +72,29 @@ public class AssetService {
     @Transactional(readOnly = true)
     public List<AssetChange> findChange(AssetChangeReq req, Long userId) {
         return assetMapper.findChange(req, userId);
+    }
+
+    @Transactional
+    public void change(@Valid AssetChangeForm assetChangeForm,
+                       Asset asset) {
+
+        AssetChange assetChange = AssetChange.builder()
+                .asset(asset)
+                .calcType(assetChangeForm.getCalcType())
+                .amount(assetChangeForm.getAmount())
+                .changeDetail(assetChangeForm.getChangeDetail())
+                .changeDate(assetChangeForm.getChangeDate())
+                .build();
+        log.info("save assetChange : {}", assetChange);
+        assetMapper.change(assetChange);
+
+        int currentAmount = asset.getCurrentAmount();
+        if(assetChangeForm.getCalcType() == CalcType.ADD) {
+            currentAmount += assetChangeForm.getAmount();
+        } else if(assetChangeForm.getCalcType() == CalcType.SUB) {
+            currentAmount -= assetChangeForm.getAmount();
+        }
+        log.info("update asset {} currentAmount : {}", asset, currentAmount);
+        assetMapper.updateCurrentAmount(asset.getAssetId(), currentAmount);
     }
 }

@@ -4,12 +4,14 @@ import lombok.Getter;
 
 @Getter
 public enum CalcType {
-    ADD("+"),
-    SUB("-");
+    ADD("+", "+ 더하기"),
+    SUB("-", "- 빼기");
 
     private final String symbol;
+    private final String text;
 
-    CalcType(String symbol) {
+    CalcType(String symbol, String text) {
         this.symbol = symbol;
+        this.text = text;
     }
 }

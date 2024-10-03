@@ -111,4 +111,26 @@
         </if>
         ORDER BY ac.change_date DESC
     </select>
+    <insert id="change" useGeneratedKeys="true" keyColumn="change_id" keyProperty="changeId">
+        INSERT INTO asset_change (
+                                  asset_id,
+                                  calc_type,
+                                  amount,
+                                  change_detail,
+                                  change_date,
+                                  created_at
+        ) VALUES (
+                  #{asset.assetId},
+                  #{calcType},
+                  #{amount},
+                  #{changeDetail},
+                  #{changeDate},
+                  NOW()
+                         )
+    </insert>
+    <update id="updateCurrentAmount">
+        UPDATE asset
+        SET current_amount = #{currentAmount}
+        WHERE asset_id = #{assetId}
+    </update>
 </mapper>
