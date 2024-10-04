@@ -1,5 +1,6 @@
 package jye.budget.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jye.budget.entity.User;
 import jye.budget.form.ChangePasswordForm;
@@ -32,7 +33,8 @@ public class PasswordController {
     }
 
     @PostMapping("/find")
-    public String find(@ModelAttribute("findPasswordForm") FindPasswordForm findPasswordForm, BindingResult bindingResult) {
+    public String find(@ModelAttribute("findPasswordForm") FindPasswordForm findPasswordForm, BindingResult bindingResult,
+                       HttpServletRequest request) {
 
         log.info("find password : {}", findPasswordForm);
 
@@ -42,7 +44,8 @@ public class PasswordController {
             return "password/find";
         }
         if(!loginUser.isVerified()) {
-            bindingResult.rejectValue("email", "email.notVerified");
+            HttpSession session = request.getSession();
+            session.setAttribute(SessionConst.EMAIL, findPasswordForm.getEmail());
             return "email/error/password";
         }
 

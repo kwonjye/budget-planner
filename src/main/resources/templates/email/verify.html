@@ -10,11 +10,6 @@
       <h2>이메일 인증</h2>
     </div>
     <form th:action="@{/email/verify}" th:object="${verifyEmailForm}" method="post">
-      <label for="email"></label>
-      <input type="hidden" id="email"
-             th:field="*{email}"
-             th:value="*{email}"
-             readonly />
       <div class="mb15">
         <p class="mtb05"><span th:text="*{email}"></span>으로 인증 메일이 발송되었습니다.</p>
         <p class="mtb05">메일에 있는 인증 코드를 아래에 입력해주세요.</p>

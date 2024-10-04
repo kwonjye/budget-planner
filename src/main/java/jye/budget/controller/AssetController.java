@@ -24,6 +24,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -223,6 +224,10 @@ public class AssetController {
         AssetChange assetChange = assetService.findChangeById(changeId);
         if(assetChange == null) {
             return "/error";
+        }
+        if(!Objects.equals(assetChange.getAsset().getAssetId(), assetChangeForm.getAssetId())) {
+            bindingResult.rejectValue("assetId", "asset.immutable");
+            return "/asset/change/edit";
         }
 
         Asset asset = checkAsset(assetChangeForm.getAssetId(), user.getUserId());
