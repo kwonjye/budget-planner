@@ -132,4 +132,10 @@ public class AssetService {
         log.info("currentAmount : {}", currentAmount.get());
         assetMapper.updateCurrentAmount(asset.getAssetId(), currentAmount.get());
     }
+
+    @Transactional
+    public void deleteChange(Long changeId, Asset asset) {
+        assetMapper.deleteChange(changeId);
+        updateCurrentAmount(asset);
+    }
 }

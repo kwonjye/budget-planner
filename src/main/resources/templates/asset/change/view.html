@@ -4,6 +4,28 @@
   <title>나만의 가계부</title>
 </head>
 <script>
+  $(document).ready(function() {
+    $(".asset-change").on('contextmenu', function(e) {
+      e.preventDefault(); // 기본 우클릭 메뉴 방지
+
+      const changeId = $(this).data('change-id');
+
+      if (confirm("자산 변동 내역을 삭제하시겠습니까?")) {
+        $.ajax({
+          url: '/asset/change/' + changeId,
+          type: 'DELETE',
+          success: function() {
+            alert("삭제되었습니다.");
+            location.reload();
+          },
+          error: function() {
+            alert("삭제할 수 없습니다.");
+          }
+        });
+      }
+    });
+  });
+
   function changeMonth(direction) {
     const input = $("#searchDate");
     const searchDate = new Date(input.val() + '-01');
@@ -60,7 +82,9 @@
       <div>
         <div th:each="groupedByChangeDate : ${groupedByChangeDate}">
           <div th:text="${T(jye.budget.util.DateFormatterUtil).formatLocalDate(groupedByChangeDate.key)}"></div>
-          <div th:each="assetChange : ${groupedByChangeDate.value}"
+          <div class="asset-change"
+               th:data-change-id="${assetChange.changeId}"
+               th:each="assetChange : ${groupedByChangeDate.value}"
                th:onclick="|location.href='@{/asset/change/}| + ${assetChange.changeId} + |'|">
             <span th:text="${assetChange.asset.assetName}"></span>
             <span th:text="${assetChange.changeDetail}"></span>

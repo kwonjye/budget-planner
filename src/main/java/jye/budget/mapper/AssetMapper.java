@@ -39,4 +39,6 @@ public interface AssetMapper {
     void updateChange(AssetChange assetChange);
 
     List<AssetChange> findChangeByAssetId(@Param("assetId") Long assetId);
+
+    void deleteChange(@Param("changeId") Long changeId);
 }

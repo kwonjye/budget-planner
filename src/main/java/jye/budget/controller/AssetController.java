@@ -179,7 +179,7 @@ public class AssetController {
     }
 
     @PostMapping("/change/add")
-    public String changeAdd(@Valid @ModelAttribute("assetChangeForm") AssetChangeForm assetChangeForm, BindingResult bindingResult,
+    public String addChange(@Valid @ModelAttribute("assetChangeForm") AssetChangeForm assetChangeForm, BindingResult bindingResult,
                             HttpSession session) {
 
         User user = (User) session.getAttribute(SessionConst.LOGIN_USER);
@@ -215,7 +215,7 @@ public class AssetController {
     }
 
     @PostMapping("/change/{changeId}")
-    public String changeEdit(@PathVariable Long changeId,
+    public String editChange(@PathVariable Long changeId,
                              @Valid @ModelAttribute("assetChangeForm") AssetChangeForm assetChangeForm, BindingResult bindingResult,
                              HttpSession session) {
 
@@ -238,5 +238,26 @@ public class AssetController {
 
         assetService.updateChange(changeId, assetChangeForm, asset);
         return "redirect:/asset/change";
+    }
+
+    @DeleteMapping("/change/{changeId}")
+    public ResponseEntity<Void> deleteChange(@PathVariable Long changeId, HttpSession session) {
+
+        log.info("delete asset change : {}", changeId);
+
+        User user = (User) session.getAttribute(SessionConst.LOGIN_USER);
+
+        AssetChange assetChange = assetService.findChangeById(changeId);
+        if(assetChange == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        Asset asset = checkAsset(assetChange.getAsset().getAssetId(), user.getUserId());
+        if(asset == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        assetService.deleteChange(changeId, asset);
+        return ResponseEntity.noContent().build();
     }
 }

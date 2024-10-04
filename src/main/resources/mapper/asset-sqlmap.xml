@@ -135,7 +135,8 @@
     </insert>
     <update id="updateCurrentAmount">
         UPDATE asset
-        SET current_amount = #{currentAmount}
+        SET current_amount = #{currentAmount},
+            updated_at = NOW()
         WHERE asset_id = #{assetId}
     </update>
     <select id="findChangeById" resultMap="assetChange">
@@ -156,4 +157,8 @@
         <include refid="assetChange"/>
         WHERE a.asset_id = #{assetId}
     </select>
+    <delete id="deleteChange">
+        DELETE FROM asset_change
+        WHERE change_id = #{changeId}
+    </delete>
 </mapper>
