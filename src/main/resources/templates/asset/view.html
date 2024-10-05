@@ -28,23 +28,37 @@
   });
 </script>
 <body>
-  <div th:insert="~{fragment/header :: header}"></div>
-  <div>
-    <span>총 자산</span>
-    <span th:text="${#numbers.formatInteger(totalAmount, 1, 'COMMA')}"></span>
+<div th:insert="~{fragment/header :: header}"></div>
+<div class="container">
+  <div class="w600">
+    <div class="fs35 space-between mt50 mb30">
+      <h2>총 자산</h2>
+      <h2 th:text="${#numbers.formatInteger(totalAmount, 1, 'COMMA')}"></h2>
+    </div>
+    <div>
+      <div class="asset space-between cursor h-weight"
+           th:data-asset-id="${asset.assetId}"
+           th:data-asset-name="${asset.assetName}"
+           th:each="asset : ${assets}"
+           th:onclick="|location.href='@{/asset/edit/}| + ${asset.assetId} + |'|">
+        <div class="fs20">
+          <span th:text="${asset.assetName}">자산명</span>
+          <span th:if="${asset.allocated}">*</span>
+        </div>
+        <div class="fs20">
+          <span th:text="${#numbers.formatInteger(asset.currentAmount, 1, 'COMMA')}">현재 금액</span>
+        </div>
+      </div>
+    </div>
+    <div class="asset-button space-between">
+      <button class="fs20 ai-center" type="button" th:onclick="|location.href='@{/asset/add}'|">
+        <i class="mr10 fi fi-rr-layer-plus"></i>자산 추가
+      </button>
+      <button class="fs20 ai-center" type="button" th:onclick="|location.href='@{/asset/change}'|">
+        <i class="mr10 fi fi-rr-plus-minus"></i>자산 변동
+      </button>
+    </div>
   </div>
-  <div class="asset"
-       th:data-asset-id="${asset.assetId}"
-       th:data-asset-name="${asset.assetName}"
-       th:each="asset : ${assets}"
-       th:onclick="|location.href='@{/asset/edit/}| + ${asset.assetId} + |'|">
-    <span th:text="${asset.assetName}">자산명</span>
-    <span th:if="${asset.allocated}">*</span>
-    <span th:text="${#numbers.formatInteger(asset.currentAmount, 1, 'COMMA')}">현재 금액</span>
-  </div>
-  <div>
-    <button type="button" th:onclick="|location.href='@{/asset/add}'|">자산 추가</button>
-    <button type="button" th:onclick="|location.href='@{/asset/change}'|">자산 변동</button>
-  </div>
+</div>
 </body>
 </html>

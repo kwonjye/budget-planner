@@ -32,11 +32,12 @@ public class UserController {
     @PostMapping("/join")
     public String join(@Valid @ModelAttribute("joinUserForm") JoinUserForm joinUserForm, BindingResult bindingResult,
                        HttpServletRequest request) {
+
+        log.info("join user : {}", joinUserForm);
+
         if (bindingResult.hasErrors()) {
             return "user/join";
         }
-
-        log.info("join user : {}", joinUserForm);
 
         User user = userService.findByEmail(joinUserForm.getEmail());
         if(user != null) {

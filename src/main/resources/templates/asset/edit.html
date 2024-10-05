@@ -14,40 +14,56 @@
 </script>
 <body>
 <div th:insert="~{fragment/header :: header}"></div>
-<div>
-    <button type="button" th:onclick="|location.href='@{/asset}'|">목록</button>
-</div>
-<div>
-    <h2>자산 추가</h2>
-</div>
-<div>
-    <form th:action th:object="${assetForm}" method="post">
-        <div>
-            <label for="assetName">자산명</label>
-            <input type="text" id="assetName" class=""
-                   th:field="*{assetName}"
-                   th:errorclass="input-border-error">
-            <div class="field-error" th:errors="*{assetName}"></div>
+<div class="container">
+    <div>
+        <div class="fix-top-left">
+            <i class="fi fi-rr-menu-burger" th:onclick="|location.href='@{/asset}'|"></i>
         </div>
-        <div>
-            <label for="initialAmount">초기 금액</label>
-            <input type="number" id="initialAmount" min="0" class=""
-                   th:field="*{initialAmount}"
-                   th:errorclass="input-border-error">원
-            <div class="field-error" th:errors="*{initialAmount}"></div>
+        <div class="w550">
+            <div class="fs35 space-between mt70 mb30">
+                <h2>자산 상세</h2>
+            </div>
+            <div class="fs20">
+                <form th:action th:object="${assetForm}" method="post">
+                    <div class="mtb50">
+                        <div class="space-between">
+                            <label for="assetName">자산명</label>
+                            <div class="div-underline">
+                                <input type="text" id="assetName" class="input-underline"
+                                       th:field="*{assetName}">
+                            </div>
+                        </div>
+                        <div class="field-error mt05 right" th:errors="*{assetName}"></div>
+                    </div>
+                    <div class="mtb50">
+                        <div class="space-between">
+                            <label for="initialAmount">초기 금액</label>
+                            <div class="div-underline">
+                                <input type="number" id="initialAmount" min="0" class="input-underline"
+                                       th:field="*{initialAmount}">
+                                <span>원</span>
+                            </div>
+                        </div>
+                        <div class="field-error" th:errors="*{initialAmount}"></div>
+                    </div>
+                    <div class="mtb50">
+                        <div class="space-between">
+                            <label for="allocated">예산 배분 여부</label>
+                            <div class="div-underline h-weight" onclick="changeAllocatedValue();">
+                                <input type="hidden" id="allocated"
+                                       th:field="*{allocated}" readonly>
+                                <span id="allocatedText" th:text="${assetForm.allocated ? 'Y' : 'N'}"></span>
+                            </div>
+                        </div>
+                        <div class="field-error" th:errors="*{allocated}"></div>
+                    </div>
+                    <div class="right">
+                        <button class="btn-gradient w200" type="submit">저장</button>
+                    </div>
+                </form>
+            </div>
         </div>
-        <div onclick="changeAllocatedValue();">
-            <label for="allocated">예산 배분 여부</label>
-            <input type="hidden" id="allocated" class=""
-                   th:field="*{allocated}"
-                   th:errorclass="input-border-error" readonly>
-            <span id="allocatedText" th:text="${assetForm.allocated ? 'Y' : 'N'}"></span>
-            <div class="field-error" th:errors="*{allocated}"></div>
-        </div>
-        <div>
-            <button type="submit">저장</button>
-        </div>
-    </form>
+    </div>
 </div>
 </body>
 </html>

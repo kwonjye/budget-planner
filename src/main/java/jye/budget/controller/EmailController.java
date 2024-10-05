@@ -39,6 +39,10 @@ public class EmailController {
 
         log.info("email verify {}", verifyEmailForm);
 
+        if (bindingResult.hasErrors()) {
+            return "email/verify";
+        }
+
         boolean isVerified = emailService.verifyCode(email, verifyEmailForm.getCode());
         if(!isVerified) {
             bindingResult.rejectValue("code", "email.code.mismatch");

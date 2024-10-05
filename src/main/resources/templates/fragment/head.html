@@ -3,4 +3,26 @@
     <link th:href="@{/css/common.css}" href="/css/common.css" rel="stylesheet">
     <title>나만의 가계부</title>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // 현재 URL 가져오기
+            const currentUrl = window.location.pathname;
+
+            // 각 버튼의 URL과 연결된 경로
+            const menuItems = [
+                { path: '/asset', button: $("#asset") },
+                { path: '/budget', button: $("#budget") },
+                { path: '/expenses', button: $("#expenses") },
+                { path: '/category', button: $("#category") },
+                { path: '/subscription', button: $("#subscription") }
+            ];
+
+            // 현재 URL과 일치하는 버튼에 active 클래스 추가
+            $.each(menuItems, function(index, item) {
+                if (currentUrl.includes(item.path)) {
+                    item.button.addClass('active');
+                }
+            });
+        });
+    </script>
 </head>

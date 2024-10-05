@@ -60,6 +60,10 @@ public class AssetController {
 
         log.info("add asset : {}", assetForm);
 
+        if (bindingResult.hasErrors()) {
+            return "/asset/add";
+        }
+
         User user = (User) session.getAttribute(SessionConst.LOGIN_USER);
 
         boolean existsByAssetName = assetService.existsByAssetName(user.getUserId(), assetForm.getAssetName(), null);
@@ -94,6 +98,10 @@ public class AssetController {
                        HttpSession session) {
 
         log.info("edit asset : {}", assetForm);
+
+        if (bindingResult.hasErrors()) {
+            return "/asset/edit";
+        }
 
         User user = (User) session.getAttribute(SessionConst.LOGIN_USER);
 
@@ -182,6 +190,10 @@ public class AssetController {
     public String addChange(@Valid @ModelAttribute("assetChangeForm") AssetChangeForm assetChangeForm, BindingResult bindingResult,
                             HttpSession session) {
 
+        if (bindingResult.hasErrors()) {
+            return "/asset/change/add";
+        }
+
         User user = (User) session.getAttribute(SessionConst.LOGIN_USER);
 
         Asset asset = checkAsset(assetChangeForm.getAssetId(), user.getUserId());
@@ -218,6 +230,10 @@ public class AssetController {
     public String editChange(@PathVariable Long changeId,
                              @Valid @ModelAttribute("assetChangeForm") AssetChangeForm assetChangeForm, BindingResult bindingResult,
                              HttpSession session) {
+
+        if (bindingResult.hasErrors()) {
+            return "/asset/change/edit";
+        }
 
         User user = (User) session.getAttribute(SessionConst.LOGIN_USER);
 

@@ -17,22 +17,19 @@ body {
 *:not(h2) {
     font-family: 'Noto Sans KR', sans-serif;
 }
+h2 {
+    font-family: 'HakgyoansimWoojuR', sans-serif;
+}
 body, h2, h3, input, button, p {
     margin: 0;
     padding: 0;
 }
-.container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-}
-button, i {
+button, i, .cursor {
     cursor: pointer;
 }
 
 /* icon */
-i {
+i:not(.menu i) {
     font-size: 24px;
 }
 .fix-top-right {
@@ -40,10 +37,21 @@ i {
     top: 15px;
     right: 15px;
 }
+.fix-top-left {
+    position: absolute;
+    top: 20px;
+    left: 30px;
+}
 
 /* width % */
 .w100p {
     width: 100%;
+}
+.w200 {
+    width: 200px;
+}
+.w300 {
+    width: 300px;
 }
 .w500 {
     width: 500px;
@@ -55,7 +63,12 @@ i {
     width: 600px;
 }
 
-/* align */
+/* align-items */
+.ai-center {
+    align-items: center;
+}
+
+/* text-align */
 .center {
     text-align: center;
 }
@@ -65,17 +78,54 @@ i {
 .left {
     text-align: left;
 }
-.justify {
+
+/* justify-content */
+.space-between {
     display: flex;
     justify-content: space-between;
 }
 
-/* text */
+/* text-decoration */
 .underline {
     text-decoration: underline;
 }
 
+/* font */
+.fs10 {
+    font-size: 10px;
+}
+.fs20 {
+    font-size: 20px;
+}
+.fs35 {
+    font-size: 35px;
+}
+.bold {
+    font-weight: bold;
+}
+
 /* margin */
+.mt05 {
+    margin-top: 5px;
+}
+.mt10 {
+    margin-top: 10px;
+}
+.mt20 {
+    margin-top: 20px;
+}
+.mt50 {
+    margin-top: 50px;
+}
+.mt60 {
+    margin-top: 60px;
+}
+.mt70 {
+    margin-top: 70px;
+}
+.mr10 {
+    margin-right: 10px;
+}
 .mb05 {
     margin-bottom: 5px;
 }
@@ -85,14 +135,26 @@ i {
 .mb15 {
     margin-bottom: 15px;
 }
+.mb20 {
+    margin-bottom: 20px;
+}
 .mb30 {
     margin-bottom: 30px;
 }
 .mtb05 {
     margin: 5px 0;
 }
+.mtb10 {
+    margin: 10px 0;
+}
 .mtb20 {
     margin: 20px 0;
+}
+.mtb30 {
+    margin: 30px 0;
+}
+.mtb50 {
+    margin: 50px 0;
 }
 
 /* padding */
@@ -112,7 +174,54 @@ i {
     margin-bottom: 5px;
 }
 
-/* content-01 */
+/* header */
+header {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 12px;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background: #fff;
+    z-index: 1000;
+}
+.menu button {
+    background: none;
+    border: none;
+    font-size: 20px;
+    margin: 0 20px;
+    transition: transform 0.3s, font-weight 0.3s;
+}
+.menu button:hover {
+    transform: scale(1.1);
+    font-weight: bold;
+}
+.menu button.active {
+    transform: scale(1.1);
+    font-weight: bold;
+    transition: none;
+}
+.menu i {
+    font-size: 25px;
+    margin: 0 7px;
+}
+
+/* container */
+.container {
+    display: flex;
+    justify-content: center;
+    height: CALC(100vh - 90px);
+    overflow: hidden;
+    overflow-y: scroll;
+    scrollbar-width: none;
+    margin-top: 60px;
+    margin-bottom: 30px;
+    position: relative;
+}
+.container::-webkit-scrollbar {
+    display: none;
+}
+
+/* content */
 .content-01 {
     position: relative;
     border-radius: 10px;
@@ -120,9 +229,8 @@ i {
     padding: 70px;
 }
 
-/* header */
+/* header title */
 .header-01 {
-    font-family: 'HakgyoansimWoojuR', sans-serif;
     font-size: 40px;
     margin-bottom: 40px;
     text-align: center;
@@ -142,6 +250,29 @@ i {
 }
 .input-border-error::placeholder {
     color: #ff5757;
+}
+
+/* underline */
+.div-underline {
+    display: flex;
+    justify-content: center;
+    width: 70%;
+    border-bottom: 1px solid #eeeeee;
+
+}
+.input-underline {
+    width: 100%;
+    border: none;
+    font-size: 20px;
+    text-align: center;
+}
+
+/* hover */
+.h-weight {
+    transition: font-weight 0.3s ease;
+}
+.h-weight:hover {
+    font-weight: bold;
 }
 
 /* button */
@@ -165,4 +296,39 @@ i {
 .code {
     margin: 10px 0;
     color: #5170ff;
+}
+
+/* asset */
+.asset {
+    background: #eeeeee;
+    border-radius: 10px;
+    border: none;
+    margin: 15px 0;
+    padding: 20px;
+}
+.asset-button {
+    border-top: 1px solid #eeeeee;
+    margin-top: 30px;
+    padding-top: 20px;
+}
+.asset-button button {
+    display: flex;
+    background: #eeeeee;
+    border-radius: 10px;
+    border: none;
+    padding: 20px 90px;
+}
+.asset-button button i {
+    height: 30px;
+}
+
+/* color */
+.blue {
+    color: #5271ff;
+}
+.red {
+    color: #ff5757;
+}
+.gray {
+    color: #737373;
 }
