@@ -37,64 +37,78 @@
     input.val(year + '-' + month);
     input.trigger('change');
   }
+
+  function search() {
+    $("#form").submit();
+  }
 </script>
 <body>
 <div th:insert="~{fragment/header :: header}"></div>
-<form th:action="@{/asset/change}" th:object="${req}" method="get">
+<div class="container">
   <div>
-    <div>
-      <button type="button" th:onclick="|location.href='@{/asset}'|">목록</button>
-    </div>
-    <div>
-      <button type="button" onclick="changeMonth(-1)">&lt;</button>
-      <label>
-        <input id="searchDate" type="month" th:field="*{searchDate}" th:onchange="this.form.submit()">
-      </label>
-      <button type="button" onclick="changeMonth(1)">&gt;</button>
-    </div>
-    <div>
-      <label>
-        <select th:field="*{calcType}">
-          <option value="">+/-</option>
-          <option th:each="calcType : ${calcTypeValues}"
-                  th:value="${calcType.name()}"
-                  th:text="${calcType.symbol}"></option>
-        </select>
-      </label>
-      <label>
-        <input type="text" th:field="*{searchText}">
-      </label>
-      <button type="submit">검색</button>
-    </div>
-  </div>
-  <div>
-    <div>
-      <h2>자산 변동 내역</h2>
-      <label>
-        <select th:field="*{assetId}" th:onchange="this.form.submit()">
-          <option value="">전체</option>
-          <option th:each="asset : ${assets}"
-                  th:value="${asset.assetId}"
-                  th:text="${asset.assetName}"></option>
-        </select>
-      </label>
-    </div>
-    <div>
-      <div th:each="groupedByChangeDate : ${groupedByChangeDate}">
-        <div th:text="${T(jye.budget.util.DateFormatterUtil).formatLocalDate(groupedByChangeDate.key)}"></div>
-        <div class="asset-change"
-             th:data-change-id="${assetChange.changeId}"
-             th:each="assetChange : ${groupedByChangeDate.value}"
-             th:onclick="|location.href='@{/asset/change/}| + ${assetChange.changeId} + |'|">
-          <span th:text="${assetChange.asset.assetName}"></span>
-          <span th:text="${assetChange.changeDetail}"></span>
-          <span th:text="${assetChange.calcType.symbol}"></span>
-          <span th:text="${#numbers.formatInteger(assetChange.amount, 1, 'COMMA')}"></span>
+    <form id="form" th:action="@{/asset/change}" th:object="${req}" method="get">
+      <div>
+        <div class="fix-top-left">
+          <i class="fi fi-rr-menu-burger" th:onclick="|location.href='@{/asset}'|"></i>
+        </div>
+        <div class="w650 center fix-top-center-w650">
+          <i class="fi fi-rr-angle-left h30" onclick="changeMonth(-1)"></i>
+          <label>
+            <input id="searchDate" type="month" th:field="*{searchDate}" th:onchange="this.form.submit()" class="input-month">
+          </label>
+          <i class="fi fi-rr-angle-right h30" onclick="changeMonth(1)"></i>
+        </div>
+        <div class="fix-top-right">
+          <label>
+            <select th:field="*{calcType}" class="select-none">
+              <option value="">+/-</option>
+              <option th:each="calcType : ${calcTypeValues}"
+                      th:value="${calcType.name()}"
+                      th:text="${calcType.symbol}"></option>
+            </select>
+          </label>
+          <label class="label-underline mlr10">
+            <input type="text" th:field="*{searchText}" class="input-none w200">
+          </label>
+          <i class="fi fi-rr-discover h30" onclick="search()"></i>
         </div>
       </div>
-    </div>
-    <button type="button" th:onclick="|location.href='@{/asset/change/add}'|">추가</button>
+      <div class="w650 mt100">
+        <div class="space-between ai-flex-end mb30">
+          <div class="fs35">
+            <h2>자산 변동 내역</h2>
+          </div>
+          <label class="label-underline w25p h35">
+            <select th:field="*{assetId}" th:onchange="this.form.submit()" class="select-none">
+              <option value="">전체</option>
+              <option th:each="asset : ${assets}"
+                      th:value="${asset.assetId}"
+                      th:text="${asset.assetName}"></option>
+            </select>
+          </label>
+        </div>
+        <div class="fs20">
+          <div th:each="groupedByChangeDate : ${groupedByChangeDate}" class="mtb50">
+            <div th:text="${T(jye.budget.util.DateFormatterUtil).formatLocalDate(groupedByChangeDate.key)}" class="bold mtb20"></div>
+            <div class="asset-change space-between mtb20 h-weight"
+                 th:data-change-id="${assetChange.changeId}"
+                 th:each="assetChange : ${groupedByChangeDate.value}"
+                 th:onclick="|location.href='@{/asset/change/}| + ${assetChange.changeId} + |'|">
+              <span th:text="${assetChange.asset.assetName}"></span>
+              <span th:text="${assetChange.changeDetail}" class="gray"></span>
+              <div class="bold" th:class="${assetChange.calcType.name() == 'ADD' ? 'blue' : 'red'}">
+                <span th:text="${assetChange.calcType.symbol}"></span>
+                <span th:text="${#numbers.formatInteger(assetChange.amount, 1, 'COMMA')}"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="right">
+          <button class="btn-gradient w200" type="button" th:onclick="|location.href='@{/asset/change/add}'|">추가</button>
+        </div>
+      </div>
+    </form>
   </div>
-</form>
+</div>
 </body>
 </html>

@@ -20,7 +20,7 @@
             <div class="space-between">
               <label for="assetId">자산</label>
               <div class="div-underline">
-                <select id="assetId" th:field="*{assetId}" class="input-underline">
+                <select id="assetId" th:field="*{assetId}" class="input-none w100p">
                   <option th:each="asset : ${assets}"
                           th:value="${asset.assetId}"
                           th:text="${asset.assetName}"></option>
@@ -33,7 +33,7 @@
             <div class="space-between">
               <label for="calcType">계산 유형</label>
               <div class="div-underline">
-                <select id="calcType" th:field="*{calcType}" class="input-underline bold">
+                <select id="calcType" th:field="*{calcType}" class="input-none w100p bold">
                   <option th:each="calcType : ${calcTypeValues}"
                           th:value="${calcType.name()}"
                           th:text="${calcType.text}"></option>
@@ -46,7 +46,7 @@
             <div class="space-between">
               <label for="amount">변동 금액</label>
               <div class="div-underline">
-                <input type="number" id="amount" min="0" class="input-underline"
+                <input type="number" id="amount" min="0" class="input-none w100p"
                        th:field="*{amount}">원
               </div>
               <div class="field-error" th:errors="*{amount}"></div>
@@ -56,7 +56,7 @@
             <div class="space-between">
               <label for="changeDetail">변동 내용</label>
               <div class="div-underline">
-                <input type="text" id="changeDetail" class="input-underline"
+                <input type="text" id="changeDetail" class="input-none w100p"
                        th:field="*{changeDetail}">
               </div>
               <div class="field-error" th:errors="*{changeDetail}"></div>
@@ -66,7 +66,7 @@
             <div class="space-between">
               <label for="changeDate">변동일</label>
               <div class="div-underline">
-                <input type="date" id="changeDate" class="input-underline"
+                <input type="date" id="changeDate" class="input-none w100p"
                        th:field="*{changeDate}">
               </div>
               <div class="field-error" th:errors="*{changeDate}"></div>

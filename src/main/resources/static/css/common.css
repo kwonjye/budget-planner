@@ -32,7 +32,7 @@ button, i, .cursor {
 i:not(.menu i) {
     font-size: 24px;
 }
-.fix-top-right {
+.fix-top-right-15 {
     position: absolute;
     top: 15px;
     right: 15px;
@@ -42,8 +42,27 @@ i:not(.menu i) {
     top: 20px;
     left: 30px;
 }
+.fix-top-center-w650 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 20px;
+    left: CALC(50% - 325px);
+}
+.fix-top-right {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: absolute;
+    top: 20px;
+    right: 30px;
+}
 
 /* width % */
+.w25p {
+    width: 25%;
+}
 .w100p {
     width: 100%;
 }
@@ -62,10 +81,24 @@ i:not(.menu i) {
 .w600 {
     width: 600px;
 }
+.w650 {
+    width: 650px;
+}
+
+/* height */
+.h30 {
+    height: 30px;
+}
+.h35 {
+    height: 35px;
+}
 
 /* align-items */
 .ai-center {
     align-items: center;
+}
+.ai-flex-end {
+    align-items: flex-end;
 }
 
 /* text-align */
@@ -123,6 +156,15 @@ i:not(.menu i) {
 .mt70 {
     margin-top: 70px;
 }
+.mt80 {
+    margin-top: 80px;
+}
+.mt90 {
+    margin-top: 90px;
+}
+.mt100 {
+    margin-top: 100px;
+}
 .mr10 {
     margin-right: 10px;
 }
@@ -153,8 +195,14 @@ i:not(.menu i) {
 .mtb30 {
     margin: 30px 0;
 }
+.mtb40 {
+    margin: 40px 0;
+}
 .mtb50 {
     margin: 50px 0;
+}
+.mlr10 {
+    margin: 0 10px;
 }
 
 /* padding */
@@ -251,6 +299,16 @@ header {
 .input-border-error::placeholder {
     color: #ff5757;
 }
+.input-month {
+    font-size: 25px;
+    font-weight: bold;
+    border: none;
+    text-align: center;
+    padding: 0 25px;
+}
+input[type="month"]::-webkit-calendar-picker-indicator {
+    display: none;
+}
 
 /* underline */
 .div-underline {
@@ -260,11 +318,10 @@ header {
     border-bottom: 1px solid #eeeeee;
 
 }
-.input-underline {
-    width: 100%;
-    border: none;
-    font-size: 20px;
-    text-align: center;
+.label-underline {
+    display: flex;
+    justify-content: center;
+    border-bottom: 1px solid #eeeeee;
 }
 
 /* hover */
@@ -273,6 +330,18 @@ header {
 }
 .h-weight:hover {
     font-weight: bold;
+}
+
+/* none */
+.select-none {
+    border: none;
+    font-size: 20px;
+    text-align: center;
+}
+.input-none {
+    border: none;
+    font-size: 20px;
+    text-align: center;
 }
 
 /* button */
