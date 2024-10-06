@@ -37,12 +37,16 @@
     input.val(year + '-' + month);
     input.trigger('change');
   }
+
+  function search() {
+    $("#form").submit();
+  }
 </script>
 <body>
 <div th:insert="~{fragment/header :: header}"></div>
 <div class="container">
   <div>
-    <form th:action="@{/asset/change}" th:object="${req}" method="get">
+    <form id="form" th:action="@{/asset/change}" th:object="${req}" method="get">
       <div>
         <div class="fix-top-left">
           <i class="fi fi-rr-menu-burger" th:onclick="|location.href='@{/asset}'|"></i>
@@ -66,7 +70,7 @@
           <label class="label-underline mlr10">
             <input type="text" th:field="*{searchText}" class="input-none w200">
           </label>
-          <i class="fi fi-rr-discover h30" onclick="this.form.submit()"></i>
+          <i class="fi fi-rr-discover h30" onclick="search()"></i>
         </div>
       </div>
       <div class="w650 mt100">
