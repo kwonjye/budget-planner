@@ -1,7 +1,9 @@
 package jye.budget.controller;
 
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import jye.budget.form.VerifyEmailForm;
+import jye.budget.login.SessionConst;
 import jye.budget.service.EmailService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,18 +19,31 @@ public class EmailController {
 
     private final EmailService emailService;
 
-    @PostMapping("/send")
-    public String send(@ModelAttribute("verifyEmailForm") VerifyEmailForm verifyEmailForm) {
-        emailService.verifyEmail(verifyEmailForm.getEmail());
+    @GetMapping("/send")
+    public String send(@ModelAttribute("verifyEmailForm") VerifyEmailForm verifyEmailForm,
+                       HttpSession session) {
+
+        String email = (String) session.getAttribute(SessionConst.EMAIL);
+        verifyEmailForm.setEmail(email);
+
+        emailService.verifyEmail(email);
         return "email/verify";
     }
 
     @PostMapping("/verify")
-    public String verify(@Valid @ModelAttribute("verifyEmailForm") VerifyEmailForm verifyEmailForm, BindingResult bindingResult) {
+    public String verify(@Valid @ModelAttribute("verifyEmailForm") VerifyEmailForm verifyEmailForm, BindingResult bindingResult,
+                         HttpSession session) {
+
+        String email = (String) session.getAttribute(SessionConst.EMAIL);
+        verifyEmailForm.setEmail(email);
 
         log.info("email verify {}", verifyEmailForm);
 
-        boolean isVerified = emailService.verifyCode(verifyEmailForm.getEmail(), verifyEmailForm.getCode());
+        if (bindingResult.hasErrors()) {
+            return "email/verify";
+        }
+
+        boolean isVerified = emailService.verifyCode(email, verifyEmailForm.getCode());
         if(!isVerified) {
             bindingResult.rejectValue("code", "email.code.mismatch");
             return "email/verify";

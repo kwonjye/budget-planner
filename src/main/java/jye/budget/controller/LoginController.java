@@ -49,6 +49,8 @@ public class LoginController {
             return "login";
         }
         if(!loginUser.isVerified()) {
+            HttpSession session = request.getSession();
+            session.setAttribute(SessionConst.EMAIL, loginForm.getEmail());
             return "email/error/login";
         }
 

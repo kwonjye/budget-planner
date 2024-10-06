@@ -1,0 +1,13 @@
+<header th:fragment="header" class="space-between">
+  <div class="menu">
+    <button id="asset" type="button" th:onclick="|location.href='@{/asset}'|">자산</button>
+    <button id="budget" type="button" th:onclick="|location.href='@{/budget}'|">예산</button>
+    <button id="expenses" type="button" th:onclick="|location.href='@{/expenses}'|">지출</button>
+    <button id="category" type="button" th:onclick="|location.href='@{/category}'|">카테고리</button>
+    <button id="subscription" type="button" th:onclick="|location.href='@{/subscription}'|">구독</button>
+  </div>
+  <div class="menu">
+    <i class="fi fi-rr-user" th:onclick="|location.href='@{/user/info}'|"></i>
+    <i class="fi fi-rr-sign-out-alt" th:onclick="|location.href='@{/logout}'|"></i>
+  </div>
+</header>

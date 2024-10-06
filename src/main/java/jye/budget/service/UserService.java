@@ -26,12 +26,12 @@ public class UserService {
 
     @Transactional
     public void save(@Valid JoinUserForm joinUserForm) {
-        log.info("save user: {}", joinUserForm);
-
         User user = User.builder()
                 .email(joinUserForm.getEmail())
                 .password(PasswordUtil.hashPassword(joinUserForm.getPassword()))
                 .build();
+
+        log.info("save user: {}", user);
         userMapper.save(user);
     }
 

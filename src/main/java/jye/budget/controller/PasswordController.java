@@ -1,6 +1,8 @@
 package jye.budget.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import jye.budget.entity.User;
 import jye.budget.form.ChangePasswordForm;
 import jye.budget.form.FindPasswordForm;
@@ -32,9 +34,13 @@ public class PasswordController {
     }
 
     @PostMapping("/find")
-    public String find(@ModelAttribute("findPasswordForm") FindPasswordForm findPasswordForm, BindingResult bindingResult) {
-
+    public String find(@Valid @ModelAttribute("findPasswordForm") FindPasswordForm findPasswordForm, BindingResult bindingResult,
+                       HttpServletRequest request) {
         log.info("find password : {}", findPasswordForm);
+
+        if (bindingResult.hasErrors()) {
+            return "password/find";
+        }
 
         User loginUser = userService.findByEmail(findPasswordForm.getEmail());
         if(loginUser == null) {
@@ -42,7 +48,8 @@ public class PasswordController {
             return "password/find";
         }
         if(!loginUser.isVerified()) {
-            bindingResult.rejectValue("email", "email.notVerified");
+            HttpSession session = request.getSession();
+            session.setAttribute(SessionConst.EMAIL, findPasswordForm.getEmail());
             return "email/error/password";
         }
 
@@ -56,10 +63,14 @@ public class PasswordController {
     }
 
     @PostMapping("/change")
-    public String change(@ModelAttribute("changePasswordForm") ChangePasswordForm changePasswordForm, BindingResult bindingResult,
+    public String change(@Valid @ModelAttribute("changePasswordForm") ChangePasswordForm changePasswordForm, BindingResult bindingResult,
                          HttpSession session) {
 
         log.info("change password : {}", changePasswordForm);
+
+        if (bindingResult.hasErrors()) {
+            return "password/change";
+        }
 
         User user = (User) session.getAttribute(SessionConst.LOGIN_USER);
         if(PasswordUtil.isPasswordMismatch(changePasswordForm.getPassword(), user.getPassword())) {

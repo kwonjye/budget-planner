@@ -1,9 +1,9 @@
 package jye.budget.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import jye.budget.form.DeleteUserForm;
-import jye.budget.form.VerifyEmailForm;
 import jye.budget.entity.User;
 import jye.budget.form.JoinUserForm;
 import jye.budget.login.SessionConst;
@@ -15,7 +15,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Slf4j
 @Controller
@@ -32,12 +31,13 @@ public class UserController {
 
     @PostMapping("/join")
     public String join(@Valid @ModelAttribute("joinUserForm") JoinUserForm joinUserForm, BindingResult bindingResult,
-                       RedirectAttributes redirectAttributes) {
+                       HttpServletRequest request) {
+
+        log.info("join user : {}", joinUserForm);
+
         if (bindingResult.hasErrors()) {
             return "user/join";
         }
-
-        log.info("join user : {}", joinUserForm);
 
         User user = userService.findByEmail(joinUserForm.getEmail());
         if(user != null) {
@@ -52,8 +52,9 @@ public class UserController {
 
         userService.save(joinUserForm);
 
-        redirectAttributes.addFlashAttribute("verifyEmailForm", VerifyEmailForm.builder().email(joinUserForm.getEmail()).build());
-        return "redirect:/email/verify";
+        HttpSession session = request.getSession();
+        session.setAttribute(SessionConst.EMAIL, joinUserForm.getEmail());
+        return "redirect:/email/send";
     }
 
     @GetMapping("/info")

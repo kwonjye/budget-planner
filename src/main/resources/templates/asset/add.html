@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head th:replace="fragment/head :: head">
+  <title>나만의 가계부</title>
+</head>
+<script>
+  function changeAllocatedValue() {
+    const allocatedInput = $("#allocated");
+    const isAllocated = allocatedInput.val() === '1';
+
+    allocatedInput.val(isAllocated ? '0' : '1');
+    $("#allocatedText").text(isAllocated ? 'N' : 'Y');
+  }
+</script>
+<body>
+<div th:insert="~{fragment/header :: header}"></div>
+<div class="container">
+  <div>
+    <div class="fix-top-left">
+      <i class="fi fi-rr-menu-burger" th:onclick="|location.href='@{/asset}'|"></i>
+    </div>
+    <div class="w550">
+      <div class="fs35 space-between mt70 mb30">
+        <h2>자산 추가</h2>
+      </div>
+      <div class="fs20">
+        <form th:action th:object="${assetForm}" method="post">
+          <div class="mtb50">
+            <div class="space-between">
+              <label for="assetName">자산명</label>
+              <div class="div-underline">
+                <input type="text" id="assetName" class="input-none w100p"
+                       th:field="*{assetName}">
+              </div>
+            </div>
+            <div class="field-error mt05 right" th:errors="*{assetName}"></div>
+          </div>
+          <div class="mtb50">
+            <div class="space-between">
+              <label for="initialAmount">초기 금액</label>
+              <div class="div-underline">
+                <input type="number" id="initialAmount" min="0" class="input-none w100p"
+                       th:field="*{initialAmount}">
+                <span>원</span>
+              </div>
+            </div>
+            <div class="field-error" th:errors="*{initialAmount}"></div>
+          </div>
+          <div class="mtb50">
+            <div class="space-between">
+              <label for="allocated">예산 배분 여부</label>
+              <div class="div-underline h-weight" onclick="changeAllocatedValue();">
+                <input type="hidden" id="allocated"
+                       th:field="*{allocated}" readonly>
+                <span id="allocatedText">N</span>
+              </div>
+            </div>
+            <div class="field-error" th:errors="*{allocated}"></div>
+          </div>
+          <div class="right">
+            <button class="btn-gradient w200" type="submit">저장</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head th:replace="fragment/head :: head">
+  <title>나만의 가계부</title>
+</head>
+<script>
+  $(document).ready(function() {
+    $(".asset").on('contextmenu', function(e) {
+      e.preventDefault(); // 기본 우클릭 메뉴 방지
+
+      const assetId = $(this).data('asset-id');
+      const assetName = $(this).data('asset-name');
+
+      if (confirm("'" + assetName + "' 자산을 삭제하시겠습니까?")) {
+        $.ajax({
+          url: '/asset/' + assetId,
+          type: 'DELETE',
+          success: function() {
+            alert("삭제되었습니다.");
+            location.reload();
+          },
+          error: function() {
+            alert("삭제할 수 없습니다.");
+          }
+        });
+      }
+    });
+  });
+</script>
+<body>
+<div th:insert="~{fragment/header :: header}"></div>
+<div class="container">
+  <div class="w600">
+    <div class="fs35 space-between mt50 mb30">
+      <h2>총 자산</h2>
+      <h2 th:text="${#numbers.formatInteger(totalAmount, 1, 'COMMA')}"></h2>
+    </div>
+    <div>
+      <div class="asset space-between cursor h-weight"
+           th:data-asset-id="${asset.assetId}"
+           th:data-asset-name="${asset.assetName}"
+           th:each="asset : ${assets}"
+           th:onclick="|location.href='@{/asset/edit/}| + ${asset.assetId} + |'|">
+        <div class="fs20">
+          <span th:text="${asset.assetName}">자산명</span>
+          <span th:if="${asset.allocated}">*</span>
+        </div>
+        <div class="fs20">
+          <span th:text="${#numbers.formatInteger(asset.currentAmount, 1, 'COMMA')}">현재 금액</span>
+        </div>
+      </div>
+    </div>
+    <div class="asset-button space-between">
+      <button class="fs20 ai-center" type="button" th:onclick="|location.href='@{/asset/add}'|">
+        <i class="mr10 fi fi-rr-layer-plus"></i>자산 추가
+      </button>
+      <button class="fs20 ai-center" type="button" th:onclick="|location.href='@{/asset/change}'|">
+        <i class="mr10 fi fi-rr-plus-minus"></i>자산 변동
+      </button>
+    </div>
+  </div>
+</div>
+</body>
+</html>
