@@ -1,6 +1,5 @@
 package jye.budget.form;
 
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,8 +12,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class VerifyEmailForm {
 
-    @NotBlank
-    @Email
     private String email;
 
     @NotBlank
