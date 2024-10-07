@@ -351,8 +351,10 @@ header {
     text-align: center;
     padding: 0 25px;
 }
-input[type="month"]::-webkit-calendar-picker-indicator {
+.input-month::-webkit-inner-spin-button,
+.input-month::-webkit-calendar-picker-indicator {
     display: none;
+    -webkit-appearance: none;
 }
 
 /* underline */

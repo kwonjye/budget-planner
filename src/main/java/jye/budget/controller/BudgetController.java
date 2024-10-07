@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.time.LocalDate;
@@ -47,8 +48,6 @@ public class BudgetController {
                            @ModelAttribute("budget") BudgetDto budget, HttpSession session, Model model) {
         User user = (User) session.getAttribute(SessionConst.LOGIN_USER);
 
-        log.info("budget edit : {}", user);
-
         if(StringUtils.isBlank(req.getSearchDate())) {
             req.setSearchDate(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM")));
         }
@@ -56,5 +55,14 @@ public class BudgetController {
         model.addAttribute("data", data);
 
         return "budget/edit";
+    }
+
+    @PostMapping("/edit")
+    public String edit(@ModelAttribute("budget") BudgetDto budget, HttpSession session) {
+        User user = (User) session.getAttribute(SessionConst.LOGIN_USER);
+
+        log.info("edit budget : {}", user);
+
+        return "redirect:/budget";
     }
 }

@@ -51,7 +51,7 @@ public class BudgetService {
             List<FixedExpenses> fixedExpenses = FixedExpansesCategories.stream().map(fixedExpensesCategory -> FixedExpenses.builder().category(fixedExpensesCategory).build()).toList();
 
             return BudgetDto.builder()
-                    .budget(new Budget())
+                    .budget(Budget.builder().yearMonth(req.getSearchDate()).build())
                     .budgetAllocations(budgetAllocations)
                     .fixedExpenses(fixedExpenses)
                     .build();
