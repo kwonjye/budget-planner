@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head th:replace="fragment/head :: head">
+    <title>나만의 가계부</title>
+</head>
+<script>
+    function changeMonth(direction) {
+        const input = $("#searchDate");
+        const searchDate = new Date(input.val() + '-01');
+
+        searchDate.setMonth(searchDate.getMonth() + direction);
+
+        const year = searchDate.getFullYear();
+        const month = String(searchDate.getMonth() + 1).padStart(2, '0');
+        input.val(year + '-' + month);
+        input.trigger('change');
+    }
+</script>
+<body>
+<div th:insert="~{fragment/header :: header}"></div>
+<div class="container">
+    <div>
+        <form th:action="@{/budget}" th:object="${req}" method="get">
+            <div class="w600 center fix-top-center-w600">
+                <div class="h30" onclick="changeMonth(-1)">
+                    <i class="fi fi-rr-angle-left"></i>
+                </div>
+                <label>
+                    <input id="searchDate" type="month" th:field="*{searchDate}" th:onchange="this.form.submit()" class="input-month" readonly>
+                </label>
+                <div class="h30" onclick="changeMonth(1)">
+                    <i class="fi fi-rr-angle-right"></i>
+                </div>
+            </div>
+            <div class="fix-top-center-right-w600-h38">
+                <i class="fi fi-rs-edit h30" th:onclick="|location.href='@{/budget/edit}'|"></i>
+            </div>
+            <div class="w600 mt90" th:if="${res != null}">
+                <div class="fs26 space-between ai-flex-end pm15 border-underline">
+                    <h2>생활비</h2>
+                    <h2 th:text="${#numbers.formatInteger(res.budget.livingExpenseBudget, 1, 'COMMA')}"></h2>
+                </div>
+                <div class="mtb15">
+                    <div class="space-between mtb10 fs23">
+                        <span>자산 분배</span>
+                        <span th:text="${#numbers.formatInteger(res.budget.assetAllocation, 1, 'COMMA')}"></span>
+                    </div>
+                    <div class="mtb10 fs20 background-gray">
+                        <div th:each="budgetAllocation : ${res.budgetAllocations}" class="space-between p10">
+                            <span th:text="${budgetAllocation.asset.assetName}"></span>
+                            <span th:text="${#numbers.formatInteger(budgetAllocation.amount, 1, 'COMMA')}"></span>
+                        </div>
+                    </div>
+                    <div class="space-between mtb10 fs23">
+                        <span>고정 지출</span>
+                        <span th:text="${#numbers.formatInteger(res.budget.fixedExpenses, 1, 'COMMA')}"></span>
+                    </div>
+                    <div class="mtb10 fs20 background-gray">
+                        <div th:each="fixedExpense : ${res.fixedExpenses}" class="space-between p10">
+                            <span th:text="${fixedExpense.category.categoryName}"></span>
+                            <span th:text="${#numbers.formatInteger(fixedExpense.amount, 1, 'COMMA')}"></span>
+                        </div>
+                    </div>
+                    <div class="space-between mtb10 fs23">
+                        <span>총 예산 금액</span>
+                        <span th:text="${#numbers.formatInteger(res.budget.totalBudget, 1, 'COMMA')}"></span>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>

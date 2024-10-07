@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jye.budget.mapper.BudgetMapper">
+    <select id="findByYearMonth" resultType="jye.budget.entity.Budget">
+        SELECT budget_id,
+               user_id,
+               `year_month`,
+               total_budget,
+               asset_allocation,
+               fixed_expenses,
+               living_expense_budget,
+               created_at,
+               updated_at
+        FROM budget
+        WHERE user_id = #{userId}
+            AND `year_month` = #{req.searchDate}
+    </select>
+    <resultMap id="budgetAllocation" type="jye.budget.entity.BudgetAllocation">
+        <id column="budget_allocation_id" property="budgetAllocationId" />
+        <result column="budget_id" property="budgetId" />
+        <result column="amount" property="amount" />
+        <association property="asset" resultMap="jye.budget.mapper.AssetMapper.asset" columnPrefix="a_"/>
+    </resultMap>
+    <select id="findBudgetAllocationByBudgetId" resultMap="budgetAllocation">
+        SELECT ba.budget_allocation_id,
+               ba.budget_id,
+               ba.amount,
+               a.asset_id AS a_asset_id,
+               a.user_id AS a_user_id,
+               a.asset_name AS a_asset_name,
+               a.initial_amount AS a_initial_amount,
+               a.current_amount AS a_current_amount,
+               a.is_allocated AS a_is_allocated,
+               a.created_at AS a_created_at,
+               a.updated_at AS a_updated_at
+        FROM budget_allocation ba
+        JOIN asset a ON ba.asset_id = a.asset_id
+        WHERE budget_id = #{budgetId}
+    </select>
+    <resultMap id="fixedExpenses" type="jye.budget.entity.FixedExpenses">
+        <id column="fixed_expense_id" property="fixedExpenseId" />
+        <result column="budget_id" property="budgetId" />
+        <result column="amount" property="amount" />
+        <association property="category" resultMap="jye.budget.mapper.CategoryMapper.category" columnPrefix="c_"/>
+    </resultMap>
+    <select id="findFixedExpensesByBudgetId" resultMap="fixedExpenses">
+        SELECT fe.fixed_expense_id,
+               fe.budget_id,
+               fe.amount,
+               c.category_id AS c_category_id,
+               c.category_type AS c_category_type,
+               c.category_name AS c_category_name,
+               c.category_color AS c_category_color,
+               c.created_at AS c_created_at
+        FROM fixed_expenses fe
+        JOIN category c ON fe.category_id = c.category_id
+    </select>
+</mapper>

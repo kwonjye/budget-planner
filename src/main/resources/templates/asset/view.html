@@ -36,7 +36,7 @@
       <h2 th:text="${#numbers.formatInteger(totalAmount, 1, 'COMMA')}"></h2>
     </div>
     <div>
-      <div class="asset space-between cursor h-weight"
+      <div class="asset background-gray space-between cursor h-weight"
            th:data-asset-id="${asset.assetId}"
            th:data-asset-name="${asset.assetName}"
            th:each="asset : ${assets}"
