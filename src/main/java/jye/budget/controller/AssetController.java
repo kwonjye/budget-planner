@@ -188,18 +188,23 @@ public class AssetController {
 
     @PostMapping("/change/add")
     public String addChange(@Valid @ModelAttribute("assetChangeForm") AssetChangeForm assetChangeForm, BindingResult bindingResult,
-                            HttpSession session) {
+                            Model model, HttpSession session) {
 
-        if (bindingResult.hasErrors()) {
-            return "/asset/change/add";
-        }
+        log.info("add asset change : {}", assetChangeForm);
 
         User user = (User) session.getAttribute(SessionConst.LOGIN_USER);
 
+        if (bindingResult.hasErrors()) {
+            List<Asset> assets = assetService.findByUserId(user.getUserId());
+            model.addAttribute("assets", assets);
+
+            model.addAttribute("calcTypeValues", CalcType.values());
+            return "/asset/change/add";
+        }
+
         Asset asset = checkAsset(assetChangeForm.getAssetId(), user.getUserId());
         if(asset == null) {
-            bindingResult.rejectValue("assetId", "asset.notFound");
-            return "/asset/change/add";
+            return "/error";
         }
         assetService.change(assetChangeForm, asset);
 
@@ -229,11 +234,9 @@ public class AssetController {
     @PostMapping("/change/{changeId}")
     public String editChange(@PathVariable Long changeId,
                              @Valid @ModelAttribute("assetChangeForm") AssetChangeForm assetChangeForm, BindingResult bindingResult,
-                             HttpSession session) {
+                             Model model, HttpSession session) {
 
-        if (bindingResult.hasErrors()) {
-            return "/asset/change/edit";
-        }
+        log.info("edit asset change : {}", assetChangeForm);
 
         User user = (User) session.getAttribute(SessionConst.LOGIN_USER);
 
@@ -242,13 +245,17 @@ public class AssetController {
             return "/error";
         }
         if(!Objects.equals(assetChange.getAsset().getAssetId(), assetChangeForm.getAssetId())) {
-            bindingResult.rejectValue("assetId", "asset.immutable");
-            return "/asset/change/edit";
+            return "/error";
         }
 
         Asset asset = checkAsset(assetChangeForm.getAssetId(), user.getUserId());
         if(asset == null) {
-            bindingResult.rejectValue("assetId", "asset.notFound");
+            return "/error";
+        }
+
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("asset", asset);
+            model.addAttribute("calcTypeValues", CalcType.values());
             return "/asset/change/edit";
         }
 

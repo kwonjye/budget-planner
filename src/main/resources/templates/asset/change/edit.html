@@ -23,8 +23,8 @@
                                 <input id="assetId" type="hidden" th:field="*{assetId}" th:value="${asset.assetId}">
                                 <span th:text="${asset.assetName}" class="gray"></span>
                             </div>
-                            <div class="field-error" th:errors="*{assetId}"></div>
                         </div>
+                        <div class="field-error mt05 right" th:errors="*{assetId}"></div>
                     </div>
                     <div class="mtb50">
                         <div class="space-between">
@@ -36,8 +36,8 @@
                                             th:text="${calcType.text}"></option>
                                 </select>
                             </div>
-                            <div class="field-error" th:errors="*{calcType}"></div>
                         </div>
+                        <div class="field-error mt05 right" th:errors="*{calcType}"></div>
                     </div>
                     <div class="mtb50">
                         <div class="space-between">
@@ -46,8 +46,8 @@
                                 <input type="number" id="amount" min="0" class="input-none w100p"
                                        th:field="*{amount}">원
                             </div>
-                            <div class="field-error" th:errors="*{amount}"></div>
                         </div>
+                        <div class="field-error mt05 right" th:errors="*{amount}"></div>
                     </div>
                     <div class="mtb50">
                         <div class="space-between">
@@ -56,8 +56,8 @@
                                 <input type="text" id="changeDetail" class="input-none w100p"
                                        th:field="*{changeDetail}">
                             </div>
-                            <div class="field-error" th:errors="*{changeDetail}"></div>
                         </div>
+                        <div class="field-error mt05 right" th:errors="*{changeDetail}"></div>
                     </div>
                     <div class="mtb50">
                         <div class="space-between">
@@ -67,8 +67,8 @@
                                        th:field="*{changeDate}"
                                        th:errorclass="input-border-error">
                             </div>
-                            <div class="field-error" th:errors="*{changeDate}"></div>
                         </div>
+                        <div class="field-error mt05 right" th:errors="*{changeDate}"></div>
                     </div>
                     <div class="right">
                         <button class="btn-gradient w200" type="submit">저장</button>
