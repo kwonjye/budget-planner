@@ -1,4 +1,4 @@
-package jye.budget.res;
+package jye.budget.dto;
 
 import jye.budget.entity.Budget;
 import jye.budget.entity.BudgetAllocation;
@@ -14,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class BudgetRes {
+public class BudgetDto {
     private Budget budget;
     private List<BudgetAllocation> budgetAllocations;
     private List<FixedExpenses> fixedExpenses;

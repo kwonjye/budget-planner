@@ -91,7 +91,7 @@
         </div>
         <div class="fs20">
           <div th:each="groupedByChangeDate : ${groupedByChangeDate}" class="mtb50">
-            <div th:text="${T(jye.budget.util.DateFormatterUtil).formatLocalDate(groupedByChangeDate.key)}" class="bold mtb20"></div>
+            <div th:text="${T(jye.budget.util.DateFormatterUtil).formatLocalDateWithDay(groupedByChangeDate.key)}" class="bold mtb20"></div>
             <div class="asset-change space-between mtb20 h-weight"
                  th:data-change-id="${assetChange.changeId}"
                  th:each="assetChange : ${groupedByChangeDate.value}"

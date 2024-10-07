@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 @Builder
 public class Category {
     private Long categoryId;
+    private Long userId;
     private CategoryType categoryType;
     private String categoryName;
     private String categoryColor;

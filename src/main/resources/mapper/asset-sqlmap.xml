@@ -161,4 +161,9 @@
         DELETE FROM asset_change
         WHERE change_id = #{changeId}
     </delete>
+    <select id="findByUserIdAndAllocated" resultMap="asset">
+        <include refid="asset"/>
+        WHERE user_id = #{userId}
+            AND is_allocated = true
+    </select>
 </mapper>

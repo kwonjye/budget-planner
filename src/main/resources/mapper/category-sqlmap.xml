@@ -3,9 +3,21 @@
 <mapper namespace="jye.budget.mapper.CategoryMapper">
     <resultMap id="category" type="jye.budget.entity.Category">
         <id column="category_id" property="categoryId" />
+        <result column="user_id" property="userId" />
         <result column="category_type" property="categoryType" />
         <result column="category_name" property="categoryName" />
         <result column="category_color" property="categoryColor" />
         <result column="created_at" property="createdAt" />
     </resultMap>
+    <select id="findByUserIdAndType" resultMap="category">
+        SELECT category_id,
+               user_id,
+               category_type,
+               category_name,
+               category_color,
+               created_at
+        FROM category
+        WHERE user_id = #{userId}
+            AND category_type = #{categoryType}
+    </select>
 </mapper>
