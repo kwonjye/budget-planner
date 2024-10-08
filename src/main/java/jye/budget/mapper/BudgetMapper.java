@@ -31,4 +31,6 @@ public interface BudgetMapper {
     void updateBudgetAllocation(BudgetAllocation budgetAllocation);
 
     void updateFixedExpenses(FixedExpenses fixedExpenses);
+
+    Budget findRecent(@Param("userId") Long userId);
 }

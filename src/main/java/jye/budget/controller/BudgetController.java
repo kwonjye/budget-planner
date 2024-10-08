@@ -10,6 +10,8 @@ import jye.budget.dto.BudgetDto;
 import jye.budget.service.BudgetService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -83,58 +85,83 @@ public class BudgetController {
 
         if(reqDto.getBudget().getBudgetId() != null) {
             log.info("기존 예산 정보 있음 : {}", budgetDto.getBudget());
-            boolean hasNonMatchingBudgetAllocationIds = reqDto.getBudgetAllocations().stream()
-                    .anyMatch(reqBudgetAllocation ->
-                            budgetDto.getBudgetAllocations().stream()
-                                    .noneMatch(budgetAllocation ->
-                                            Objects.equals(budgetAllocation.getBudgetAllocationId(), reqBudgetAllocation.getBudgetAllocationId()) &&
-                                            Objects.equals(budgetAllocation.getAsset().getAssetId(), reqBudgetAllocation.getAsset().getAssetId())));
+            if(!budgetDto.getBudgetAllocations().isEmpty() && reqDto.getBudgetAllocations() != null) {
+                boolean hasNonMatchingBudgetAllocationIds = reqDto.getBudgetAllocations().stream()
+                        .anyMatch(reqBudgetAllocation ->
+                                budgetDto.getBudgetAllocations().stream()
+                                        .noneMatch(budgetAllocation ->
+                                                Objects.equals(budgetAllocation.getBudgetAllocationId(), reqBudgetAllocation.getBudgetAllocationId()) &&
+                                                        Objects.equals(budgetAllocation.getAsset().getAssetId(), reqBudgetAllocation.getAsset().getAssetId())));
 
-            if (hasNonMatchingBudgetAllocationIds) {
-                log.error("자산 분배 budgetAllocationId, assetId 불일치 : budgetDto - {}, reqDto - {}", budgetDto.getBudgetAllocations(), reqDto.getBudgetAllocations());
-                return "/error";
+                if (hasNonMatchingBudgetAllocationIds) {
+                    log.error("자산 분배 budgetAllocationId, assetId 불일치 : budgetDto - {}, reqDto - {}", budgetDto.getBudgetAllocations(), reqDto.getBudgetAllocations());
+                    return "/error";
+                }
             }
 
-            boolean hasNonMatchingFixedExpenseIds = reqDto.getFixedExpenses().stream()
-                    .anyMatch(reqFixedExpense ->
-                            budgetDto.getFixedExpenses().stream()
-                                    .noneMatch(fixedExpense ->
-                                            Objects.equals(fixedExpense.getFixedExpenseId(), reqFixedExpense.getFixedExpenseId()) &&
-                                            Objects.equals(fixedExpense.getCategory().getCategoryId(), reqFixedExpense.getCategory().getCategoryId())));
+            if(!budgetDto.getFixedExpenses().isEmpty() && reqDto.getFixedExpenses() != null) {
+                boolean hasNonMatchingFixedExpenseIds = reqDto.getFixedExpenses().stream()
+                        .anyMatch(reqFixedExpense ->
+                                budgetDto.getFixedExpenses().stream()
+                                        .noneMatch(fixedExpense ->
+                                                Objects.equals(fixedExpense.getFixedExpenseId(), reqFixedExpense.getFixedExpenseId()) &&
+                                                        Objects.equals(fixedExpense.getCategory().getCategoryId(), reqFixedExpense.getCategory().getCategoryId())));
 
-            if (hasNonMatchingFixedExpenseIds) {
-                log.error("고정 지출 fixedExpenseId, categoryId 불일치 : budgetDto - {}, reqDto - {}", budgetDto.getFixedExpenses(), reqDto.getFixedExpenses());
-                return "/error";
+                if (hasNonMatchingFixedExpenseIds) {
+                    log.error("고정 지출 fixedExpenseId, categoryId 불일치 : budgetDto - {}, reqDto - {}", budgetDto.getFixedExpenses(), reqDto.getFixedExpenses());
+                    return "/error";
+                }
             }
 
             budgetService.update(reqDto);
         } else {
             log.info("기존 예산 정보 없음");
-            boolean hasNonMatchingAssetIds = reqDto.getBudgetAllocations().stream()
-                    .anyMatch(reqBudgetAllocation ->
-                            budgetDto.getBudgetAllocations().stream()
-                                    .noneMatch(budgetAllocation ->
-                                            Objects.equals(budgetAllocation.getAsset().getAssetId(), reqBudgetAllocation.getAsset().getAssetId())));
 
-            if (hasNonMatchingAssetIds) {
-                log.error("자산 분배 assetId 불일치 : budgetDto - {}, reqDto - {}", budgetDto.getBudgetAllocations(), reqDto.getBudgetAllocations());
-                return "/error";
+            if(!budgetDto.getBudgetAllocations().isEmpty() && reqDto.getBudgetAllocations() != null) {
+                boolean hasNonMatchingAssetIds = reqDto.getBudgetAllocations().stream()
+                        .anyMatch(reqBudgetAllocation ->
+                                budgetDto.getBudgetAllocations().stream()
+                                        .noneMatch(budgetAllocation ->
+                                                Objects.equals(budgetAllocation.getAsset().getAssetId(), reqBudgetAllocation.getAsset().getAssetId())));
+
+                if (hasNonMatchingAssetIds) {
+                    log.error("자산 분배 assetId 불일치 : budgetDto - {}, reqDto - {}", budgetDto.getBudgetAllocations(), reqDto.getBudgetAllocations());
+                    return "/error";
+                }
             }
 
-            boolean hasNonMatchingCategoryIds = reqDto.getFixedExpenses().stream()
-                    .anyMatch(reqFixedExpense ->
-                            budgetDto.getFixedExpenses().stream()
-                                    .noneMatch(fixedExpense ->
-                                            Objects.equals(fixedExpense.getCategory().getCategoryId(), reqFixedExpense.getCategory().getCategoryId())));
+            if(!budgetDto.getFixedExpenses().isEmpty() && reqDto.getFixedExpenses() != null) {
+                boolean hasNonMatchingCategoryIds = reqDto.getFixedExpenses().stream()
+                        .anyMatch(reqFixedExpense ->
+                                budgetDto.getFixedExpenses().stream()
+                                        .noneMatch(fixedExpense ->
+                                                Objects.equals(fixedExpense.getCategory().getCategoryId(), reqFixedExpense.getCategory().getCategoryId())));
 
-            if (hasNonMatchingCategoryIds) {
-                log.error("고정 지출 categoryId 불일치 : budgetDto - {}, reqDto - {}", budgetDto.getFixedExpenses(), reqDto.getFixedExpenses());
-                return "/error";
+                if (hasNonMatchingCategoryIds) {
+                    log.error("고정 지출 categoryId 불일치 : budgetDto - {}, reqDto - {}", budgetDto.getFixedExpenses(), reqDto.getFixedExpenses());
+                    return "/error";
+                }
             }
 
             reqDto.getBudget().setUserId(user.getUserId());
             budgetService.save(reqDto);
         }
         return "redirect:/budget?searchDate=" + reqDto.getBudget().getYearMonth();
+    }
+
+    @GetMapping("/recent")
+    public ResponseEntity<BudgetDto> getRecent(HttpSession session) {
+
+        User user = (User) session.getAttribute(SessionConst.LOGIN_USER);
+
+        log.info("최근 예산 정보 조회 : {}", user.getUserId());
+
+        BudgetDto recentBudget = budgetService.getRecentBudget(user.getUserId());
+
+        if (recentBudget != null) {
+            return ResponseEntity.ok(recentBudget);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
     }
 }

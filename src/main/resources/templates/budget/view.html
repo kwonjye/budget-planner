@@ -47,21 +47,21 @@
                     <h2 th:text="${#numbers.formatInteger(data.budget.livingExpenseBudget, 1, 'COMMA')}"></h2>
                 </div>
                 <div class="mtb15">
-                    <div class="space-between mtb10 fs23">
+                    <div class="space-between mtb10 fs23" th:if="${data.budgetAllocations.size() > 0}">
                         <span>자산 분배</span>
                         <span th:text="${#numbers.formatInteger(data.budget.assetAllocation, 1, 'COMMA')}"></span>
                     </div>
-                    <div class="mtb10 fs20 background-gray">
+                    <div class="mtb10 fs20 background-gray" th:if="${data.budgetAllocations.size() > 0}">
                         <div th:each="budgetAllocation : ${data.budgetAllocations}" class="space-between p10">
                             <span th:text="${budgetAllocation.asset.assetName}"></span>
                             <span th:text="${#numbers.formatInteger(budgetAllocation.amount, 1, 'COMMA')}"></span>
                         </div>
                     </div>
-                    <div class="space-between mtb10 fs23">
+                    <div class="space-between mtb10 fs23" th:if="${data.fixedExpenses.size() > 0}">
                         <span>고정 지출</span>
                         <span th:text="${#numbers.formatInteger(data.budget.fixedExpenses, 1, 'COMMA')}"></span>
                     </div>
-                    <div class="mtb10 fs20 background-gray">
+                    <div class="mtb10 fs20 background-gray" th:if="${data.fixedExpenses.size() > 0}">
                         <div th:each="fixedExpense : ${data.fixedExpenses}" class="space-between p10">
                             <span th:text="${fixedExpense.category.categoryName}"></span>
                             <span th:text="${#numbers.formatInteger(fixedExpense.amount, 1, 'COMMA')}"></span>

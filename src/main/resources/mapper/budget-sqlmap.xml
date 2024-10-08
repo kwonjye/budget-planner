@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="jye.budget.mapper.BudgetMapper">
-    <select id="findByYearMonth" resultType="jye.budget.entity.Budget">
+    <sql id="budget">
         SELECT budget_id,
                user_id,
                `year_month`,
@@ -12,6 +12,9 @@
                created_at,
                updated_at
         FROM budget
+    </sql>
+    <select id="findByYearMonth" resultType="jye.budget.entity.Budget">
+        <include refid="budget"/>
         WHERE user_id = #{userId}
             AND `year_month` = #{yearMonth}
     </select>
@@ -116,4 +119,10 @@
         SET amount = #{amount}
         WHERE fixed_expense_id = #{fixedExpenseId}
     </update>
+    <select id="findRecent" resultType="jye.budget.entity.Budget">
+        <include refid="budget"/>
+        WHERE user_id = #{userId}
+        ORDER BY updated_at DESC
+        LIMIT 1
+    </select>
 </mapper>

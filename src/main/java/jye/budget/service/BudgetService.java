@@ -29,17 +29,7 @@ public class BudgetService {
         log.info("find budget : {}", budget);
 
         if(budget != null) {
-            List<BudgetAllocation> budgetAllocations = budgetMapper.findBudgetAllocationByBudgetId(budget.getBudgetId());
-            List<FixedExpenses> fixedExpenses = budgetMapper.findFixedExpensesByBudgetId(budget.getBudgetId());
-
-            log.info("budgetAllocations : {}", budgetAllocations);
-            log.info("fixedExpenses : {}", fixedExpenses);
-
-            return BudgetDto.builder()
-                    .budget(budget)
-                    .budgetAllocations(budgetAllocations)
-                    .fixedExpenses(fixedExpenses)
-                    .build();
+            return getBudgetDtoByBudget(budget);
         } else {
             List<Asset> assets = assetMapper.findByUserIdAndAllocated(userId);
             List<Category> FixedExpansesCategories = categoryMapper.findByUserIdAndType(userId, CategoryType.FIXED_EXPENSE);
@@ -64,10 +54,14 @@ public class BudgetService {
         budgetMapper.save(req.getBudget());
 
         log.info("save budgetAllocation : {}", req.getBudgetAllocations());
-        budgetMapper.saveBudgetAllocation(req.getBudget().getBudgetId(), req.getBudgetAllocations());
+        if(req.getBudgetAllocations() != null) {
+            budgetMapper.saveBudgetAllocation(req.getBudget().getBudgetId(), req.getBudgetAllocations());
+        }
 
         log.info("save fixedExpenses : {}", req.getFixedExpenses());
-        budgetMapper.saveFixedExpenses(req.getBudget().getBudgetId(), req.getFixedExpenses());
+        if(req.getFixedExpenses() != null) {
+            budgetMapper.saveFixedExpenses(req.getBudget().getBudgetId(), req.getFixedExpenses());
+        }
     }
 
     @Transactional
@@ -76,9 +70,38 @@ public class BudgetService {
         budgetMapper.update(req.getBudget());
 
         log.info("update budgetAllocation : {}", req.getBudgetAllocations());
-        req.getBudgetAllocations().forEach(budgetMapper::updateBudgetAllocation);
+        if(req.getBudgetAllocations() != null) {
+            req.getBudgetAllocations().forEach(budgetMapper::updateBudgetAllocation);
+        }
 
         log.info("update fixedExpenses : {}", req.getFixedExpenses());
-        req.getFixedExpenses().forEach(budgetMapper::updateFixedExpenses);
+        if(req.getFixedExpenses() != null) {
+            req.getFixedExpenses().forEach(budgetMapper::updateFixedExpenses);
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public BudgetDto getRecentBudget(Long userId) {
+        Budget budget = budgetMapper.findRecent(userId);
+        log.info("get recent budget : {}", budget);
+
+        if(budget != null) {
+            return getBudgetDtoByBudget(budget);
+        }
+        return null;
+    }
+
+    private BudgetDto getBudgetDtoByBudget(Budget budget) {
+        List<BudgetAllocation> budgetAllocations = budgetMapper.findBudgetAllocationByBudgetId(budget.getBudgetId());
+        List<FixedExpenses> fixedExpenses = budgetMapper.findFixedExpensesByBudgetId(budget.getBudgetId());
+
+        log.info("budgetAllocations : {}", budgetAllocations);
+        log.info("fixedExpenses : {}", fixedExpenses);
+
+        return BudgetDto.builder()
+                .budget(budget)
+                .budgetAllocations(budgetAllocations)
+                .fixedExpenses(fixedExpenses)
+                .build();
     }
 }

@@ -37,6 +37,21 @@
       $("#livingExpenseBudgetText").text(livingExpenseBudget.toLocaleString('ko-KR'));
     });
   });
+
+  // 최근 예산 정보 불러오기
+  function fetchRecentBudget() {
+    if(confirm("최근 예산 정보를 불러오겠습니까?")) {
+      fetch("/budget/recent")
+              .then(response => response.json())
+              .then(data => {
+                console.log(data);
+              })
+              .catch(error => {
+                console.error("최근 예산 정보 조회 오류 : ", error);
+                alert("최근 예산 정보를 불러올 수 없습니다.");
+              })
+    }
+  }
 </script>
 <body>
 <div th:insert="~{fragment/header :: header}"></div>
@@ -50,7 +65,7 @@
       <div class="w600 mt60">
         <div class="fs30 space-between ai-flex-end">
           <h2 th:text="${T(jye.budget.util.DateFormatterUtil).formatYearMonth(budgetDto.budget.yearMonth)}"></h2>
-          <i class="fi fi-rr-copy h35"></i>
+          <i class="fi fi-rr-copy h35" onclick="fetchRecentBudget();"></i>
         </div>
         <input type="hidden" th:field="*{budget.yearMonth}">
         <div>
@@ -64,14 +79,14 @@
             </div>
             <div class="field-error mt05 right" th:errors="*{budget.totalBudget}"></div>
           </div>
-          <div class="mt40 mb20 fs23 blue">
+          <div class="mt40 mb20 fs23 blue" th:if="${budgetDto.budgetAllocations.size() > 0}">
             <div class="space-between">
               <span>자산 분배</span>
               <span id="assetAllocationText" th:text="${#numbers.formatInteger(budgetDto.budget.assetAllocation, 1, 'COMMA')}"></span>
             </div>
             <input id="assetAllocation" type="hidden" th:field="*{budget.assetAllocation}">
           </div>
-          <div class="mtb20 fs20">
+          <div class="mtb20 fs20" th:if="${budgetDto.budgetAllocations.size() > 0}">
             <div class="mtb20" th:each="budgetAllocation : ${budgetDto.budgetAllocations}">
               <div class="space-between">
                 <label th:for="'allocation-' + ${budgetAllocationStat.index}" th:text="${budgetAllocation.asset.assetName}"></label>
@@ -86,14 +101,14 @@
               <div class="field-error mt05 right" th:errors="*{budgetAllocations[__${budgetAllocationStat.index}__].amount}"></div>
             </div>
           </div>
-          <div class="mt40 mb20 fs23 red">
+          <div class="mt40 mb20 fs23 red" th:if="${budgetDto.fixedExpenses.size() > 0}">
             <div class="space-between">
               <span>고정 지출</span>
               <span id="fixedExpensesText" th:text="${#numbers.formatInteger(budgetDto.budget.fixedExpenses, 1, 'COMMA')}"></span>
             </div>
             <input id="fixedExpenses" type="hidden" th:field="*{budget.fixedExpenses}">
           </div>
-          <div class="mtb20 fs20">
+          <div class="mtb20 fs20" th:if="${budgetDto.fixedExpenses.size() > 0}">
             <div class="mtb20" th:each="fixedExpense : ${budgetDto.fixedExpenses}">
               <div class="space-between">
                 <label th:for="'fixedExpense-' + ${fixedExpenseStat.index}" th:text="${fixedExpense.category.categoryName}"></label>
