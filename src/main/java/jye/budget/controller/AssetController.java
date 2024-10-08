@@ -39,7 +39,7 @@ public class AssetController {
     public String view(HttpSession session, Model model) {
         User user = (User) session.getAttribute(SessionConst.LOGIN_USER);
 
-        log.info("asset view : {}", user);
+        log.info("자산 조회 : {}", user);
 
         List<Asset> assets = assetService.findByUserId(user.getUserId());
         int totalAmount = assets.stream().mapToInt(Asset::getCurrentAmount).sum();
@@ -58,7 +58,7 @@ public class AssetController {
     public String add(@Valid @ModelAttribute("assetForm") AssetForm assetForm, BindingResult bindingResult,
                       HttpSession session) {
 
-        log.info("add asset : {}", assetForm);
+        log.info("자산 추가 : {}", assetForm);
 
         if (bindingResult.hasErrors()) {
             return "/asset/add";
@@ -68,7 +68,6 @@ public class AssetController {
 
         boolean existsByAssetName = assetService.existsByAssetName(user.getUserId(), assetForm.getAssetName(), null);
         if(existsByAssetName) {
-            log.error("existsByAssetName : {}", assetForm.getAssetName());
             bindingResult.rejectValue("assetName", "asset.exists");
             return "/asset/add";
         }
@@ -97,7 +96,7 @@ public class AssetController {
     public String edit(@PathVariable Long assetId, @Valid @ModelAttribute("assetForm") AssetForm assetForm, BindingResult bindingResult,
                        HttpSession session) {
 
-        log.info("edit asset : {}", assetForm);
+        log.info("자산 수정 : {}", assetForm);
 
         if (bindingResult.hasErrors()) {
             return "/asset/edit";
@@ -112,7 +111,6 @@ public class AssetController {
 
         boolean existsByAssetName = assetService.existsByAssetName(user.getUserId(), assetForm.getAssetName(), assetId);
         if(existsByAssetName) {
-            log.error("existsByAssetName : {}", assetForm.getAssetName());
             bindingResult.rejectValue("assetName", "asset.exists");
             return "/asset/edit";
         }
@@ -124,11 +122,11 @@ public class AssetController {
     private Asset checkAsset(Long assetId, Long userId) {
         Asset asset = assetService.findById(assetId);
         if(asset == null) {
-            log.error("asset not found: {}", assetId);
+            log.error("자산 정보 없음 : {}", assetId);
             return null;
         }
         if(!asset.getUserId().equals(userId)) {
-            log.error("asset userId mismatch: assetId - {}, assetUserId - {}, userId - {}",
+            log.error("자산 userId 불일치 : assetId - {}, asset.userId - {}, userId - {}",
                     asset.getAssetId(), asset.getUserId(), userId);
             return null;
         }
@@ -138,7 +136,7 @@ public class AssetController {
     @DeleteMapping("/{assetId}")
     public ResponseEntity<Void> delete(@PathVariable Long assetId, HttpSession session) {
 
-        log.info("delete asset : {}", assetId);
+        log.info("자산 삭제 : {}", assetId);
 
         User user = (User) session.getAttribute(SessionConst.LOGIN_USER);
 
@@ -158,7 +156,7 @@ public class AssetController {
     public String changeView(@ModelAttribute("req") AssetChangeReq req, HttpSession session, Model model) {
         User user = (User) session.getAttribute(SessionConst.LOGIN_USER);
 
-        log.info("asset change view : {}", user);
+        log.info("자산 변동 내역 : {}", user);
 
         if(StringUtils.isBlank(req.getSearchDate())) {
             req.setSearchDate(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM")));
@@ -190,7 +188,7 @@ public class AssetController {
     public String addChange(@Valid @ModelAttribute("assetChangeForm") AssetChangeForm assetChangeForm, BindingResult bindingResult,
                             Model model, HttpSession session) {
 
-        log.info("add asset change : {}", assetChangeForm);
+        log.info("자산 변동 추가 : {}", assetChangeForm);
 
         User user = (User) session.getAttribute(SessionConst.LOGIN_USER);
 
@@ -236,7 +234,7 @@ public class AssetController {
                              @Valid @ModelAttribute("assetChangeForm") AssetChangeForm assetChangeForm, BindingResult bindingResult,
                              Model model, HttpSession session) {
 
-        log.info("edit asset change : {}", assetChangeForm);
+        log.info("자산 변동 수정 : {}", assetChangeForm);
 
         User user = (User) session.getAttribute(SessionConst.LOGIN_USER);
 
@@ -245,6 +243,8 @@ public class AssetController {
             return "/error";
         }
         if(!Objects.equals(assetChange.getAsset().getAssetId(), assetChangeForm.getAssetId())) {
+            log.error("assetId 불일치 : assetChange.assetId - {}, req.assetId - {}",
+                    assetChange.getAsset().getAssetId(), assetChangeForm.getAssetId());
             return "/error";
         }
 
@@ -266,7 +266,7 @@ public class AssetController {
     @DeleteMapping("/change/{changeId}")
     public ResponseEntity<Void> deleteChange(@PathVariable Long changeId, HttpSession session) {
 
-        log.info("delete asset change : {}", changeId);
+        log.info("자산 변동 삭제 : {}", changeId);
 
         User user = (User) session.getAttribute(SessionConst.LOGIN_USER);
 

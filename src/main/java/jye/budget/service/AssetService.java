@@ -43,7 +43,9 @@ public class AssetService {
 
     @Transactional(readOnly = true)
     public boolean existsByAssetName(Long userId, @NotBlank String assetName, Long assetId) {
-        return assetMapper.existsByAssetName(userId, assetName, assetId);
+        boolean existsByAssetName = assetMapper.existsByAssetName(userId, assetName, assetId);
+        if (existsByAssetName) log.error("이미 존재하는 자산명 : {}", assetName);
+        return existsByAssetName;
     }
 
     @Transactional(readOnly = true)
@@ -95,7 +97,9 @@ public class AssetService {
 
     @Transactional(readOnly = true)
     public AssetChange findChangeById(Long changeId) {
-        return assetMapper.findChangeById(changeId);
+        AssetChange assetChange = assetMapper.findChangeById(changeId);
+        if(assetChange == null) log.error("자산 변동 정보 없음 : {}", changeId);
+        return assetChange;
     }
 
     @Transactional

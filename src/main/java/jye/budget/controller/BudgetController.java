@@ -35,7 +35,7 @@ public class BudgetController {
     public String view(@ModelAttribute("req") BudgetReq req, HttpSession session, Model model) {
         User user = (User) session.getAttribute(SessionConst.LOGIN_USER);
 
-        log.info("budget view : {}", user);
+        log.info("예산 조회 : {}", req);
 
         if(StringUtils.isBlank(req.getSearchDate())) {
             req.setSearchDate(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM")));
@@ -63,7 +63,7 @@ public class BudgetController {
     public String edit(@Valid @ModelAttribute("budgetDto") BudgetDto reqDto, BindingResult bindingResult,
                        HttpSession session) {
 
-        log.info("edit budget : {}", reqDto);
+        log.info("예산 수정 : {}", reqDto);
 
         if(StringUtils.isBlank(reqDto.getBudget().getYearMonth())) {
             return "/error";
@@ -77,55 +77,58 @@ public class BudgetController {
         }
 
         if(!Objects.equals(budgetDto.getBudget().getBudgetId(), reqDto.getBudget().getBudgetId())) {
+            log.error("budgetId 불일치 : budgetId - {}, req.budgetId - {}", budgetDto.getBudget().getBudgetId(), reqDto.getBudget().getBudgetId());
             return "/error";
         }
 
         if(reqDto.getBudget().getBudgetId() != null) {
+            log.info("기존 예산 정보 있음 : {}", budgetDto.getBudget());
             boolean hasNonMatchingBudgetAllocationIds = reqDto.getBudgetAllocations().stream()
                     .anyMatch(reqBudgetAllocation ->
-                            reqBudgetAllocation.getBudgetAllocationId() == null || reqBudgetAllocation.getAsset().getAssetId() == null ||
                             budgetDto.getBudgetAllocations().stream()
                                     .noneMatch(budgetAllocation ->
-                                            budgetAllocation.getBudgetAllocationId().equals(reqBudgetAllocation.getBudgetAllocationId())
-                                                    && budgetAllocation.getAsset().getAssetId().equals(reqBudgetAllocation.getAsset().getAssetId())));
+                                            Objects.equals(budgetAllocation.getBudgetAllocationId(), reqBudgetAllocation.getBudgetAllocationId()) &&
+                                            Objects.equals(budgetAllocation.getAsset().getAssetId(), reqBudgetAllocation.getAsset().getAssetId())));
 
             if (hasNonMatchingBudgetAllocationIds) {
+                log.error("자산 분배 budgetAllocationId, assetId 불일치 : budgetDto - {}, reqDto - {}", budgetDto.getBudgetAllocations(), reqDto.getBudgetAllocations());
                 return "/error";
             }
 
             boolean hasNonMatchingFixedExpenseIds = reqDto.getFixedExpenses().stream()
                     .anyMatch(reqFixedExpense ->
-                            reqFixedExpense.getFixedExpenseId() == null || reqFixedExpense.getCategory().getCategoryId() == null ||
                             budgetDto.getFixedExpenses().stream()
                                     .noneMatch(fixedExpense ->
-                                            fixedExpense.getFixedExpenseId().equals(reqFixedExpense.getFixedExpenseId())
-                                                    && fixedExpense.getCategory().getCategoryId().equals(reqFixedExpense.getCategory().getCategoryId())));
+                                            Objects.equals(fixedExpense.getFixedExpenseId(), reqFixedExpense.getFixedExpenseId()) &&
+                                            Objects.equals(fixedExpense.getCategory().getCategoryId(), reqFixedExpense.getCategory().getCategoryId())));
 
             if (hasNonMatchingFixedExpenseIds) {
+                log.error("고정 지출 fixedExpenseId, categoryId 불일치 : budgetDto - {}, reqDto - {}", budgetDto.getFixedExpenses(), reqDto.getFixedExpenses());
                 return "/error";
             }
 
             budgetService.update(reqDto);
         } else {
+            log.info("기존 예산 정보 없음");
             boolean hasNonMatchingAssetIds = reqDto.getBudgetAllocations().stream()
                     .anyMatch(reqBudgetAllocation ->
-                            reqBudgetAllocation.getAsset().getAssetId() == null ||
                             budgetDto.getBudgetAllocations().stream()
                                     .noneMatch(budgetAllocation ->
-                                            budgetAllocation.getAsset().getAssetId().equals(reqBudgetAllocation.getAsset().getAssetId())));
+                                            Objects.equals(budgetAllocation.getAsset().getAssetId(), reqBudgetAllocation.getAsset().getAssetId())));
 
             if (hasNonMatchingAssetIds) {
+                log.error("자산 분배 assetId 불일치 : budgetDto - {}, reqDto - {}", budgetDto.getBudgetAllocations(), reqDto.getBudgetAllocations());
                 return "/error";
             }
 
             boolean hasNonMatchingCategoryIds = reqDto.getFixedExpenses().stream()
                     .anyMatch(reqFixedExpense ->
-                            reqFixedExpense.getCategory().getCategoryId() == null ||
                             budgetDto.getFixedExpenses().stream()
                                     .noneMatch(fixedExpense ->
-                                            fixedExpense.getCategory().getCategoryId().equals(reqFixedExpense.getCategory().getCategoryId())));
+                                            Objects.equals(fixedExpense.getCategory().getCategoryId(), reqFixedExpense.getCategory().getCategoryId())));
 
             if (hasNonMatchingCategoryIds) {
+                log.error("고정 지출 categoryId 불일치 : budgetDto - {}, reqDto - {}", budgetDto.getFixedExpenses(), reqDto.getFixedExpenses());
                 return "/error";
             }
 

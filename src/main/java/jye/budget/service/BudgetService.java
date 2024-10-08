@@ -26,7 +26,7 @@ public class BudgetService {
     @Transactional(readOnly = true)
     public BudgetDto findByYearMonthAndUserId(String yearMonth, Long userId) {
         Budget budget = budgetMapper.findByYearMonth(yearMonth, userId);
-        log.info("{} budget : {}", yearMonth, budget);
+        log.info("find budget : {}", budget);
 
         if(budget != null) {
             List<BudgetAllocation> budgetAllocations = budgetMapper.findBudgetAllocationByBudgetId(budget.getBudgetId());
