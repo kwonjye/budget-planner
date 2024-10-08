@@ -3,6 +3,41 @@
 <head th:replace="~{fragment/head :: head}">
   <title>나만의 가계부</title>
 </head>
+<script>
+  $(document).ready(function() {
+    $('input[type="number"]').on('input', function() {
+      let livingExpenseBudget;
+      let assetAllocation = 0;
+      let fixedExpenses = 0;
+
+      const totalBudget = $("#totalBudget").val();
+
+      // 자산 분배
+      $('input[data-type="budget-allocation"]').each(function() {
+        const value = Number($(this).val());
+        if (!isNaN(value)) {
+          assetAllocation += value;
+        }
+      });
+      $("#assetAllocation").val(assetAllocation);
+      $("#assetAllocationText").text(assetAllocation.toLocaleString('ko-KR'));
+
+      // 고정 지출
+      $('input[data-type="fixed-expense"]').each(function() {
+        const value = Number($(this).val());
+        if (!isNaN(value)) {
+          fixedExpenses += value;
+        }
+      });
+      $("#fixedExpenses").val(fixedExpenses);
+      $("#fixedExpensesText").text(fixedExpenses.toLocaleString('ko-KR'));
+
+      livingExpenseBudget = totalBudget - assetAllocation - fixedExpenses;
+      $("#livingExpenseBudget").val(livingExpenseBudget);
+      $("#livingExpenseBudgetText").text(livingExpenseBudget.toLocaleString('ko-KR'));
+    });
+  });
+</script>
 <body>
 <div th:insert="~{fragment/header :: header}"></div>
 <div class="container">
@@ -21,9 +56,9 @@
         <div>
           <div class="mtb40 fs20">
             <div class="space-between">
-              <label for="amount">총 예산 금액</label>
+              <label for="totalBudget">총 예산 금액</label>
               <div class="div-underline">
-                <input type="number" id="amount" min="0" class="input-none w100p"
+                <input id="totalBudget" type="number" min="0" class="input-none w100p"
                        th:field="*{budget.totalBudget}">원
               </div>
             </div>
@@ -32,16 +67,16 @@
           <div class="mt40 mb20 fs23 blue">
             <div class="space-between">
               <span>자산 분배</span>
-              <span th:text="${#numbers.formatInteger(budgetDto.budget.assetAllocation, 1, 'COMMA')}"></span>
+              <span id="assetAllocationText" th:text="${#numbers.formatInteger(budgetDto.budget.assetAllocation, 1, 'COMMA')}"></span>
             </div>
-            <input type="hidden" th:field="*{budget.assetAllocation}">
+            <input id="assetAllocation" type="hidden" th:field="*{budget.assetAllocation}">
           </div>
           <div class="mtb20 fs20">
             <div class="mtb20" th:each="budgetAllocation : ${budgetDto.budgetAllocations}">
               <div class="space-between">
                 <label th:for="'allocation-' + ${budgetAllocationStat.index}" th:text="${budgetAllocation.asset.assetName}"></label>
                 <div class="div-underline">
-                  <input th:id="'allocation-' + ${budgetAllocationStat.index}" type="number" min="0" class="input-none w100p"
+                  <input th:id="'allocation-' + ${budgetAllocationStat.index}" type="number" min="0" class="input-none w100p" data-type="budget-allocation"
                          th:field="*{budgetAllocations[__${budgetAllocationStat.index}__].amount}">원
                 </div>
               </div>
@@ -53,16 +88,16 @@
           <div class="mt40 mb20 fs23 red">
             <div class="space-between">
               <span>고정 지출</span>
-              <span th:text="${#numbers.formatInteger(budgetDto.budget.fixedExpenses, 1, 'COMMA')}"></span>
+              <span id="fixedExpensesText" th:text="${#numbers.formatInteger(budgetDto.budget.fixedExpenses, 1, 'COMMA')}"></span>
             </div>
-            <input type="hidden" th:field="*{budget.fixedExpenses}">
+            <input id="fixedExpenses" type="hidden" th:field="*{budget.fixedExpenses}">
           </div>
           <div class="mtb20 fs20">
             <div class="mtb20" th:each="fixedExpense : ${budgetDto.fixedExpenses}">
               <div class="space-between">
                 <label th:for="'fixedExpense-' + ${fixedExpenseStat.index}" th:text="${fixedExpense.category.categoryName}"></label>
                 <div class="div-underline">
-                  <input th:id="'fixedExpense-' + ${fixedExpenseStat.index}" type="number" min="0" class="input-none w100p"
+                  <input th:id="'fixedExpense-' + ${fixedExpenseStat.index}" type="number" min="0" class="input-none w100p" data-type="fixed-expense"
                          th:field="*{fixedExpenses[__${fixedExpenseStat.index}__].amount}">원
                 </div>
               </div>
@@ -74,9 +109,9 @@
           <div class="mtb40 fs23 bold">
             <div class="space-between">
               <span>생활비</span>
-              <span th:text="${#numbers.formatInteger(budgetDto.budget.livingExpenseBudget, 1, 'COMMA')}"></span>
+              <span id="livingExpenseBudgetText" th:text="${#numbers.formatInteger(budgetDto.budget.livingExpenseBudget, 1, 'COMMA')}"></span>
             </div>
-            <input type="hidden" th:field="*{budget.livingExpenseBudget}">
+            <input id="livingExpenseBudget" type="hidden" th:field="*{budget.livingExpenseBudget}">
           </div>
           <div class="right">
             <button class="btn-gradient w200" type="submit">저장</button>

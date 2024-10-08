@@ -67,7 +67,7 @@ public class BudgetController {
 
         User user = (User) session.getAttribute(SessionConst.LOGIN_USER);
 
-        log.info("edit budget : {}", user);
+        log.info("edit budget : {}", budget);
 
         return "redirect:/budget";
     }
