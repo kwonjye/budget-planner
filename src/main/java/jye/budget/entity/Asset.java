@@ -18,6 +18,7 @@ public class Asset {
     private int initialAmount;
     private int currentAmount;
     private boolean isAllocated;
+    private boolean isUsed;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

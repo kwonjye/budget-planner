@@ -28,6 +28,21 @@ public class AssetService {
         return assetMapper.findByUserId(userId);
     }
 
+    @Transactional(readOnly = true)
+    public Asset checkAsset(Long assetId, Long userId) {
+        Asset asset = findById(assetId);
+        if(asset == null) {
+            log.error("자산 정보 없음 : {}", assetId);
+            return null;
+        }
+        if(!asset.getUserId().equals(userId)) {
+            log.error("자산 userId 불일치 : assetId - {}, asset.userId - {}, userId - {}",
+                    asset.getAssetId(), asset.getUserId(), userId);
+            return null;
+        }
+        return asset;
+    }
+
     @Transactional
     public void save(Long userId, @Valid AssetForm assetForm) {
         Asset asset = Asset.builder()
@@ -77,7 +92,7 @@ public class AssetService {
     }
 
     @Transactional
-    public void change(@Valid AssetChangeForm assetChangeForm,
+    public AssetChange change(@Valid AssetChangeForm assetChangeForm,
                        Asset asset) {
 
         AssetChange assetChange = AssetChange.builder()
@@ -93,6 +108,8 @@ public class AssetService {
         int currentAmount = assetChangeForm.getCalcType().apply(asset.getCurrentAmount(), assetChange.getAmount());
         log.info("update asset {} currentAmount : {}", asset, currentAmount);
         assetMapper.updateCurrentAmount(asset.getAssetId(), currentAmount);
+
+        return assetChange;
     }
 
     @Transactional(readOnly = true)

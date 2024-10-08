@@ -42,7 +42,7 @@ public class BudgetController {
         if(StringUtils.isBlank(req.getSearchDate())) {
             req.setSearchDate(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM")));
         }
-        BudgetDto data = budgetService.findByYearMonthAndUserId(req.getSearchDate(), user.getUserId());
+        BudgetDto data = budgetService.findByYearMonthAndUserId(req.getSearchDate(), user.getUserId(), false);
         model.addAttribute("data", data);
 
         return "budget/view";
@@ -55,7 +55,7 @@ public class BudgetController {
         if(StringUtils.isBlank(req.getSearchDate())) {
             req.setSearchDate(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM")));
         }
-        BudgetDto budgetDto = budgetService.findByYearMonthAndUserId(req.getSearchDate(), user.getUserId());
+        BudgetDto budgetDto = budgetService.findByYearMonthAndUserId(req.getSearchDate(), user.getUserId(), true);
         model.addAttribute("budgetDto", budgetDto);
 
         return "budget/edit";
@@ -73,7 +73,7 @@ public class BudgetController {
 
         User user = (User) session.getAttribute(SessionConst.LOGIN_USER);
 
-        BudgetDto budgetDto = budgetService.findByYearMonthAndUserId(reqDto.getBudget().getYearMonth(), user.getUserId());
+        BudgetDto budgetDto = budgetService.findByYearMonthAndUserId(reqDto.getBudget().getYearMonth(), user.getUserId(), true);
         if (bindingResult.hasErrors()) {
             return "budget/edit";
         }
@@ -94,7 +94,7 @@ public class BudgetController {
                                                         Objects.equals(budgetAllocation.getAsset().getAssetId(), reqBudgetAllocation.getAsset().getAssetId())));
 
                 if (hasNonMatchingBudgetAllocationIds) {
-                    log.error("자산 분배 budgetAllocationId, assetId 불일치 : budgetDto - {}, reqDto - {}", budgetDto.getBudgetAllocations(), reqDto.getBudgetAllocations());
+                    log.error("예산 배분 budgetAllocationId, assetId 불일치 : budgetDto - {}, reqDto - {}", budgetDto.getBudgetAllocations(), reqDto.getBudgetAllocations());
                     return "/error";
                 }
             }
@@ -113,7 +113,7 @@ public class BudgetController {
                 }
             }
 
-            budgetService.update(reqDto);
+            budgetService.update(reqDto, user.getUserId());
         } else {
             log.info("기존 예산 정보 없음");
 
@@ -125,7 +125,7 @@ public class BudgetController {
                                                 Objects.equals(budgetAllocation.getAsset().getAssetId(), reqBudgetAllocation.getAsset().getAssetId())));
 
                 if (hasNonMatchingAssetIds) {
-                    log.error("자산 분배 assetId 불일치 : budgetDto - {}, reqDto - {}", budgetDto.getBudgetAllocations(), reqDto.getBudgetAllocations());
+                    log.error("예산 배분 assetId 불일치 : budgetDto - {}, reqDto - {}", budgetDto.getBudgetAllocations(), reqDto.getBudgetAllocations());
                     return "/error";
                 }
             }
@@ -144,7 +144,7 @@ public class BudgetController {
             }
 
             reqDto.getBudget().setUserId(user.getUserId());
-            budgetService.save(reqDto);
+            budgetService.save(reqDto, user.getUserId());
         }
         return "redirect:/budget?searchDate=" + reqDto.getBudget().getYearMonth();
     }

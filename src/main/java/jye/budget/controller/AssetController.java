@@ -83,7 +83,7 @@ public class AssetController {
 
         User user = (User) session.getAttribute(SessionConst.LOGIN_USER);
 
-        Asset asset = checkAsset(assetId, user.getUserId());
+        Asset asset = assetService.checkAsset(assetId, user.getUserId());
         if(asset == null) {
             return "/error";
         }
@@ -104,7 +104,7 @@ public class AssetController {
 
         User user = (User) session.getAttribute(SessionConst.LOGIN_USER);
 
-        Asset asset = checkAsset(assetId, user.getUserId());
+        Asset asset = assetService.checkAsset(assetId, user.getUserId());
         if(asset == null) {
             return "/error";
         }
@@ -119,20 +119,6 @@ public class AssetController {
         return "redirect:/asset";
     }
 
-    private Asset checkAsset(Long assetId, Long userId) {
-        Asset asset = assetService.findById(assetId);
-        if(asset == null) {
-            log.error("자산 정보 없음 : {}", assetId);
-            return null;
-        }
-        if(!asset.getUserId().equals(userId)) {
-            log.error("자산 userId 불일치 : assetId - {}, asset.userId - {}, userId - {}",
-                    asset.getAssetId(), asset.getUserId(), userId);
-            return null;
-        }
-        return asset;
-    }
-
     @DeleteMapping("/{assetId}")
     public ResponseEntity<Void> delete(@PathVariable Long assetId, HttpSession session) {
 
@@ -140,7 +126,7 @@ public class AssetController {
 
         User user = (User) session.getAttribute(SessionConst.LOGIN_USER);
 
-        Asset asset = checkAsset(assetId, user.getUserId());
+        Asset asset = assetService.checkAsset(assetId, user.getUserId());
         if(asset == null) {
             return ResponseEntity.badRequest().build();
         }
@@ -200,7 +186,7 @@ public class AssetController {
             return "/asset/change/add";
         }
 
-        Asset asset = checkAsset(assetChangeForm.getAssetId(), user.getUserId());
+        Asset asset = assetService.checkAsset(assetChangeForm.getAssetId(), user.getUserId());
         if(asset == null) {
             return "/error";
         }
@@ -218,7 +204,7 @@ public class AssetController {
             return "/error";
         }
 
-        Asset asset = checkAsset(assetChange.getAsset().getAssetId(), user.getUserId());
+        Asset asset = assetService.checkAsset(assetChange.getAsset().getAssetId(), user.getUserId());
         if(asset == null) {
             return "/error";
         }
@@ -248,7 +234,7 @@ public class AssetController {
             return "/error";
         }
 
-        Asset asset = checkAsset(assetChangeForm.getAssetId(), user.getUserId());
+        Asset asset = assetService.checkAsset(assetChangeForm.getAssetId(), user.getUserId());
         if(asset == null) {
             return "/error";
         }
@@ -275,7 +261,7 @@ public class AssetController {
             return ResponseEntity.badRequest().build();
         }
 
-        Asset asset = checkAsset(assetChange.getAsset().getAssetId(), user.getUserId());
+        Asset asset = assetService.checkAsset(assetChange.getAsset().getAssetId(), user.getUserId());
         if(asset == null) {
             return ResponseEntity.badRequest().build();
         }

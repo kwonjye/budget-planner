@@ -14,6 +14,7 @@ public class BudgetAllocation {
     private Long budgetAllocationId;
     private Long budgetId;
     private Asset asset;
+    private Long changeId;
     @Min(0)
     private int amount;
 }

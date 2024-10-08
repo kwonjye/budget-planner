@@ -18,13 +18,17 @@ public interface BudgetMapper {
 
     List<FixedExpenses> findFixedExpensesByBudgetId(@Param("budgetId") Long budgetId);
 
+    List<BudgetAllocation> findBudgetAllocationByBudgetIdForUpdate(@Param("budgetId") Long budgetId,
+                                                                   @Param("userId") Long userId);
+
+    List<FixedExpenses> findFixedExpensesByBudgetIdForUpdate(@Param("budgetId") Long budgetId,
+                                                             @Param("userId") Long userId);
+
     void save(@Valid Budget budget);
 
-    void saveBudgetAllocation(@Param("budgetId") Long budgetId,
-                              @Param("budgetAllocations") @Valid List<BudgetAllocation> budgetAllocations);
+    void saveBudgetAllocation(BudgetAllocation budgetAllocation);
 
-    void saveFixedExpenses(@Param("budgetId") Long budgetId,
-                           @Param("fixedExpenses") @Valid List<FixedExpenses> fixedExpenses);
+    void saveFixedExpenses(FixedExpenses fixedExpenses);
 
     void update(@Valid Budget budget);
 
@@ -33,4 +37,6 @@ public interface BudgetMapper {
     void updateFixedExpenses(FixedExpenses fixedExpenses);
 
     Budget findRecent(@Param("userId") Long userId);
+
+    Long findChangeIdByBudgetAllocationId(@Param("budgetAllocationId") Long budgetAllocationId);
 }

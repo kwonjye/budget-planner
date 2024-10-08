@@ -18,5 +18,7 @@ public class Category {
     private CategoryType categoryType;
     private String categoryName;
     private String categoryColor;
+    private boolean isUsed;
     private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }

@@ -21,12 +21,14 @@
     <resultMap id="budgetAllocation" type="jye.budget.entity.BudgetAllocation">
         <id column="budget_allocation_id" property="budgetAllocationId" />
         <result column="budget_id" property="budgetId" />
+        <result column="change_id" property="changeId" />
         <result column="amount" property="amount" />
         <association property="asset" resultMap="jye.budget.mapper.AssetMapper.asset" columnPrefix="a_"/>
     </resultMap>
     <select id="findBudgetAllocationByBudgetId" resultMap="budgetAllocation">
         SELECT ba.budget_allocation_id,
                ba.budget_id,
+               ba.change_id,
                ba.amount,
                a.asset_id AS a_asset_id,
                a.user_id AS a_user_id,
@@ -39,6 +41,27 @@
         FROM budget_allocation ba
         JOIN asset a ON ba.asset_id = a.asset_id
         WHERE budget_id = #{budgetId}
+    </select>
+    <select id="findBudgetAllocationByBudgetIdForUpdate" resultMap="budgetAllocation">
+        SELECT ba.budget_allocation_id,
+               ba.budget_id,
+               ba.change_id,
+               ba.amount,
+               a.asset_id AS a_asset_id,
+               a.user_id AS a_user_id,
+               a.asset_name AS a_asset_name,
+               a.initial_amount AS a_initial_amount,
+               a.current_amount AS a_current_amount,
+               a.is_allocated AS a_is_allocated,
+               a.is_used AS a_is_used,
+               a.created_at AS a_created_at,
+               a.updated_at AS a_updated_at
+        FROM budget_allocation ba
+        RIGHT JOIN asset a ON ba.asset_id = a.asset_id
+        WHERE a.user_id = #{userId}
+          AND ((ba.budget_allocation_id IS NULL AND a.is_allocated = true AND a.is_used = true)
+            OR (ba.budget_allocation_id IS NOT NULL AND ba.budget_id = #{budgetId}))
+        FOR UPDATE
     </select>
     <resultMap id="fixedExpenses" type="jye.budget.entity.FixedExpenses">
         <id column="fixed_expense_id" property="fixedExpenseId" />
@@ -58,6 +81,24 @@
         FROM fixed_expenses fe
         JOIN category c ON fe.category_id = c.category_id
         WHERE budget_id = #{budgetId}
+    </select>
+    <select id="findFixedExpensesByBudgetIdForUpdate" resultMap="fixedExpenses">
+        SELECT fe.fixed_expense_id,
+               fe.budget_id,
+               fe.amount,
+               c.category_id AS c_category_id,
+               c.user_id AS c_user_id,
+               c.category_type AS c_category_type,
+               c.category_name AS c_category_name,
+               c.category_color AS c_category_color,
+               c.is_used AS c_is_used,
+               c.created_at AS c_created_at
+        FROM fixed_expenses fe
+        RIGHT JOIN category c ON fe.category_id = c.category_id
+        WHERE c.user_id = #{userId}
+          AND ((fe.fixed_expense_id IS NULL AND c.is_used = true)
+            OR (fe.fixed_expense_id IS NOT NULL AND fe.budget_id = #{budgetId}))
+        FOR UPDATE
     </select>
     <insert id="save" useGeneratedKeys="true" keyColumn="budget_id" keyProperty="budgetId">
         INSERT INTO budget (
@@ -84,21 +125,25 @@
         INSERT INTO budget_allocation (
                                        budget_id,
                                        asset_id,
+                                       change_id,
                                        amount
-        ) VALUES
-        <foreach collection="budgetAllocations" item="item" separator=",">
-            (#{budgetId}, #{item.asset.assetId}, #{item.amount})
-        </foreach>
+        ) VALUES (
+                  #{budgetId},
+                  #{asset.assetId},
+                  #{changeId},
+                  #{amount}
+                         )
     </insert>
     <insert id="saveFixedExpenses">
         INSERT INTO fixed_expenses (
                                     budget_id,
                                     category_id,
                                     amount
-        ) VALUES
-        <foreach collection="fixedExpenses" item="item" separator=",">
-            (#{budgetId}, #{item.category.categoryId}, #{item.amount})
-        </foreach>
+        ) VALUES (
+                  #{budgetId},
+                  #{category.categoryId},
+                  #{amount}
+                         )
     </insert>
     <update id="update">
         UPDATE budget
@@ -124,5 +169,10 @@
         WHERE user_id = #{userId}
         ORDER BY updated_at DESC
         LIMIT 1
+    </select>
+    <select id="findChangeIdByBudgetAllocationId" resultType="long">
+        SELECT change_id
+        FROM budget_allocation
+        WHERE budget_allocation_id = #{budgetAllocationId}
     </select>
 </mapper>
