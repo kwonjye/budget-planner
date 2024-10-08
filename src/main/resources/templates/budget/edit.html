@@ -82,6 +82,7 @@
               </div>
               <input type="hidden" th:field="*{budgetAllocations[__${budgetAllocationStat.index}__].budgetAllocationId}">
               <input type="hidden" th:field="*{budgetAllocations[__${budgetAllocationStat.index}__].asset.assetId}">
+              <input type="hidden" th:field="*{budgetAllocations[__${budgetAllocationStat.index}__].asset.assetName}">
               <div class="field-error mt05 right" th:errors="*{budgetAllocations[__${budgetAllocationStat.index}__].amount}"></div>
             </div>
           </div>
@@ -103,15 +104,17 @@
               </div>
               <input type="hidden" th:field="*{fixedExpenses[__${fixedExpenseStat.index}__].fixedExpenseId}">
               <input type="hidden" th:field="*{fixedExpenses[__${fixedExpenseStat.index}__].category.categoryId}">
+              <input type="hidden" th:field="*{fixedExpenses[__${fixedExpenseStat.index}__].category.categoryName}">
               <div class="field-error mt05 right" th:errors="*{fixedExpenses[__${fixedExpenseStat.index}__].amount}"></div>
             </div>
           </div>
-          <div class="mtb40 fs23 bold">
-            <div class="space-between">
+          <div class="mtb40">
+            <div class="space-between fs23 bold">
               <span>생활비</span>
               <span id="livingExpenseBudgetText" th:text="${#numbers.formatInteger(budgetDto.budget.livingExpenseBudget, 1, 'COMMA')}"></span>
             </div>
             <input id="livingExpenseBudget" type="hidden" th:field="*{budget.livingExpenseBudget}">
+            <div class="field-error mt05 right fs20" th:errors="*{budget.livingExpenseBudget}"></div>
           </div>
           <div class="right">
             <button class="btn-gradient w200" type="submit">저장</button>

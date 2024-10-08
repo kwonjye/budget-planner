@@ -13,7 +13,7 @@
                updated_at
         FROM budget
         WHERE user_id = #{userId}
-            AND `year_month` = #{req.searchDate}
+            AND `year_month` = #{yearMonth}
     </select>
     <resultMap id="budgetAllocation" type="jye.budget.entity.BudgetAllocation">
         <id column="budget_allocation_id" property="budgetAllocationId" />
@@ -54,5 +54,66 @@
                c.created_at AS c_created_at
         FROM fixed_expenses fe
         JOIN category c ON fe.category_id = c.category_id
+        WHERE budget_id = #{budgetId}
     </select>
+    <insert id="save" useGeneratedKeys="true" keyColumn="budget_id" keyProperty="budgetId">
+        INSERT INTO budget (
+                            user_id,
+                            `year_month`,
+                            total_budget,
+                            asset_allocation,
+                            fixed_expenses,
+                            living_expense_budget,
+                            created_at,
+                            updated_at
+        ) VALUES (
+                  #{userId},
+                  #{yearMonth},
+                  #{totalBudget},
+                  #{assetAllocation},
+                  #{fixedExpenses},
+                  #{livingExpenseBudget},
+                  NOW(),
+                  NOW()
+                         )
+    </insert>
+    <insert id="saveBudgetAllocation">
+        INSERT INTO budget_allocation (
+                                       budget_id,
+                                       asset_id,
+                                       amount
+        ) VALUES
+        <foreach collection="budgetAllocations" item="item" separator=",">
+            (#{budgetId}, #{item.asset.assetId}, #{item.amount})
+        </foreach>
+    </insert>
+    <insert id="saveFixedExpenses">
+        INSERT INTO fixed_expenses (
+                                    budget_id,
+                                    category_id,
+                                    amount
+        ) VALUES
+        <foreach collection="fixedExpenses" item="item" separator=",">
+            (#{budgetId}, #{item.category.categoryId}, #{item.amount})
+        </foreach>
+    </insert>
+    <update id="update">
+        UPDATE budget
+        SET total_budget = #{totalBudget},
+            asset_allocation = #{assetAllocation},
+            fixed_expenses = #{fixedExpenses},
+            living_expense_budget = #{livingExpenseBudget},
+            updated_at = NOW()
+        WHERE budget_id = #{budgetId}
+    </update>
+    <update id="updateBudgetAllocation">
+        UPDATE budget_allocation
+        SET amount = #{amount}
+        WHERE budget_allocation_id = #{budgetAllocationId}
+    </update>
+    <update id="updateFixedExpenses">
+        UPDATE fixed_expenses
+        SET amount = #{amount}
+        WHERE fixed_expense_id = #{fixedExpenseId}
+    </update>
 </mapper>

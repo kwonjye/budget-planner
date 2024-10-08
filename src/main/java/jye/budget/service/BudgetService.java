@@ -1,10 +1,10 @@
 package jye.budget.service;
 
+import jakarta.validation.Valid;
 import jye.budget.entity.*;
 import jye.budget.mapper.AssetMapper;
 import jye.budget.mapper.BudgetMapper;
 import jye.budget.mapper.CategoryMapper;
-import jye.budget.req.BudgetReq;
 import jye.budget.dto.BudgetDto;
 import jye.budget.type.CategoryType;
 import lombok.RequiredArgsConstructor;
@@ -24,9 +24,9 @@ public class BudgetService {
     private final CategoryMapper categoryMapper;
 
     @Transactional(readOnly = true)
-    public BudgetDto findByYearMonthAndUserId(BudgetReq req, Long userId) {
-        Budget budget = budgetMapper.findByYearMonth(req, userId);
-        log.info("{} budget : {}", req.getSearchDate(), budget);
+    public BudgetDto findByYearMonthAndUserId(String yearMonth, Long userId) {
+        Budget budget = budgetMapper.findByYearMonth(yearMonth, userId);
+        log.info("{} budget : {}", yearMonth, budget);
 
         if(budget != null) {
             List<BudgetAllocation> budgetAllocations = budgetMapper.findBudgetAllocationByBudgetId(budget.getBudgetId());
@@ -51,10 +51,34 @@ public class BudgetService {
             List<FixedExpenses> fixedExpenses = FixedExpansesCategories.stream().map(fixedExpensesCategory -> FixedExpenses.builder().category(fixedExpensesCategory).build()).toList();
 
             return BudgetDto.builder()
-                    .budget(Budget.builder().yearMonth(req.getSearchDate()).build())
+                    .budget(Budget.builder().yearMonth(yearMonth).build())
                     .budgetAllocations(budgetAllocations)
                     .fixedExpenses(fixedExpenses)
                     .build();
         }
+    }
+
+    @Transactional
+    public void save(@Valid BudgetDto req) {
+        log.info("save budget : {}", req.getBudget());
+        budgetMapper.save(req.getBudget());
+
+        log.info("save budgetAllocation : {}", req.getBudgetAllocations());
+        budgetMapper.saveBudgetAllocation(req.getBudget().getBudgetId(), req.getBudgetAllocations());
+
+        log.info("save fixedExpenses : {}", req.getFixedExpenses());
+        budgetMapper.saveFixedExpenses(req.getBudget().getBudgetId(), req.getFixedExpenses());
+    }
+
+    @Transactional
+    public void update(@Valid BudgetDto req) {
+        log.info("update budget : {}", req.getBudget());
+        budgetMapper.update(req.getBudget());
+
+        log.info("update budgetAllocation : {}", req.getBudgetAllocations());
+        req.getBudgetAllocations().forEach(budgetMapper::updateBudgetAllocation);
+
+        log.info("update fixedExpenses : {}", req.getFixedExpenses());
+        req.getFixedExpenses().forEach(budgetMapper::updateFixedExpenses);
     }
 }

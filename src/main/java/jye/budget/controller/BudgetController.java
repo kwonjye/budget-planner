@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 
 @Slf4j
 @Controller
@@ -39,7 +40,7 @@ public class BudgetController {
         if(StringUtils.isBlank(req.getSearchDate())) {
             req.setSearchDate(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM")));
         }
-        BudgetDto data = budgetService.findByYearMonthAndUserId(req, user.getUserId());
+        BudgetDto data = budgetService.findByYearMonthAndUserId(req.getSearchDate(), user.getUserId());
         model.addAttribute("data", data);
 
         return "budget/view";
@@ -52,23 +53,85 @@ public class BudgetController {
         if(StringUtils.isBlank(req.getSearchDate())) {
             req.setSearchDate(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM")));
         }
-        BudgetDto budgetDto = budgetService.findByYearMonthAndUserId(req, user.getUserId());
+        BudgetDto budgetDto = budgetService.findByYearMonthAndUserId(req.getSearchDate(), user.getUserId());
         model.addAttribute("budgetDto", budgetDto);
 
         return "budget/edit";
     }
 
     @PostMapping("/edit")
-    public String edit(@Valid @ModelAttribute("budgetDto") BudgetDto budget, BindingResult bindingResult,
+    public String edit(@Valid @ModelAttribute("budgetDto") BudgetDto reqDto, BindingResult bindingResult,
                        HttpSession session) {
-        if (bindingResult.hasErrors()) {
-            return "budget/edit";
+
+        log.info("edit budget : {}", reqDto);
+
+        if(StringUtils.isBlank(reqDto.getBudget().getYearMonth())) {
+            return "/error";
         }
 
         User user = (User) session.getAttribute(SessionConst.LOGIN_USER);
 
-        log.info("edit budget : {}", budget);
+        BudgetDto budgetDto = budgetService.findByYearMonthAndUserId(reqDto.getBudget().getYearMonth(), user.getUserId());
+        if (bindingResult.hasErrors()) {
+            return "budget/edit";
+        }
 
-        return "redirect:/budget";
+        if(!Objects.equals(budgetDto.getBudget().getBudgetId(), reqDto.getBudget().getBudgetId())) {
+            return "/error";
+        }
+
+        if(reqDto.getBudget().getBudgetId() != null) {
+            boolean hasNonMatchingBudgetAllocationIds = reqDto.getBudgetAllocations().stream()
+                    .anyMatch(reqBudgetAllocation ->
+                            reqBudgetAllocation.getBudgetAllocationId() == null || reqBudgetAllocation.getAsset().getAssetId() == null ||
+                            budgetDto.getBudgetAllocations().stream()
+                                    .noneMatch(budgetAllocation ->
+                                            budgetAllocation.getBudgetAllocationId().equals(reqBudgetAllocation.getBudgetAllocationId())
+                                                    && budgetAllocation.getAsset().getAssetId().equals(reqBudgetAllocation.getAsset().getAssetId())));
+
+            if (hasNonMatchingBudgetAllocationIds) {
+                return "/error";
+            }
+
+            boolean hasNonMatchingFixedExpenseIds = reqDto.getFixedExpenses().stream()
+                    .anyMatch(reqFixedExpense ->
+                            reqFixedExpense.getFixedExpenseId() == null || reqFixedExpense.getCategory().getCategoryId() == null ||
+                            budgetDto.getFixedExpenses().stream()
+                                    .noneMatch(fixedExpense ->
+                                            fixedExpense.getFixedExpenseId().equals(reqFixedExpense.getFixedExpenseId())
+                                                    && fixedExpense.getCategory().getCategoryId().equals(reqFixedExpense.getCategory().getCategoryId())));
+
+            if (hasNonMatchingFixedExpenseIds) {
+                return "/error";
+            }
+
+            budgetService.update(reqDto);
+        } else {
+            boolean hasNonMatchingAssetIds = reqDto.getBudgetAllocations().stream()
+                    .anyMatch(reqBudgetAllocation ->
+                            reqBudgetAllocation.getAsset().getAssetId() == null ||
+                            budgetDto.getBudgetAllocations().stream()
+                                    .noneMatch(budgetAllocation ->
+                                            budgetAllocation.getAsset().getAssetId().equals(reqBudgetAllocation.getAsset().getAssetId())));
+
+            if (hasNonMatchingAssetIds) {
+                return "/error";
+            }
+
+            boolean hasNonMatchingCategoryIds = reqDto.getFixedExpenses().stream()
+                    .anyMatch(reqFixedExpense ->
+                            reqFixedExpense.getCategory().getCategoryId() == null ||
+                            budgetDto.getFixedExpenses().stream()
+                                    .noneMatch(fixedExpense ->
+                                            fixedExpense.getCategory().getCategoryId().equals(reqFixedExpense.getCategory().getCategoryId())));
+
+            if (hasNonMatchingCategoryIds) {
+                return "/error";
+            }
+
+            reqDto.getBudget().setUserId(user.getUserId());
+            budgetService.save(reqDto);
+        }
+        return "redirect:/budget?searchDate=" + reqDto.getBudget().getYearMonth();
     }
 }
