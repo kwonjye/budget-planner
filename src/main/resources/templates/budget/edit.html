@@ -6,37 +6,41 @@
 <script>
   $(document).ready(function() {
     $('input[type="number"]').on('input', function() {
-      let livingExpenseBudget;
-      let assetAllocation = 0;
-      let fixedExpenses = 0;
-
-      const totalBudget = $("#totalBudget").val();
-
-      // 예산 배분
-      $('input[data-type="budget-allocation"]').each(function() {
-        const value = Number($(this).val());
-        if (!isNaN(value)) {
-          assetAllocation += value;
-        }
-      });
-      $("#assetAllocation").val(assetAllocation);
-      $("#assetAllocationText").text(assetAllocation.toLocaleString('ko-KR'));
-
-      // 고정 지출
-      $('input[data-type="fixed-expense"]').each(function() {
-        const value = Number($(this).val());
-        if (!isNaN(value)) {
-          fixedExpenses += value;
-        }
-      });
-      $("#fixedExpenses").val(fixedExpenses);
-      $("#fixedExpensesText").text(fixedExpenses.toLocaleString('ko-KR'));
-
-      livingExpenseBudget = totalBudget - assetAllocation - fixedExpenses;
-      $("#livingExpenseBudget").val(livingExpenseBudget);
-      $("#livingExpenseBudgetText").text(livingExpenseBudget.toLocaleString('ko-KR'));
+      calculate();
     });
   });
+
+  function calculate() {
+    let livingExpenseBudget;
+    let assetAllocation = 0;
+    let fixedExpenses = 0;
+
+    const totalBudget = $("#totalBudget").val();
+
+    // 예산 배분
+    $('input[data-type="budget-allocation"]').each(function() {
+      const value = Number($(this).val());
+      if (!isNaN(value)) {
+        assetAllocation += value;
+      }
+    });
+    $("#assetAllocation").val(assetAllocation);
+    $("#assetAllocationText").text(assetAllocation.toLocaleString('ko-KR'));
+
+    // 고정 지출
+    $('input[data-type="fixed-expense"]').each(function() {
+      const value = Number($(this).val());
+      if (!isNaN(value)) {
+        fixedExpenses += value;
+      }
+    });
+    $("#fixedExpenses").val(fixedExpenses);
+    $("#fixedExpensesText").text(fixedExpenses.toLocaleString('ko-KR'));
+
+    livingExpenseBudget = totalBudget - assetAllocation - fixedExpenses;
+    $("#livingExpenseBudget").val(livingExpenseBudget);
+    $("#livingExpenseBudgetText").text(livingExpenseBudget.toLocaleString('ko-KR'));
+  }
 
   // 최근 예산 정보 불러오기
   function fetchRecentBudget() {
@@ -45,6 +49,14 @@
               .then(response => response.json())
               .then(data => {
                 console.log(data);
+                $("#totalBudget").val(data.budget.totalBudget);
+                data.budgetAllocations.forEach((budgetAllocation) => {
+                  $("#assetId-" + budgetAllocation.asset.assetId).val(budgetAllocation.amount);
+                });
+                data.fixedExpenses.forEach((fixedExpense) => {
+                  $("#categoryId-" + fixedExpense.category.categoryId).val(fixedExpense.amount);
+                });
+                calculate();
               })
               .catch(error => {
                 console.error("최근 예산 정보 조회 오류 : ", error);
@@ -89,9 +101,9 @@
           <div class="mtb20 fs20" th:if="${budgetDto.budgetAllocations.size() > 0}">
             <div class="mtb20" th:each="budgetAllocation : ${budgetDto.budgetAllocations}">
               <div class="space-between">
-                <label th:for="'allocation-' + ${budgetAllocationStat.index}" th:text="${budgetAllocation.asset.assetName}"></label>
+                <label th:for="'assetId-' + ${budgetAllocation.asset.assetId}" th:text="${budgetAllocation.asset.assetName}"></label>
                 <div class="div-underline">
-                  <input th:id="'allocation-' + ${budgetAllocationStat.index}" type="number" min="0" class="input-none w100p" data-type="budget-allocation"
+                  <input th:id="'assetId-' + ${budgetAllocation.asset.assetId}" type="number" min="0" class="input-none w100p" data-type="budget-allocation"
                          th:field="*{budgetAllocations[__${budgetAllocationStat.index}__].amount}">원
                 </div>
               </div>
@@ -111,9 +123,9 @@
           <div class="mtb20 fs20" th:if="${budgetDto.fixedExpenses.size() > 0}">
             <div class="mtb20" th:each="fixedExpense : ${budgetDto.fixedExpenses}">
               <div class="space-between">
-                <label th:for="'fixedExpense-' + ${fixedExpenseStat.index}" th:text="${fixedExpense.category.categoryName}"></label>
+                <label th:for="'categoryId-' + ${fixedExpense.category.categoryId}" th:text="${fixedExpense.category.categoryName}"></label>
                 <div class="div-underline">
-                  <input th:id="'fixedExpense-' + ${fixedExpenseStat.index}" type="number" min="0" class="input-none w100p" data-type="fixed-expense"
+                  <input th:id="'categoryId-' + ${fixedExpense.category.categoryId}" type="number" min="0" class="input-none w100p" data-type="fixed-expense"
                          th:field="*{fixedExpenses[__${fixedExpenseStat.index}__].amount}">원
                 </div>
               </div>
