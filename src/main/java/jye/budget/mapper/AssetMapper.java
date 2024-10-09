@@ -41,4 +41,6 @@ public interface AssetMapper {
     List<AssetChange> findChangeByAssetId(@Param("assetId") Long assetId);
 
     void deleteChange(@Param("changeId") Long changeId);
+
+    List<Asset> findByUserIdAndAllocated(@Param("userId") Long userId);
 }

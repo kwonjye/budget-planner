@@ -8,6 +8,7 @@
         <result column="initial_amount" property="initialAmount" />
         <result column="current_amount" property="currentAmount" />
         <result column="is_allocated" property="allocated" />
+        <result column="is_used" property="used" />
         <result column="created_at" property="createdAt" />
         <result column="updated_at" property="updatedAt" />
     </resultMap>
@@ -18,6 +19,7 @@
                initial_amount,
                current_amount,
                is_allocated,
+               is_used,
                created_at,
                updated_at
         FROM asset
@@ -25,6 +27,7 @@
     <select id="findByUserId" resultMap="asset">
         <include refid="asset"/>
         WHERE user_id = #{userId}
+            AND is_used = true
     </select>
     <insert id="save" useGeneratedKeys="true" keyColumn="asset_id" keyProperty="assetId">
         INSERT INTO asset (
@@ -49,7 +52,9 @@
         SELECT EXISTS(
             SELECT 1
             FROM asset
-            WHERE user_id = #{userId} AND asset_name = #{assetName}
+            WHERE user_id = #{userId}
+              AND is_used = true
+              AND asset_name = #{assetName}
             <if test="assetId != null">
                 AND asset_id != #{assetId}
             </if>
@@ -69,7 +74,9 @@
         WHERE asset_id = #{assetId}
     </update>
     <delete id="delete">
-        DELETE FROM asset
+        UPDATE asset
+        SET is_used = false,
+            updated_at = NOW()
         WHERE asset_id = #{assetId}
     </delete>
     <resultMap id="assetChange" type="jye.budget.entity.AssetChange">
@@ -102,6 +109,7 @@
     <select id="findChangeByReqAndUserId" resultMap="assetChange">
         <include refid="assetChange"/>
         WHERE a.user_id = #{userId}
+            AND ac.amount > 0
             AND DATE_FORMAT(ac.change_date, '%Y-%m') = #{req.searchDate}
         <if test="req.assetId != null">
             AND a.asset_id = #{req.assetId}
@@ -161,4 +169,10 @@
         DELETE FROM asset_change
         WHERE change_id = #{changeId}
     </delete>
+    <select id="findByUserIdAndAllocated" resultMap="asset">
+        <include refid="asset"/>
+        WHERE user_id = #{userId}
+            AND is_used = true
+            AND is_allocated = true
+    </select>
 </mapper>

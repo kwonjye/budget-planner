@@ -36,7 +36,7 @@ public class PasswordController {
     @PostMapping("/find")
     public String find(@Valid @ModelAttribute("findPasswordForm") FindPasswordForm findPasswordForm, BindingResult bindingResult,
                        HttpServletRequest request) {
-        log.info("find password : {}", findPasswordForm);
+        log.info("비밀번호 찾기 : {}", findPasswordForm);
 
         if (bindingResult.hasErrors()) {
             return "password/find";
@@ -66,7 +66,7 @@ public class PasswordController {
     public String change(@Valid @ModelAttribute("changePasswordForm") ChangePasswordForm changePasswordForm, BindingResult bindingResult,
                          HttpSession session) {
 
-        log.info("change password : {}", changePasswordForm);
+        log.info("비밀번호 변경 : {}", changePasswordForm);
 
         if (bindingResult.hasErrors()) {
             return "password/change";

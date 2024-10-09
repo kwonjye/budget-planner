@@ -33,7 +33,7 @@ public class UserController {
     public String join(@Valid @ModelAttribute("joinUserForm") JoinUserForm joinUserForm, BindingResult bindingResult,
                        HttpServletRequest request) {
 
-        log.info("join user : {}", joinUserForm);
+        log.info("회원가입 : {}", joinUserForm);
 
         if (bindingResult.hasErrors()) {
             return "user/join";

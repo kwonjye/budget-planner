@@ -37,7 +37,7 @@ public class EmailController {
         String email = (String) session.getAttribute(SessionConst.EMAIL);
         verifyEmailForm.setEmail(email);
 
-        log.info("email verify {}", verifyEmailForm);
+        log.info("이메일 인증 : {}", verifyEmailForm);
 
         if (bindingResult.hasErrors()) {
             return "email/verify";

@@ -38,7 +38,7 @@ public class LoginController {
         }
 
         User loginUser = userService.findByEmail(loginForm.getEmail());
-        log.info("login? {}", loginUser);
+        log.info("로그인 : {}", loginUser);
 
         if(loginUser == null) {
             bindingResult.rejectValue("email", "email.notFound");

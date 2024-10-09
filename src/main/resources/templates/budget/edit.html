@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head th:replace="~{fragment/head :: head}">
+  <title>나만의 가계부</title>
+</head>
+<script>
+  $(document).ready(function() {
+    $('input[type="number"]').on('input', function() {
+      calculate();
+    });
+  });
+
+  function calculate() {
+    let livingExpenseBudget;
+    let assetAllocation = 0;
+    let fixedExpenses = 0;
+
+    const totalBudget = $("#totalBudget").val();
+
+    // 예산 배분
+    $('input[data-type="budget-allocation"]').each(function() {
+      const value = Number($(this).val());
+      if (!isNaN(value)) {
+        assetAllocation += value;
+      }
+    });
+    $("#assetAllocation").val(assetAllocation);
+    $("#assetAllocationText").text(assetAllocation.toLocaleString('ko-KR'));
+
+    // 고정 지출
+    $('input[data-type="fixed-expense"]').each(function() {
+      const value = Number($(this).val());
+      if (!isNaN(value)) {
+        fixedExpenses += value;
+      }
+    });
+    $("#fixedExpenses").val(fixedExpenses);
+    $("#fixedExpensesText").text(fixedExpenses.toLocaleString('ko-KR'));
+
+    livingExpenseBudget = totalBudget - assetAllocation - fixedExpenses;
+    $("#livingExpenseBudget").val(livingExpenseBudget);
+    $("#livingExpenseBudgetText").text(livingExpenseBudget.toLocaleString('ko-KR'));
+  }
+
+  // 최근 예산 정보 불러오기
+  function fetchRecentBudget() {
+    if(confirm("최근 예산 정보를 불러오겠습니까?")) {
+      fetch("/budget/recent")
+              .then(response => response.json())
+              .then(data => {
+                console.log(data);
+                $("#totalBudget").val(data.budget.totalBudget);
+                data.budgetAllocations.forEach((budgetAllocation) => {
+                  $("#assetId-" + budgetAllocation.asset.assetId).val(budgetAllocation.amount);
+                });
+                data.fixedExpenses.forEach((fixedExpense) => {
+                  $("#categoryId-" + fixedExpense.category.categoryId).val(fixedExpense.amount);
+                });
+                calculate();
+              })
+              .catch(error => {
+                console.error("최근 예산 정보 조회 오류 : ", error);
+                alert("최근 예산 정보를 불러올 수 없습니다.");
+              })
+    }
+  }
+</script>
+<body>
+<div th:insert="~{fragment/header :: header}"></div>
+<div class="container">
+  <div>
+    <form th:action="@{/budget/edit}" th:object="${budgetDto}" method="post">
+      <input type="hidden" th:field="*{budget.budgetId}">
+      <div class="fix-top-left">
+        <i class="fi fi-rr-menu-burger" th:data-searchDate="*{budget.yearMonth}" onclick="location.href='/budget?searchDate=' + this.getAttribute('data-searchDate')"></i>
+      </div>
+      <div class="w600 mt60">
+        <div class="fs30 space-between ai-flex-end">
+          <h2 th:text="${T(jye.budget.util.DateFormatterUtil).formatYearMonth(budgetDto.budget.yearMonth)}"></h2>
+          <i class="fi fi-rr-copy h35" onclick="fetchRecentBudget();"></i>
+        </div>
+        <input type="hidden" th:field="*{budget.yearMonth}">
+        <div>
+          <div class="mtb40 fs20">
+            <div class="space-between">
+              <label for="totalBudget">총 예산 금액</label>
+              <div class="div-underline">
+                <input id="totalBudget" type="number" min="0" class="input-none w100p"
+                       th:field="*{budget.totalBudget}">원
+              </div>
+            </div>
+            <div class="field-error mt05 right" th:errors="*{budget.totalBudget}"></div>
+          </div>
+          <div class="mt40 mb20 fs23 blue" th:if="${budgetDto.budgetAllocations.size() > 0}">
+            <div class="space-between">
+              <span>자산 분배</span>
+              <span id="assetAllocationText" th:text="${#numbers.formatInteger(budgetDto.budget.assetAllocation, 1, 'COMMA')}"></span>
+            </div>
+            <input id="assetAllocation" type="hidden" th:field="*{budget.assetAllocation}">
+          </div>
+          <div class="mtb20 fs20" th:if="${budgetDto.budgetAllocations.size() > 0}">
+            <div class="mtb20" th:each="budgetAllocation : ${budgetDto.budgetAllocations}">
+              <div class="space-between">
+                <label th:for="'assetId-' + ${budgetAllocation.asset.assetId}" th:text="${budgetAllocation.asset.assetName}"></label>
+                <div class="div-underline">
+                  <input th:id="'assetId-' + ${budgetAllocation.asset.assetId}" type="number" min="0" class="input-none w100p" data-type="budget-allocation"
+                         th:field="*{budgetAllocations[__${budgetAllocationStat.index}__].amount}">원
+                </div>
+              </div>
+              <input type="hidden" th:field="*{budgetAllocations[__${budgetAllocationStat.index}__].budgetAllocationId}">
+              <input type="hidden" th:field="*{budgetAllocations[__${budgetAllocationStat.index}__].asset.assetId}">
+              <input type="hidden" th:field="*{budgetAllocations[__${budgetAllocationStat.index}__].asset.assetName}">
+              <div class="field-error mt05 right" th:errors="*{budgetAllocations[__${budgetAllocationStat.index}__].amount}"></div>
+            </div>
+          </div>
+          <div class="mt40 mb20 fs23 red" th:if="${budgetDto.fixedExpenses.size() > 0}">
+            <div class="space-between">
+              <span>고정 지출</span>
+              <span id="fixedExpensesText" th:text="${#numbers.formatInteger(budgetDto.budget.fixedExpenses, 1, 'COMMA')}"></span>
+            </div>
+            <input id="fixedExpenses" type="hidden" th:field="*{budget.fixedExpenses}">
+          </div>
+          <div class="mtb20 fs20" th:if="${budgetDto.fixedExpenses.size() > 0}">
+            <div class="mtb20" th:each="fixedExpense : ${budgetDto.fixedExpenses}">
+              <div class="space-between">
+                <label th:for="'categoryId-' + ${fixedExpense.category.categoryId}" th:text="${fixedExpense.category.categoryName}"></label>
+                <div class="div-underline">
+                  <input th:id="'categoryId-' + ${fixedExpense.category.categoryId}" type="number" min="0" class="input-none w100p" data-type="fixed-expense"
+                         th:field="*{fixedExpenses[__${fixedExpenseStat.index}__].amount}">원
+                </div>
+              </div>
+              <input type="hidden" th:field="*{fixedExpenses[__${fixedExpenseStat.index}__].fixedExpenseId}">
+              <input type="hidden" th:field="*{fixedExpenses[__${fixedExpenseStat.index}__].category.categoryId}">
+              <input type="hidden" th:field="*{fixedExpenses[__${fixedExpenseStat.index}__].category.categoryName}">
+              <div class="field-error mt05 right" th:errors="*{fixedExpenses[__${fixedExpenseStat.index}__].amount}"></div>
+            </div>
+          </div>
+          <div class="mtb40">
+            <div class="space-between fs23 bold">
+              <span>생활비</span>
+              <span id="livingExpenseBudgetText" th:text="${#numbers.formatInteger(budgetDto.budget.livingExpenseBudget, 1, 'COMMA')}"></span>
+            </div>
+            <input id="livingExpenseBudget" type="hidden" th:field="*{budget.livingExpenseBudget}">
+            <div class="field-error mt05 right fs20" th:errors="*{budget.livingExpenseBudget}"></div>
+          </div>
+          <div class="right">
+            <button class="btn-gradient w200" type="submit">저장</button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+</body>
+</html>

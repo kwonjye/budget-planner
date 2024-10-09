@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jye.budget.mapper.CategoryMapper">
+    <resultMap id="category" type="jye.budget.entity.Category">
+        <id column="category_id" property="categoryId" />
+        <result column="user_id" property="userId" />
+        <result column="category_type" property="categoryType" />
+        <result column="category_name" property="categoryName" />
+        <result column="category_color" property="categoryColor" />
+        <result column="is_used" property="used" />
+        <result column="created_at" property="createdAt" />
+        <result column="updated_at" property="updatedAt" />
+    </resultMap>
+    <select id="findByUserIdAndType" resultMap="category">
+        SELECT category_id,
+               user_id,
+               category_type,
+               category_name,
+               category_color,
+               is_used,
+               created_at,
+               updated_at
+        FROM category
+        WHERE user_id = #{userId}
+            AND is_used = true
+            AND category_type = #{categoryType}
+    </select>
+</mapper>

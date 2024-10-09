@@ -28,6 +28,21 @@ public class AssetService {
         return assetMapper.findByUserId(userId);
     }
 
+    @Transactional(readOnly = true)
+    public Asset checkAsset(Long assetId, Long userId) {
+        Asset asset = findById(assetId);
+        if(asset == null) {
+            log.error("자산 정보 없음 : {}", assetId);
+            return null;
+        }
+        if(!asset.getUserId().equals(userId)) {
+            log.error("자산 userId 불일치 : assetId - {}, asset.userId - {}, userId - {}",
+                    asset.getAssetId(), asset.getUserId(), userId);
+            return null;
+        }
+        return asset;
+    }
+
     @Transactional
     public void save(Long userId, @Valid AssetForm assetForm) {
         Asset asset = Asset.builder()
@@ -43,7 +58,9 @@ public class AssetService {
 
     @Transactional(readOnly = true)
     public boolean existsByAssetName(Long userId, @NotBlank String assetName, Long assetId) {
-        return assetMapper.existsByAssetName(userId, assetName, assetId);
+        boolean existsByAssetName = assetMapper.existsByAssetName(userId, assetName, assetId);
+        if (existsByAssetName) log.error("이미 존재하는 자산명 : {}", assetName);
+        return existsByAssetName;
     }
 
     @Transactional(readOnly = true)
@@ -75,7 +92,7 @@ public class AssetService {
     }
 
     @Transactional
-    public void change(@Valid AssetChangeForm assetChangeForm,
+    public AssetChange change(@Valid AssetChangeForm assetChangeForm,
                        Asset asset) {
 
         AssetChange assetChange = AssetChange.builder()
@@ -91,11 +108,15 @@ public class AssetService {
         int currentAmount = assetChangeForm.getCalcType().apply(asset.getCurrentAmount(), assetChange.getAmount());
         log.info("update asset {} currentAmount : {}", asset, currentAmount);
         assetMapper.updateCurrentAmount(asset.getAssetId(), currentAmount);
+
+        return assetChange;
     }
 
     @Transactional(readOnly = true)
     public AssetChange findChangeById(Long changeId) {
-        return assetMapper.findChangeById(changeId);
+        AssetChange assetChange = assetMapper.findChangeById(changeId);
+        if(assetChange == null) log.error("자산 변동 정보 없음 : {}", changeId);
+        return assetChange;
     }
 
     @Transactional

@@ -1,4 +1,5 @@
 @import url('https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-rounded/css/uicons-regular-rounded.css');
+@import url('https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-straight/css/uicons-regular-straight.css');
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap');
 @font-face {
     font-family: 'HakgyoansimWoojuR';
@@ -42,6 +43,14 @@ i:not(.menu i) {
     top: 20px;
     left: 30px;
 }
+.fix-top-center-w600 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 20px;
+    left: CALC(50% - 300px);
+}
 .fix-top-center-w650 {
     display: flex;
     justify-content: center;
@@ -50,13 +59,22 @@ i:not(.menu i) {
     top: 20px;
     left: CALC(50% - 325px);
 }
-.fix-top-right {
+.fix-top-center-right-w600-h38 {
+    display: flex;
+    align-items: center;
+    position: absolute;
+    top: 20px;
+    right: CALC(50% - 300px);
+    height: 38px;
+}
+.fix-top-right-h38 {
     display: flex;
     justify-content: space-between;
     align-items: center;
     position: absolute;
     top: 20px;
     right: 30px;
+    height: 38px;
 }
 
 /* width % */
@@ -130,6 +148,21 @@ i:not(.menu i) {
 .fs20 {
     font-size: 20px;
 }
+.fs23 {
+    font-size: 23px;
+}
+.fs25 {
+    font-size: 25px;
+}
+.fs26 {
+    font-size: 26px;
+}
+.fs28 {
+    font-size: 28px;
+}
+.fs30 {
+    font-size: 30px;
+}
 .fs35 {
     font-size: 35px;
 }
@@ -189,6 +222,9 @@ i:not(.menu i) {
 .mtb10 {
     margin: 10px 0;
 }
+.mtb15 {
+    margin: 15px 0;
+}
 .mtb20 {
     margin: 20px 0;
 }
@@ -206,8 +242,17 @@ i:not(.menu i) {
 }
 
 /* padding */
+.p10 {
+    padding: 10px;
+}
 .pt20 {
     padding-top: 20px;
+}
+.pm15 {
+    padding-bottom: 15px;
+}
+.pm30 {
+    padding-bottom: 30px;
 }
 
 /* error */
@@ -306,8 +351,10 @@ header {
     text-align: center;
     padding: 0 25px;
 }
-input[type="month"]::-webkit-calendar-picker-indicator {
+.input-month::-webkit-inner-spin-button,
+.input-month::-webkit-calendar-picker-indicator {
     display: none;
+    -webkit-appearance: none;
 }
 
 /* underline */
@@ -321,6 +368,9 @@ input[type="month"]::-webkit-calendar-picker-indicator {
 .label-underline {
     display: flex;
     justify-content: center;
+    border-bottom: 1px solid #eeeeee;
+}
+.border-underline {
     border-bottom: 1px solid #eeeeee;
 }
 
@@ -368,13 +418,6 @@ input[type="month"]::-webkit-calendar-picker-indicator {
 }
 
 /* asset */
-.asset {
-    background: #eeeeee;
-    border-radius: 10px;
-    border: none;
-    margin: 15px 0;
-    padding: 20px;
-}
 .asset-button {
     border-top: 1px solid #eeeeee;
     margin-top: 30px;
@@ -400,4 +443,13 @@ input[type="month"]::-webkit-calendar-picker-indicator {
 }
 .gray {
     color: #737373;
+}
+
+/* background */
+.background-gray {
+    background: #eeeeee;
+    border-radius: 10px;
+    border: none;
+    margin: 15px 0;
+    padding: 20px;
 }
