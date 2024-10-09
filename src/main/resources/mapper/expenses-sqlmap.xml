@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jye.budget.mapper.ExpensesMapper">
+    <resultMap id="expenses" type="jye.budget.entity.Expenses">
+        <id column="expense_id" property="expenseId" />
+        <result column="user_id" property="userId" />
+        <result column="expense_name" property="expenseName" />
+        <result column="expense_detail" property="expenseDetail" />
+        <result column="amount" property="amount" />
+        <result column="memo" property="memo" />
+        <result column="related_url" property="relatedUrl" />
+        <result column="expense_date" property="expenseDate" />
+        <result column="is_necessary" property="necessary" />
+        <result column="created_at" property="createdAt" />
+        <result column="updated_at" property="updatedAt" />
+        <association property="category" resultMap="jye.budget.mapper.CategoryMapper.category" columnPrefix="c_"/>
+    </resultMap>
+    <select id="findByReqAndUserId" resultMap="expenses">
+        SELECT e.expense_id,
+               e.user_id,
+               e.expense_name,
+               e.expense_detail,
+               e.amount,
+               e.memo,
+               e.related_url,
+               e.expense_date,
+               e.is_necessary,
+               e.created_at,
+               e.updated_at,
+               c.category_id AS c_category_id,
+               c.category_type AS c_category_type,
+               c.category_name AS c_category_name,
+               c.category_color AS c_category_color,
+               c.created_at AS c_created_at
+        FROM expenses e
+        JOIN category c ON e.category_id = c.category_id
+        WHERE e.user_id = #{userId}
+            AND DATE_FORMAT(e.expense_date, '%Y-%m') = #{req.searchDate}
+        <if test='req.searchText != null and req.searchText != ""'>
+            AND (e.expense_name LIKE CONCAT('%', #{req.searchText}, '%')
+              OR e.expense_detail LIKE CONCAT('%', #{req.searchText}, '%'))
+        </if>
+    </select>
+</mapper>

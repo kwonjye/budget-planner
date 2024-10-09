@@ -48,13 +48,13 @@
 </script>
 <body>
 <div th:insert="~{fragment/header :: header}"></div>
-<div class="container">
+<div class="container center">
   <div>
     <form id="form" th:action="@{/asset/change}" th:object="${req}" method="get">
       <div class="fix-top-left">
         <i class="fi fi-rr-menu-burger" th:onclick="|location.href='@{/asset}'|"></i>
       </div>
-      <div class="w600 center fix-top-center-w600">
+      <div class="w600 ta-center fix-top-center-w600">
         <div class="h30" onclick="changeMonth(-1)">
           <i class="fi fi-rr-angle-left"></i>
         </div>
@@ -109,7 +109,7 @@
             </div>
           </div>
         </div>
-        <div class="right">
+        <div class="ta-right">
           <button class="btn-gradient w200" type="button" th:onclick="|location.href='@{/asset/change/add}'|">추가</button>
         </div>
       </div>

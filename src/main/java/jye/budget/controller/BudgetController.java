@@ -37,11 +37,12 @@ public class BudgetController {
     public String view(@ModelAttribute("req") BudgetReq req, HttpSession session, Model model) {
         User user = (User) session.getAttribute(SessionConst.LOGIN_USER);
 
-        log.info("예산 조회 : {}", req);
-
         if(StringUtils.isBlank(req.getSearchDate())) {
             req.setSearchDate(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM")));
         }
+
+        log.info("예산 조회 : {}", req);
+
         BudgetDto data = budgetService.findByYearMonthAndUserId(req.getSearchDate(), user.getUserId(), false);
         model.addAttribute("data", data);
 

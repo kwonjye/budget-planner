@@ -24,10 +24,10 @@
 </script>
 <body>
 <div th:insert="~{fragment/header :: header}"></div>
-<div class="container">
+<div class="container center">
     <div>
         <form th:action="@{/budget}" th:object="${req}" method="get">
-            <div class="w600 center fix-top-center-w600">
+            <div class="w600 ta-center fix-top-center-w600">
                 <div class="h30" onclick="changeMonth(-1)">
                     <i class="fi fi-rr-angle-left"></i>
                 </div>
@@ -42,7 +42,7 @@
                 <i class="fi fi-rs-edit h30" th:data-searchDate="${req.searchDate}" onclick="location.href='/budget/edit?searchDate=' + this.getAttribute('data-searchDate')"></i>
             </div>
             <div class="w600 mt90">
-                <div class="fs26 space-between ai-flex-end pm15 border-underline">
+                <div class="fs26 space-between ai-flex-end pb15 border-underline">
                     <h2>생활비</h2>
                     <h2 th:text="${#numbers.formatInteger(data.budget.livingExpenseBudget, 1, 'COMMA')}"></h2>
                 </div>

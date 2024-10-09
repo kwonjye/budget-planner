@@ -4,12 +4,12 @@
   <title>나만의 가계부</title>
 </head>
 <body>
-<div class="container ai-center">
-  <div class="content-01 w500">
-    <div class="right fix-top-right-15">
+<div class="container center ai-center">
+  <div class="content w500">
+    <div class="ta-right fix-top-right-15">
       <i class="fi fi-rr-sign-in-alt" th:onclick="|location.href='@{/login}'|"></i>
     </div>
-    <div class="header-01">
+    <div class="header">
       <h2>회원가입</h2>
     </div>
     <form th:action th:object="${joinUserForm}" method="post">
@@ -41,7 +41,7 @@
                placeholder="비밀번호 재입력">
         <div class="field-error" th:errors="*{passwordConfirm}"></div>
       </div>
-      <div class="center">
+      <div class="ta-center">
         <button class="btn-gradient w100p" type="submit">가입하기</button>
       </div>
     </form>

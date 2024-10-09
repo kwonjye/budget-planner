@@ -67,7 +67,7 @@
 </script>
 <body>
 <div th:insert="~{fragment/header :: header}"></div>
-<div class="container">
+<div class="container center">
   <div>
     <form th:action="@{/budget/edit}" th:object="${budgetDto}" method="post">
       <input type="hidden" th:field="*{budget.budgetId}">
@@ -89,7 +89,7 @@
                        th:field="*{budget.totalBudget}">원
               </div>
             </div>
-            <div class="field-error mt05 right" th:errors="*{budget.totalBudget}"></div>
+            <div class="field-error mt05 ta-right" th:errors="*{budget.totalBudget}"></div>
           </div>
           <div class="mt40 mb20 fs23 blue" th:if="${budgetDto.budgetAllocations.size() > 0}">
             <div class="space-between">
@@ -110,7 +110,7 @@
               <input type="hidden" th:field="*{budgetAllocations[__${budgetAllocationStat.index}__].budgetAllocationId}">
               <input type="hidden" th:field="*{budgetAllocations[__${budgetAllocationStat.index}__].asset.assetId}">
               <input type="hidden" th:field="*{budgetAllocations[__${budgetAllocationStat.index}__].asset.assetName}">
-              <div class="field-error mt05 right" th:errors="*{budgetAllocations[__${budgetAllocationStat.index}__].amount}"></div>
+              <div class="field-error mt05 ta-right" th:errors="*{budgetAllocations[__${budgetAllocationStat.index}__].amount}"></div>
             </div>
           </div>
           <div class="mt40 mb20 fs23 red" th:if="${budgetDto.fixedExpenses.size() > 0}">
@@ -132,7 +132,7 @@
               <input type="hidden" th:field="*{fixedExpenses[__${fixedExpenseStat.index}__].fixedExpenseId}">
               <input type="hidden" th:field="*{fixedExpenses[__${fixedExpenseStat.index}__].category.categoryId}">
               <input type="hidden" th:field="*{fixedExpenses[__${fixedExpenseStat.index}__].category.categoryName}">
-              <div class="field-error mt05 right" th:errors="*{fixedExpenses[__${fixedExpenseStat.index}__].amount}"></div>
+              <div class="field-error mt05 ta-right" th:errors="*{fixedExpenses[__${fixedExpenseStat.index}__].amount}"></div>
             </div>
           </div>
           <div class="mtb40">
@@ -141,9 +141,9 @@
               <span id="livingExpenseBudgetText" th:text="${#numbers.formatInteger(budgetDto.budget.livingExpenseBudget, 1, 'COMMA')}"></span>
             </div>
             <input id="livingExpenseBudget" type="hidden" th:field="*{budget.livingExpenseBudget}">
-            <div class="field-error mt05 right fs20" th:errors="*{budget.livingExpenseBudget}"></div>
+            <div class="field-error mt05 ta-right fs20" th:errors="*{budget.livingExpenseBudget}"></div>
           </div>
-          <div class="right">
+          <div class="ta-right">
             <button class="btn-gradient w200" type="submit">저장</button>
           </div>
         </div>

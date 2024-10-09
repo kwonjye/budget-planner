@@ -5,9 +5,9 @@
 </head>
 <body>
 <div th:insert="~{fragment/header :: header}"></div>
-<div class="container ai-center">
-  <div class="content-01 w550">
-    <div class="header-01">
+<div class="container center ai-center">
+  <div class="content w550">
+    <div class="header">
       <h2>회원 탈퇴</h2>
     </div>
     <form th:action="@{/user/delete}" th:object="${deleteUserForm}" method="post">
@@ -27,7 +27,7 @@
                placeholder="현재 비밀번호">
         <div class="field-error" th:errors="*{password}"></div>
       </div>
-      <div class="center">
+      <div class="ta-center">
         <button class="btn-gradient w100p" type="submit">탈퇴하기</button>
       </div>
     </form>

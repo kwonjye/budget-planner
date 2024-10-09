@@ -14,7 +14,7 @@
 </script>
 <body>
 <div th:insert="~{fragment/header :: header}"></div>
-<div class="container">
+<div class="container center">
     <div>
         <div class="fix-top-left">
             <i class="fi fi-rr-menu-burger" th:onclick="|location.href='@{/asset}'|"></i>
@@ -33,7 +33,7 @@
                                        th:field="*{assetName}">
                             </div>
                         </div>
-                        <div class="field-error mt05 right" th:errors="*{assetName}"></div>
+                        <div class="field-error mt05 ta-right" th:errors="*{assetName}"></div>
                     </div>
                     <div class="mtb50">
                         <div class="space-between">
@@ -44,7 +44,7 @@
                                 <span>원</span>
                             </div>
                         </div>
-                        <div class="field-error mt05 right" th:errors="*{initialAmount}"></div>
+                        <div class="field-error mt05 ta-right" th:errors="*{initialAmount}"></div>
                     </div>
                     <div class="mtb50">
                         <div class="space-between">
@@ -55,9 +55,9 @@
                                 <span id="allocatedText" th:text="${assetForm.allocated ? 'Y' : 'N'}"></span>
                             </div>
                         </div>
-                        <div class="field-error mt05 right" th:errors="*{allocated}"></div>
+                        <div class="field-error mt05 ta-right" th:errors="*{allocated}"></div>
                     </div>
-                    <div class="right">
+                    <div class="ta-right">
                         <button class="btn-gradient w200" type="submit">저장</button>
                     </div>
                 </form>

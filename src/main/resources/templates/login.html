@@ -4,9 +4,9 @@
     <title>나만의 가계부</title>
 </head>
 <body>
-<div class="container ai-center">
-    <div class="content-01 w500">
-        <div class="header-01">
+<div class="container center ai-center">
+    <div class="content w500">
+        <div class="header">
             <h2>나만의 가계부</h2>
         </div>
         <form th:action th:object="${loginForm}" method="post">
@@ -30,7 +30,7 @@
                        placeholder="비밀번호">
                 <div class="field-error" th:errors="*{password}"></div>
             </div>
-            <div class="center">
+            <div class="ta-center">
                 <button class="btn-gradient w100p" type="submit">로그인</button>
             </div>
             <div class="space-between">
