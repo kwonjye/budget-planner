@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -149,6 +150,7 @@ public class AssetController {
         }
         List<AssetChange> assetChanges = assetService.findChangeByReqAndUserId(req, user.getUserId());
         Map<LocalDate, List<AssetChange>> groupedByChangeDate = assetChanges.stream()
+                .sorted(Comparator.comparing(AssetChange::getCreatedAt).reversed())
                 .collect(Collectors.groupingBy(AssetChange::getChangeDate));
         model.addAttribute("groupedByChangeDate", groupedByChangeDate);
 

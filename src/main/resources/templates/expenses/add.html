@@ -29,7 +29,7 @@
             <div class="space-between">
               <label for="categoryId">카테고리</label>
               <div class="div-underline">
-                <select id="categoryId" th:field="*{categoryId}" class="input-none w100p bold">
+                <select id="categoryId" th:field="*{categoryId}" class="input-none w100p">
                   <option th:each="category : ${categories}"
                           th:value="${category.categoryId}"
                           th:text="${category.categoryName}"></option>
@@ -101,11 +101,11 @@
           </div>
           <div class="mtb50">
             <div class="space-between">
-              <label for="necessary">불필요</label>
+              <label for="necessary">필요</label>
               <div class="div-underline h-weight" onclick="changeNecessaryValue();">
                 <input type="hidden" id="necessary"
                        th:field="*{necessary}" readonly>
-                <span id="necessaryText">N</span>
+                <span id="necessaryText">Y</span>
               </div>
             </div>
             <div class="field-error mt05 ta-right" th:errors="*{necessary}"></div>

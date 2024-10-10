@@ -4,6 +4,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 
@@ -27,7 +28,8 @@ public class ExpensesForm {
     private String relatedUrl;
 
     @NotNull
-    private LocalDate expenseDate;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate expenseDate = LocalDate.now();
 
-    private boolean isNecessary;
+    private boolean isNecessary = true;
 }

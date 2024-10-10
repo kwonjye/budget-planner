@@ -293,6 +293,9 @@ i:not(.menu i) {
 .pt20 {
     padding-top: 20px;
 }
+.pr20 {
+    padding-right: 20px;
+}
 .pb15 {
     padding-bottom: 15px;
 }
@@ -361,6 +364,7 @@ header {
 .container {
     height: CALC(100vh - 90px);
     overflow: hidden;
+    overflow-x: scroll;
     overflow-y: scroll;
     scrollbar-width: none;
     margin-top: 60px;

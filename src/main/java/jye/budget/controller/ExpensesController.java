@@ -52,6 +52,7 @@ public class ExpensesController {
 
         List<Expenses> expenses = expensesService.findByReqAndUserId(req, user.getUserId());
         Map<LocalDate, List<Expenses>> groupedByExpenseDate = expenses.stream()
+                .sorted(Comparator.comparing(Expenses::getCreatedAt).reversed())
                 .collect(Collectors.groupingBy(Expenses::getExpenseDate));
         model.addAttribute("groupedByExpenseDate", groupedByExpenseDate);
 
