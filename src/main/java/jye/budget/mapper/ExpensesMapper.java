@@ -17,4 +17,6 @@ public interface ExpensesMapper {
     Expenses findById(@Param("expenseId") Long expenseId);
 
     void delete(@Param("expenseId") Long expenseId);
+
+    void update(Expenses expenses);
 }

@@ -53,4 +53,20 @@ public class ExpensesService {
     public void delete(Long expenseId) {
         expensesMapper.delete(expenseId);
     }
+
+    @Transactional
+    public void update(Long expenseId, @Valid ExpensesForm expensesForm, Category category) {
+        Expenses expenses = Expenses.builder()
+                .expenseId(expenseId)
+                .category(category)
+                .expenseName(expensesForm.getExpenseName())
+                .expenseDetail(expensesForm.getExpenseDetail())
+                .amount(expensesForm.getAmount())
+                .memo(expensesForm.getMemo())
+                .relatedUrl(expensesForm.getRelatedUrl())
+                .expenseDate(expensesForm.getExpenseDate())
+                .isNecessary(expensesForm.isNecessary())
+                .build();
+        expensesMapper.update(expenses);
+    }
 }

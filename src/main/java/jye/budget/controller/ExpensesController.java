@@ -91,7 +91,7 @@ public class ExpensesController {
         User user = (User) session.getAttribute(SessionConst.LOGIN_USER);
         List<Category> categories = categoryMapper.findByUserIdAndType(user.getUserId(), CategoryType.EXPENSE);
         model.addAttribute("categories", categories);
-        return "/expenses/add";
+        return "/expenses/form";
     }
 
     @PostMapping("/add")
@@ -106,7 +106,7 @@ public class ExpensesController {
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("categories", categories);
-            return "/expenses/add";
+            return "/expenses/form";
         }
 
         Optional<Category> categoryOptional = categories.stream().filter(category -> Objects.equals(category.getCategoryId(), expensesForm.getCategoryId())).findFirst();
@@ -114,9 +114,66 @@ public class ExpensesController {
             log.error("카테고리 정보 없음 : {}", expensesForm.getCategoryId());
             bindingResult.rejectValue("categoryId", "category.notFound");
             model.addAttribute("categories", categories);
-            return "/expenses/add";
+            return "/expenses/form";
         }
         expensesService.save(user.getUserId(), expensesForm, categoryOptional.get());
+
+        return "redirect:/expenses";
+    }
+
+    @GetMapping("/{expenseId}")
+    public String editForm(@PathVariable("expenseId") Long expenseId,
+                           HttpSession session, Model model) {
+
+        User user = (User) session.getAttribute(SessionConst.LOGIN_USER);
+
+        Expenses expenses = expensesService.findById(expenseId);
+        if(expenses == null) {
+            return "/error";
+        }
+        if(!Objects.equals(expenses.getUserId(), user.getUserId())) {
+            log.error("회원 ID 불일치 : expenses - {}, user - {}", expenses.getUserId(), user.getUserId());
+            return "/error";
+        }
+        List<Category> categories = categoryMapper.findByUserIdAndType(user.getUserId(), CategoryType.EXPENSE);
+        model.addAttribute("categories", categories);
+        model.addAttribute("expensesForm", new ExpensesForm(expenses));
+        return "/expenses/form";
+    }
+
+    @PostMapping("/{expenseId}")
+    public String edit(@PathVariable("expenseId") Long expenseId,
+                       @Valid @ModelAttribute("expensesForm") ExpensesForm expensesForm, BindingResult bindingResult,
+                       HttpSession session, Model model) {
+
+        log.info("지출 수정 : {}", expensesForm);
+
+        User user = (User) session.getAttribute(SessionConst.LOGIN_USER);
+
+        List<Category> categories = categoryMapper.findByUserIdAndType(user.getUserId(), CategoryType.EXPENSE);
+
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("categories", categories);
+            return "/expenses/form";
+        }
+
+        Expenses expenses = expensesService.findById(expenseId);
+        if(expenses == null) {
+            return "/error";
+        }
+        if(!Objects.equals(expenses.getUserId(), user.getUserId())) {
+            log.error("회원 ID 불일치 : expenses - {}, user - {}", expenses.getUserId(), user.getUserId());
+            return "/error";
+        }
+
+        Optional<Category> categoryOptional = categories.stream().filter(category -> Objects.equals(category.getCategoryId(), expensesForm.getCategoryId())).findFirst();
+        if(categoryOptional.isEmpty()) {
+            log.error("카테고리 정보 없음 : {}", expensesForm.getCategoryId());
+            bindingResult.rejectValue("categoryId", "category.notFound");
+            model.addAttribute("categories", categories);
+            return "/expenses/form";
+        }
+        expensesService.update(expenseId, expensesForm, categoryOptional.get());
 
         return "redirect:/expenses";
     }

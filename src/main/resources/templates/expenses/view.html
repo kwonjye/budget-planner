@@ -105,24 +105,25 @@
         <div class="w50p plr30 min-w600">
           <div th:each="groupedByExpenseDate : ${groupedByExpenseDate}" class="mb50">
             <div th:text="${T(jye.budget.util.DateFormatterUtil).formatLocalDateWithDay(groupedByExpenseDate.key)}" class="bold mtb20"></div>
-            <div class="expenses space-between ai-center mtb20 h-scale"
+            <div class="expenses space-between ai-center mtb20 h-scale cursor"
                  th:data-expense-id="${expenses.expenseId}"
                  th:data-expense-name="${expenses.expenseName}"
                  th:data-expense-detail="${expenses.expenseDetail}"
                  th:data-amount="${expenses.amount}"
                  th:each="expenses : ${groupedByExpenseDate.value}">
-              <span th:text="${expenses.category.categoryName}" class="ptb05 w20p  ta-center br05" th:style="'background-color: ' + ${expenses.category.categoryColor}"></span>
+              <span th:text="${expenses.category.categoryName}"
+                    th:onclick="|location.href='@{/expenses/}| + ${expenses.expenseId} + |'|" class="ptb05 w20p ta-center br05" th:style="'background-color: ' + ${expenses.category.categoryColor}"></span>
               <span th:text="${expenses.expenseName}"
-                    th:onclick="|location.href='@{/expenses/}| + ${expenses.expenseId} + |'|" class="w20p ta-center h-weight"></span>
+                    th:onclick="|location.href='@{/expenses/}| + ${expenses.expenseId} + |'|" class="w20p ta-center"></span>
               <a class="flex-grow ta-center none-underline black"
-                 th:href="${expenses.relatedUrl}"
-                 th:attr="target=${expenses.relatedUrl != null ? '_blank' : ''}"
-                 th:classappend="${expenses.relatedUrl != null ? 'h-underline' : ''}">
+                 th:href="${expenses.relatedUrl != null && expenses.relatedUrl != '' ? expenses.relatedUrl : '/expenses/' + expenses.expenseId}"
+                 th:attr="target=${expenses.relatedUrl != null && expenses.relatedUrl != '' ? '_blank' : ''}"
+                 th:classappend="${expenses.relatedUrl != null && expenses.relatedUrl != '' ? 'h-underline' : ''}">
                 <span th:text="${expenses.expenseDetail}"></span>
                 <span th:if="${!expenses.necessary}" class="orange">*</span>
               </a>
               <span th:text="${#numbers.formatInteger(expenses.amount, 1, 'COMMA')}"
-                    th:onclick="|location.href='@{/expenses/}| + ${expenses.expenseId} + |'|" class="w20p ta-right h-weight"></span>
+                    th:onclick="|location.href='@{/expenses/}| + ${expenses.expenseId} + |'|" class="w20p ta-right"></span>
             </div>
           </div>
         </div>

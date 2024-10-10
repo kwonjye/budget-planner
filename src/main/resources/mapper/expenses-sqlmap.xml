@@ -79,4 +79,17 @@
         DELETE FROM expenses
         WHERE expense_id = #{expenseId}
     </delete>
+    <update id="update">
+        UPDATE expenses
+        SET category_id = #{category.categoryId},
+            expense_name = #{expenseName},
+            expense_detail = #{expenseDetail},
+            amount = #{amount},
+            memo = #{memo},
+            related_url = #{relatedUrl},
+            expense_date = #{expenseDate},
+            is_necessary = #{isNecessary},
+            updated_at = NOW()
+        WHERE expense_id = #{expenseId}
+    </update>
 </mapper>
