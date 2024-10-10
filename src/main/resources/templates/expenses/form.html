@@ -105,7 +105,7 @@
               <div class="div-underline h-weight" onclick="changeNecessaryValue();">
                 <input type="hidden" id="necessary"
                        th:field="*{necessary}" readonly>
-                <span id="necessaryText">Y</span>
+                <span id="necessaryText" th:text="${expensesForm.necessary ? 'Y' : 'N'}"></span>
               </div>
             </div>
             <div class="field-error mt05 ta-right" th:errors="*{necessary}"></div>
