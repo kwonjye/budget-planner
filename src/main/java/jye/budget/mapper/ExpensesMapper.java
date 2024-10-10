@@ -11,4 +11,6 @@ import java.util.List;
 public interface ExpensesMapper {
     List<Expenses> findByReqAndUserId(@Param("req") ExpensesReq req,
                                       @Param("userId") Long userId);
+
+    void save(Expenses expenses);
 }

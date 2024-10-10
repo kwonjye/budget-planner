@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head th:replace="~{fragment/head :: head}">
+  <title>나만의 가계부</title>
+</head>
+<script>
+  function changeNecessaryValue() {
+    const necessaryInput = $("#necessary");
+    const isNecessary = necessaryInput.val() === '1';
+
+    necessaryInput.val(isNecessary ? '0' : '1');
+    $("#necessaryText").text(isNecessary ? 'N' : 'Y');
+  }
+</script>
+<body>
+<div th:insert="~{fragment/header :: header}"></div>
+<div class="container center">
+  <div>
+    <div class="fix-top-left">
+      <i class="fi fi-rr-menu-burger" th:onclick="|location.href='@{/expenses}'|"></i>
+    </div>
+    <div class="w550">
+      <div class="fs35 space-between mt70 mb30">
+        <h2>지출 입력</h2>
+      </div>
+      <div class="fs20">
+        <form th:action th:object="${expensesForm}" method="post">
+          <div class="mtb50">
+            <div class="space-between">
+              <label for="categoryId">카테고리</label>
+              <div class="div-underline">
+                <select id="categoryId" th:field="*{categoryId}" class="input-none w100p bold">
+                  <option th:each="category : ${categories}"
+                          th:value="${category.categoryId}"
+                          th:text="${category.categoryName}"></option>
+                </select>
+              </div>
+            </div>
+            <div class="field-error mt05 ta-right" th:errors="*{categoryId}"></div>
+          </div>
+          <div class="mtb50">
+            <div class="space-between">
+              <label for="expenseName">지출명</label>
+              <div class="div-underline">
+                <input type="text" id="expenseName" class="input-none w100p"
+                       th:field="*{expenseName}">
+              </div>
+            </div>
+            <div class="field-error mt05 ta-right" th:errors="*{expenseName}"></div>
+          </div>
+          <div class="mtb50">
+            <div class="space-between">
+              <label for="expenseDetail">내용</label>
+              <div class="div-underline">
+                <input type="text" id="expenseDetail" class="input-none w100p"
+                       th:field="*{expenseDetail}">
+              </div>
+            </div>
+            <div class="field-error mt05 ta-right" th:errors="*{expenseDetail}"></div>
+          </div>
+          <div class="mtb50">
+            <div class="space-between">
+              <label for="amount">내용</label>
+              <div class="div-underline">
+                <input type="number" id="amount" class="input-none w100p"
+                       th:field="*{amount}">
+                <span>원</span>
+              </div>
+            </div>
+            <div class="field-error mt05 ta-right" th:errors="*{amount}"></div>
+          </div>
+          <div class="mtb50">
+            <div class="space-between">
+              <label for="expenseDate">지출일</label>
+              <div class="div-underline">
+                <input type="date" id="expenseDate" class="input-none w100p"
+                       th:field="*{expenseDate}">
+              </div>
+            </div>
+            <div class="field-error mt05 ta-right" th:errors="*{expenseDate}"></div>
+          </div>
+          <div class="mtb50">
+            <div class="space-between">
+              <label for="relatedUrl">관련 URL</label>
+              <div class="div-underline">
+                <input type="text" id="relatedUrl" class="input-none w100p"
+                       th:field="*{relatedUrl}">
+              </div>
+            </div>
+            <div class="field-error mt05 ta-right" th:errors="*{relatedUrl}"></div>
+          </div>
+          <div class="mtb50">
+            <div class="space-between">
+              <label for="memo">메모</label>
+              <div class="div-underline">
+                <input type="text" id="memo" class="input-none w100p"
+                       th:field="*{memo}">
+              </div>
+            </div>
+            <div class="field-error mt05 ta-right" th:errors="*{memo}"></div>
+          </div>
+          <div class="mtb50">
+            <div class="space-between">
+              <label for="necessary">불필요</label>
+              <div class="div-underline h-weight" onclick="changeNecessaryValue();">
+                <input type="hidden" id="necessary"
+                       th:field="*{necessary}" readonly>
+                <span id="necessaryText">N</span>
+              </div>
+            </div>
+            <div class="field-error mt05 ta-right" th:errors="*{necessary}"></div>
+          </div>
+          <div class="ta-right">
+            <button class="btn-gradient w200" type="submit">저장</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

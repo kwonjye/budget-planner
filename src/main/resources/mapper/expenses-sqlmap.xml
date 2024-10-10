@@ -41,4 +41,31 @@
               OR e.expense_detail LIKE CONCAT('%', #{req.searchText}, '%'))
         </if>
     </select>
+    <insert id="save" useGeneratedKeys="true" keyColumn="expense_id" keyProperty="expenseId">
+        INSERT INTO expenses (
+                              user_id,
+                              category_id,
+                              expense_name,
+                              expense_detail,
+                              amount,
+                              memo,
+                              related_url,
+                              expense_date,
+                              is_necessary,
+                              created_at,
+                              updated_at
+        ) VALUES (
+                  #{userId},
+                  #{category.categoryId},
+                  #{expenseName},
+                  #{expenseDetail},
+                  #{amount},
+                  #{memo},
+                  #{relatedUrl},
+                  #{expenseDate},
+                  #{isNecessary},
+                  NOW(),
+                  NOW()
+                         )
+    </insert>
 </mapper>
