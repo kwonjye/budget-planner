@@ -17,13 +17,11 @@ import jye.budget.service.ExpensesService;
 import jye.budget.type.CategoryType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -113,12 +111,32 @@ public class ExpensesController {
 
         Optional<Category> categoryOptional = categories.stream().filter(category -> Objects.equals(category.getCategoryId(), expensesForm.getCategoryId())).findFirst();
         if(categoryOptional.isEmpty()) {
+            log.error("카테고리 정보 없음 : {}", expensesForm.getCategoryId());
             bindingResult.rejectValue("categoryId", "category.notFound");
             model.addAttribute("categories", categories);
-            return "/asset/add";
+            return "/expenses/add";
         }
         expensesService.save(user.getUserId(), expensesForm, categoryOptional.get());
 
         return "redirect:/expenses";
+    }
+
+    @DeleteMapping("/{expenseId}")
+    public ResponseEntity<Void> delete(@PathVariable Long expenseId, HttpSession session) {
+
+        log.info("지출 삭제 : {}", expenseId);
+
+        User user = (User) session.getAttribute(SessionConst.LOGIN_USER);
+
+        Expenses expenses = expensesService.findById(expenseId);
+        if(expenses == null) {
+            return ResponseEntity.notFound().build();
+        }
+        if(!Objects.equals(expenses.getUserId(), user.getUserId())) {
+            log.error("회원 ID 불일치 : expenses - {}, user - {}", expenses.getUserId(), user.getUserId());
+            return ResponseEntity.badRequest().build();
+        }
+        expensesService.delete(expenseId);
+        return ResponseEntity.noContent().build();
     }
 }

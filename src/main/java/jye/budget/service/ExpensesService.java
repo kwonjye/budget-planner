@@ -41,4 +41,16 @@ public class ExpensesService {
         log.info("save expenses : {}", expenses);
         expensesMapper.save(expenses);
     }
+
+    @Transactional(readOnly = true)
+    public Expenses findById(Long expenseId) {
+        Expenses expenses = expensesMapper.findById(expenseId);
+        if(expenses == null) log.error("지출 정보 없음 : {}", expenseId);
+        return expenses;
+    }
+
+    @Transactional
+    public void delete(Long expenseId) {
+        expensesMapper.delete(expenseId);
+    }
 }

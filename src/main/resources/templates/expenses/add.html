@@ -60,9 +60,9 @@
           </div>
           <div class="mtb50">
             <div class="space-between">
-              <label for="amount">내용</label>
+              <label for="amount">금액</label>
               <div class="div-underline">
-                <input type="number" id="amount" class="input-none w100p"
+                <input type="number" id="amount" min="0" class="input-none w100p"
                        th:field="*{amount}">
                 <span>원</span>
               </div>

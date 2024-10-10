@@ -129,7 +129,7 @@ public class AssetController {
 
         Asset asset = assetService.checkAsset(assetId, user.getUserId());
         if(asset == null) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.notFound().build();
         }
 
         assetService.delete(assetId);
@@ -260,7 +260,7 @@ public class AssetController {
 
         AssetChange assetChange = assetService.findChangeById(changeId);
         if(assetChange == null) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.notFound().build();
         }
 
         Asset asset = assetService.checkAsset(assetChange.getAsset().getAssetId(), user.getUserId());

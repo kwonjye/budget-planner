@@ -15,7 +15,7 @@
         <result column="updated_at" property="updatedAt" />
         <association property="category" resultMap="jye.budget.mapper.CategoryMapper.category" columnPrefix="c_"/>
     </resultMap>
-    <select id="findByReqAndUserId" resultMap="expenses">
+    <sql id="expenses">
         SELECT e.expense_id,
                e.user_id,
                e.expense_name,
@@ -34,6 +34,9 @@
                c.created_at AS c_created_at
         FROM expenses e
         JOIN category c ON e.category_id = c.category_id
+    </sql>
+    <select id="findByReqAndUserId" resultMap="expenses">
+        <include refid="expenses"/>
         WHERE e.user_id = #{userId}
             AND DATE_FORMAT(e.expense_date, '%Y-%m') = #{req.searchDate}
         <if test='req.searchText != null and req.searchText != ""'>
@@ -68,4 +71,12 @@
                   NOW()
                          )
     </insert>
+    <select id="findById" resultMap="expenses">
+        <include refid="expenses"/>
+        WHERE expense_id = #{expenseId}
+    </select>
+    <delete id="delete">
+        DELETE FROM expenses
+        WHERE expense_id = #{expenseId}
+    </delete>
 </mapper>

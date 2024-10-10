@@ -9,8 +9,14 @@
       e.preventDefault(); // 기본 우클릭 메뉴 방지
 
       const expenseId = $(this).data('expense-id');
+      const expenseName = $(this).data('expense-name');
+      let expenseDetail = $(this).data('expense-detail');
+      const amount = $(this).data('amount').toLocaleString();
 
-      if (confirm("지출 내역을 삭제하시겠습니까?")) {
+      expenseDetail = expenseDetail == null ? '' : expenseDetail;
+
+      if (confirm(expenseName + " " + expenseDetail + " " + amount + "원\n" +
+              "지출을 삭제하시겠습니까?")) {
         $.ajax({
           url: '/expenses/' + expenseId,
           type: 'DELETE',
@@ -48,7 +54,7 @@
 </script>
 <body>
 <div th:insert="~{fragment/header :: header}"></div>
-<div class="container">
+<div class="container min-w1220">
   <div>
     <form id="form" th:action="@{/expenses}" th:object="${req}" method="get">
       <div class="fix-top-left">
@@ -65,8 +71,10 @@
           <i class="fi fi-rr-angle-right"></i>
         </div>
       </div>
-      <div class="fix-top-right-h38">
+      <div class="fix-top-center-w600-right">
         <i class="fi fi-rr-add h30 pr20" th:onclick="|location.href='@{/expenses/add}'|"></i>
+      </div>
+      <div class="fix-top-right-h38">
         <label class="label-underline mlr10">
           <input type="text" th:field="*{searchText}" class="input-none w200">
         </label>
@@ -97,17 +105,24 @@
         <div class="w50p plr30 min-w600">
           <div th:each="groupedByExpenseDate : ${groupedByExpenseDate}" class="mb50">
             <div th:text="${T(jye.budget.util.DateFormatterUtil).formatLocalDateWithDay(groupedByExpenseDate.key)}" class="bold mtb20"></div>
-            <div class="expenses space-between ai-center mtb20 h-weight"
+            <div class="expenses space-between ai-center mtb20 h-scale"
                  th:data-expense-id="${expenses.expenseId}"
-                 th:each="expenses : ${groupedByExpenseDate.value}"
-                 th:onclick="|location.href='@{/expenses/}| + ${expenses.expenseId} + |'|">
+                 th:data-expense-name="${expenses.expenseName}"
+                 th:data-expense-detail="${expenses.expenseDetail}"
+                 th:data-amount="${expenses.amount}"
+                 th:each="expenses : ${groupedByExpenseDate.value}">
               <span th:text="${expenses.category.categoryName}" class="ptb05 w20p  ta-center br05" th:style="'background-color: ' + ${expenses.category.categoryColor}"></span>
-              <span th:text="${expenses.expenseName}" class="w20p ta-center"></span>
-              <div class="flex-grow ta-center">
+              <span th:text="${expenses.expenseName}"
+                    th:onclick="|location.href='@{/expenses/}| + ${expenses.expenseId} + |'|" class="w20p ta-center h-weight"></span>
+              <a class="flex-grow ta-center none-underline black"
+                 th:href="${expenses.relatedUrl}"
+                 th:attr="target=${expenses.relatedUrl != null ? '_blank' : ''}"
+                 th:classappend="${expenses.relatedUrl != null ? 'h-underline' : ''}">
                 <span th:text="${expenses.expenseDetail}"></span>
                 <span th:if="${!expenses.necessary}" class="orange">*</span>
-              </div>
-              <span th:text="${#numbers.formatInteger(expenses.amount, 1, 'COMMA')}" class="w20p ta-right"></span>
+              </a>
+              <span th:text="${#numbers.formatInteger(expenses.amount, 1, 'COMMA')}"
+                    th:onclick="|location.href='@{/expenses/}| + ${expenses.expenseId} + |'|" class="w20p ta-right h-weight"></span>
             </div>
           </div>
         </div>
