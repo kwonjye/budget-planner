@@ -1,8 +1,10 @@
 package jye.budget.controller;
 
+import com.google.gson.Gson;
 import io.micrometer.common.util.StringUtils;
 import jakarta.servlet.http.HttpSession;
 import jye.budget.entity.Budget;
+import jye.budget.entity.Category;
 import jye.budget.entity.Expenses;
 import jye.budget.entity.User;
 import jye.budget.login.SessionConst;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -51,5 +54,31 @@ public class ExpensesController {
         model.addAttribute("livingExpenseBudget", budget == null ? 0 : budget.getLivingExpenseBudget());
 
         return "/expenses/view";
+    }
+
+    @GetMapping("/chart")
+    public String chart(@ModelAttribute("req") ExpensesReq req, HttpSession session, Model model) {
+        User user = (User) session.getAttribute(SessionConst.LOGIN_USER);
+
+        if(StringUtils.isBlank(req.getSearchDate())) {
+            req.setSearchDate(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM")));
+        }
+
+        log.info("지출 차트 : {}", req);
+
+        List<Expenses> expenses = expensesService.findByReqAndUserId(req, user.getUserId());
+        Map<Category, Integer> groupedByCategoryTotals = expenses.stream()
+                        .collect(Collectors.groupingBy(Expenses::getCategory, Collectors.summingInt(Expenses::getAmount)));
+
+        List<String> labels = groupedByCategoryTotals.keySet().stream().map(Category::getCategoryName).toList();
+        List<Integer> data = new ArrayList<>(groupedByCategoryTotals.values());
+        List<String> backgroundColors = groupedByCategoryTotals.keySet().stream().map(Category::getCategoryColor).toList();
+
+        Gson gson = new Gson();
+        model.addAttribute("labels", gson.toJson(labels));
+        model.addAttribute("data", gson.toJson(data));
+        model.addAttribute("backgroundColors", gson.toJson(backgroundColors));
+
+        return "/expenses/chart";
     }
 }

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head th:replace="~{fragment/head :: head}">
+    <title>나만의 가계부</title>
+</head>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+<script th:inline="javascript">
+    $(document).ready(function() {
+        $('#searchDate').on('click', function() {
+            $(this).get(0).showPicker();
+        });
+
+        const labels = /*[[${labels}]]*/ '[]';
+        const data = /*[[${data}]]*/ '[]';
+        const backgroundColors = /*[[${backgroundColors}]]*/ '[]';
+
+        const parsedLabels = JSON.parse(labels);
+        const parsedData = JSON.parse(data);
+        const parsedBackgroundColors = JSON.parse(backgroundColors);
+
+        const ctx = $('#chart')[0].getContext('2d');
+        const chart = new Chart(ctx, {
+            type: 'pie', // 원형
+            data: {
+                labels: parsedLabels,
+                datasets: [{
+                    data: parsedData,
+                    backgroundColor: parsedBackgroundColors
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top'
+                    },
+                    datalabels: {
+                        color: '#292931', // 레이블 색상
+                        formatter: (value, context) => {
+                            const total = context.chart.data.datasets[0].data.reduce((acc, val) => acc + val, 0);
+                             // 퍼센트 계산
+                            return ((value / total) * 100).toFixed(2) + '%'; // 퍼센트만 반환
+                        }
+                    }
+                }
+            },
+            plugins: [ChartDataLabels] // 플러그인 추가
+        });
+    });
+
+    function changeMonth(direction) {
+        const input = $("#searchDate");
+        const searchDate = new Date(input.val() + '-01');
+
+        searchDate.setMonth(searchDate.getMonth() + direction);
+
+        const year = searchDate.getFullYear();
+        const month = String(searchDate.getMonth() + 1).padStart(2, '0');
+        input.val(year + '-' + month);
+        input.trigger('change');
+    }
+</script>
+<body>
+<div th:insert="~{fragment/header :: header}"></div>
+<div class="container center">
+    <div>
+        <form id="form" th:action="@{/expenses/chart}" th:object="${req}" method="get">
+            <div class="fix-top-left">
+                <i class="fi fi-rr-menu-burger" th:data-searchDate="*{searchDate}" onclick="location.href='/expenses?searchDate=' + this.getAttribute('data-searchDate')"></i>
+            </div>
+            <div class="w600 ta-center fix-top-center-w600">
+                <div class="h30" onclick="changeMonth(-1)">
+                    <i class="fi fi-rr-angle-left"></i>
+                </div>
+                <label>
+                    <input id="searchDate" type="month" th:field="*{searchDate}" th:onchange="this.form.submit()" class="input-month">
+                </label>
+                <div class="h30" onclick="changeMonth(1)">
+                    <i class="fi fi-rr-angle-right"></i>
+                </div>
+            </div>
+            <canvas id="chart" class="mt90" width="550" height="550"></canvas>
+        </form>
+    </div>
+</div>
+</body>
+</html>
