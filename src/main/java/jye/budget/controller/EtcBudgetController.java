@@ -3,10 +3,7 @@ package jye.budget.controller;
 import io.micrometer.common.util.StringUtils;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
-import jye.budget.entity.Asset;
-import jye.budget.entity.Category;
-import jye.budget.entity.EtcBudget;
-import jye.budget.entity.User;
+import jye.budget.entity.*;
 import jye.budget.form.EtcBudgetForm;
 import jye.budget.login.SessionConst;
 import jye.budget.req.EtcBudgetReq;
@@ -138,5 +135,93 @@ public class EtcBudgetController {
 
         etcBudgetService.delete(etcBudget);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{etcBudgetId}")
+    public String editForm(@PathVariable Long etcBudgetId, HttpSession session, Model model) {
+        User user = (User) session.getAttribute(SessionConst.LOGIN_USER);
+
+        EtcBudget etcBudget = etcBudgetService.check(etcBudgetId, user.getUserId());
+        if(etcBudget == null) {
+            return "/error";
+        }
+
+        List<Category> categories = categoryService.findByUserIdAndType(user.getUserId(), CategoryType.ETC_BUDGET);
+        addIfUnusedCategory(categories, etcBudget.getCategory());
+
+        if(etcBudget.getAssetChange() != null) {
+            model.addAttribute("asset", etcBudget.getAssetChange().getAsset());
+        } else {
+            List<Asset> assets = assetService.findByUserId(user.getUserId());
+            model.addAttribute("assets", assets);
+        }
+
+        model.addAttribute("categories", categories);
+        model.addAttribute("calcTypeValues", CalcType.values());
+        model.addAttribute("etcBudgetForm", new EtcBudgetForm(etcBudget));
+        return "/etc-budget/edit";
+    }
+
+    @PostMapping("/{etcBudgetId}")
+    public String edit(@PathVariable Long etcBudgetId,
+                       @Valid @ModelAttribute("etcBudgetForm") EtcBudgetForm etcBudgetForm, BindingResult bindingResult,
+                       HttpSession session, Model model) {
+
+        log.info("기타 예산 수정 : {}", etcBudgetForm);
+
+        User user = (User) session.getAttribute(SessionConst.LOGIN_USER);
+
+        EtcBudget etcBudget = etcBudgetService.check(etcBudgetId, user.getUserId());
+        if(etcBudget == null) {
+            return "/error";
+        }
+
+        List<Category> categories = categoryService.findByUserIdAndType(user.getUserId(), CategoryType.ETC_BUDGET);
+        addIfUnusedCategory(categories, etcBudget.getCategory());
+
+        List<Asset> assets = null;
+        Asset asset = null;
+        if(etcBudget.getAssetChange() != null) {
+            asset = etcBudget.getAssetChange().getAsset();
+        } else {
+            assets = assetService.findByUserId(user.getUserId());
+            if(etcBudgetForm.getAssetId() != null) {
+                asset = assetService.check(etcBudgetForm.getAssetId(), user.getUserId());
+                if(asset == null) {
+                    bindingResult.rejectValue("assetId", "asset.notFound");
+                    return handleEditFormError(model, categories, null, assets);
+                }
+            }
+        }
+        if (bindingResult.hasErrors()) {
+            return handleEditFormError(model, categories, asset, assets);
+        }
+
+        Category category = categoryService.check(etcBudgetForm.getCategoryId(), user.getUserId());
+        if(category == null) {
+            bindingResult.rejectValue("category", "category.notFound");
+            return handleEditFormError(model, categories, asset, assets);
+        }
+
+        etcBudgetService.update(etcBudgetId, etcBudgetForm, etcBudget.getAssetChange(), asset, category);
+
+        return "redirect:/etc-budget?categoryId=" + etcBudgetForm.getCategoryId();
+    }
+
+    private static void addIfUnusedCategory(List<Category> categories, Category formCategory) {
+        boolean isExists = categories.stream()
+                .anyMatch(category -> category.getCategoryId().equals(formCategory.getCategoryId()));
+        if(!isExists) {
+            log.info("미사용 중인 카테고리 : {}", formCategory);
+            categories.add(formCategory);
+        }
+    }
+
+    private String handleEditFormError(Model model, List<Category> categories, Asset asset, List<Asset> assets) {
+        model.addAttribute("asset", asset);
+        model.addAttribute("assets", assets);
+        model.addAttribute("categories", categories);
+        model.addAttribute("calcTypeValues", CalcType.values());
+        return "/etc-budget/edit";
     }
 }

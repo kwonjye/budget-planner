@@ -2,6 +2,7 @@ package jye.budget.form;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import jye.budget.entity.EtcBudget;
 import jye.budget.type.CalcType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -32,4 +33,13 @@ public class EtcBudgetForm {
     @NotNull
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate etcBudgetDate = LocalDate.now();
+
+    public EtcBudgetForm(EtcBudget etcBudget) {
+        this.categoryId = etcBudget.getCategory().getCategoryId();
+        this.assetId = etcBudget.getAssetChange() == null ? null : etcBudget.getAssetChange().getAsset().getAssetId();
+        this.calcType = etcBudget.getCalcType();
+        this.amount = etcBudget.getAmount();
+        this.etcBudgetDetail = etcBudget.getEtcBudgetDetail();
+        this.etcBudgetDate = etcBudget.getEtcBudgetDate();
+    }
 }

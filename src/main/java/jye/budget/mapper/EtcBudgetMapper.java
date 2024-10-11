@@ -21,4 +21,6 @@ public interface EtcBudgetMapper {
     EtcBudget findById(@Param("etcBudgetId") Long etcBudgetId);
 
     void delete(@Param("etcBudgetId") Long etcBudgetId);
+
+    void update(EtcBudget etcBudget);
 }

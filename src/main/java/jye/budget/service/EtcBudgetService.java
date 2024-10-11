@@ -79,4 +79,28 @@ public class EtcBudgetService {
             etcBudgetMapper.delete(etcBudget.getEtcBudgetId());
         }
     }
+
+    @Transactional
+    public void update(Long etcBudgetId, @Valid EtcBudgetForm etcBudgetForm, AssetChange assetChange, Asset asset, Category category) {
+        EtcBudget etcBudget = EtcBudget.builder()
+                .etcBudgetId(etcBudgetId)
+                .category(category)
+                .calcType(etcBudgetForm.getCalcType())
+                .amount(etcBudgetForm.getAmount())
+                .etcBudgetDetail(etcBudgetForm.getEtcBudgetDetail())
+                .etcBudgetDate(etcBudgetForm.getEtcBudgetDate())
+                .build();
+
+        if(assetChange != null) {
+            assetService.updateChange(assetChange.getChangeId(), new AssetChangeForm(etcBudgetForm), asset);
+        } else {
+            if(asset != null) {
+                assetChange = assetService.change(new AssetChangeForm(etcBudgetForm), asset);
+                etcBudget.setAssetChange(assetChange);
+            }
+        }
+
+        log.info("update etcBudget : {}", etcBudgetForm);
+        etcBudgetMapper.update(etcBudget);
+    }
 }

@@ -111,4 +111,17 @@
         DELETE FROM etc_budget
         WHERE etc_budget_id = #{etcBudgetId}
     </delete>
+    <update id="update">
+        UPDATE etc_budget
+        SET category_id = #{category.categoryId},
+            <if test="assetChange != null">
+                change_id = #{assetChange.changeId},
+            </if>
+            calc_type = #{calcType},
+            amount = #{amount},
+            etc_budget_detail = #{etcBudgetDetail},
+            etc_budget_date = #{etcBudgetDate},
+            updated_at = NOW()
+        WHERE etc_budget_id = #{etcBudgetId}
+    </update>
 </mapper>
