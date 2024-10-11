@@ -101,4 +101,12 @@
                   NOW()
                          )
     </insert>
+    <select id="findById" resultMap="etcBudget">
+        <include refid="etcBudget"/>
+        WHERE eb.etc_budget_id = #{etcBudgetId}
+    </select>
+    <delete id="delete">
+        DELETE FROM etc_budget
+        WHERE etc_budget_id = #{etcBudgetId}
+    </delete>
 </mapper>

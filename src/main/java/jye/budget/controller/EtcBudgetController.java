@@ -9,28 +9,25 @@ import jye.budget.entity.EtcBudget;
 import jye.budget.entity.User;
 import jye.budget.form.EtcBudgetForm;
 import jye.budget.login.SessionConst;
-import jye.budget.mapper.CategoryMapper;
 import jye.budget.req.EtcBudgetReq;
 import jye.budget.service.AssetService;
+import jye.budget.service.CategoryService;
 import jye.budget.service.EtcBudgetService;
 import jye.budget.type.CalcType;
 import jye.budget.type.CategoryType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -41,7 +38,7 @@ public class EtcBudgetController {
 
     private final EtcBudgetService etcBudgetService;
     private final AssetService assetService;
-    private final CategoryMapper categoryMapper;
+    private final CategoryService categoryService;
 
     @GetMapping
     public String view(@ModelAttribute("req") EtcBudgetReq req, HttpSession session, Model model) {
@@ -62,13 +59,8 @@ public class EtcBudgetController {
         model.addAttribute("categories", categories);
 
         if(req.getCategoryId() != null) {
-            Category category = categoryMapper.findById(req.getCategoryId());
+            Category category = categoryService.check(req.getCategoryId(), user.getUserId());
             if(category == null) {
-                log.error("존재하지 않는 카테고리 : {}", req.getCategoryId());
-                return "/error";
-            }
-            if(!Objects.equals(category.getUserId(), user.getUserId())) {
-                log.error("회원 ID 불일치 : category - {}, user - {}", category.getUserId(), user.getUserId());
                 return "/error";
             }
             model.addAttribute("category", category);
@@ -82,7 +74,7 @@ public class EtcBudgetController {
     public String addForm(@ModelAttribute("etcBudgetForm") EtcBudgetForm etcBudgetForm, HttpSession session, Model model) {
         User user = (User) session.getAttribute(SessionConst.LOGIN_USER);
 
-        List<Category> categories = categoryMapper.findByUserIdAndType(user.getUserId(), CategoryType.ETC_BUDGET);
+        List<Category> categories = categoryService.findByUserIdAndType(user.getUserId(), CategoryType.ETC_BUDGET);
         model.addAttribute("categories", categories);
 
         List<Asset> assets = assetService.findByUserId(user.getUserId());
@@ -100,20 +92,14 @@ public class EtcBudgetController {
 
         User user = (User) session.getAttribute(SessionConst.LOGIN_USER);
 
-        List<Category> categories = categoryMapper.findByUserIdAndType(user.getUserId(), CategoryType.ETC_BUDGET);
+        List<Category> categories = categoryService.findByUserIdAndType(user.getUserId(), CategoryType.ETC_BUDGET);
         List<Asset> assets = assetService.findByUserId(user.getUserId());
         if (bindingResult.hasErrors()) {
             return handleAddFormError(model, categories, assets);
         }
 
-        Category category = categoryMapper.findById(etcBudgetForm.getCategoryId());
+        Category category = categoryService.check(etcBudgetForm.getCategoryId(), user.getUserId());
         if(category == null) {
-            log.error("존재하지 않는 카테고리 : {}", etcBudgetForm.getCategoryId());
-            bindingResult.rejectValue("category", "category.notFound");
-            return handleAddFormError(model, categories, assets);
-        }
-        if(!Objects.equals(category.getUserId(), user.getUserId())) {
-            log.error("회원 ID 불일치 : category - {}, user - {}", category.getUserId(), user.getUserId());
             bindingResult.rejectValue("category", "category.notFound");
             return handleAddFormError(model, categories, assets);
         }
@@ -126,7 +112,7 @@ public class EtcBudgetController {
                 return handleAddFormError(model, categories, assets);
             }
         }
-        etcBudgetService.save(user.getUserId(), etcBudgetForm);
+        etcBudgetService.save(user.getUserId(), etcBudgetForm, category);
 
         return "redirect:/etc-budget?categoryId=" + etcBudgetForm.getCategoryId();
     }
@@ -136,5 +122,21 @@ public class EtcBudgetController {
         model.addAttribute("assets", assets);
         model.addAttribute("calcTypeValues", CalcType.values());
         return "/etc-budget/add";
+    }
+
+    @DeleteMapping("/{etcBudgetId}")
+    public ResponseEntity<Void> delete(@PathVariable Long etcBudgetId, HttpSession session) {
+
+        log.info("기타 예산 삭제 : {}", etcBudgetId);
+
+        User user = (User) session.getAttribute(SessionConst.LOGIN_USER);
+
+        EtcBudget etcBudget = etcBudgetService.check(etcBudgetId, user.getUserId());
+        if(etcBudget == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        etcBudgetService.delete(etcBudget);
+        return ResponseEntity.noContent().build();
     }
 }

@@ -7,7 +7,6 @@ import jye.budget.entity.Category;
 import jye.budget.entity.EtcBudget;
 import jye.budget.form.AssetChangeForm;
 import jye.budget.form.EtcBudgetForm;
-import jye.budget.mapper.CategoryMapper;
 import jye.budget.mapper.EtcBudgetMapper;
 import jye.budget.req.EtcBudgetReq;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +22,6 @@ import java.util.List;
 public class EtcBudgetService {
 
     private final EtcBudgetMapper etcBudgetMapper;
-    private final CategoryMapper categoryMapper;
     private final AssetService assetService;
 
     @Transactional(readOnly = true)
@@ -37,15 +35,14 @@ public class EtcBudgetService {
     }
 
     @Transactional
-    public void save(Long userId, @Valid EtcBudgetForm etcBudgetForm) {
+    public void save(Long userId, @Valid EtcBudgetForm etcBudgetForm, Category category) {
         AssetChange assetChange = new AssetChange();
         if(etcBudgetForm.getAssetId() != null) {
-            Asset asset = assetService.checkAsset(etcBudgetForm.getAssetId(), userId);
+            Asset asset = assetService.check(etcBudgetForm.getAssetId(), userId);
             if(asset != null) {
                 assetChange = assetService.change(new AssetChangeForm(etcBudgetForm), asset);
             }
         }
-        Category category = categoryMapper.findById(etcBudgetForm.getCategoryId());
         EtcBudget etcBudget = EtcBudget.builder()
                 .userId(userId)
                 .category(category)
@@ -57,5 +54,29 @@ public class EtcBudgetService {
                 .build();
         log.info("save etcBudget : {}", etcBudget);
         etcBudgetMapper.save(etcBudget);
+    }
+
+    @Transactional(readOnly = true)
+    public EtcBudget check(Long etcBudgetId, Long userId) {
+        EtcBudget etcBudget = etcBudgetMapper.findById(etcBudgetId);
+        if(etcBudget == null) {
+            log.error("기타 예산 정보 없음 : {}", etcBudgetId);
+            return null;
+        }
+        if(!etcBudget.getUserId().equals(userId)) {
+            log.error("회원 ID 불일치 : etcBudget - {}, user - {}", etcBudget, userId);
+            return null;
+        }
+        return etcBudget;
+    }
+
+    @Transactional
+    public void delete(EtcBudget etcBudget) {
+        if(etcBudget.getAssetChange() != null) {
+            assetService.deleteChange(etcBudget.getAssetChange().getChangeId(), etcBudget.getAssetChange().getAsset());
+        } else {
+            log.info("delete etcBudget : {}", etcBudget.getEtcBudgetId());
+            etcBudgetMapper.delete(etcBudget.getEtcBudgetId());
+        }
     }
 }

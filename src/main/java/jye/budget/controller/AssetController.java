@@ -84,7 +84,7 @@ public class AssetController {
 
         User user = (User) session.getAttribute(SessionConst.LOGIN_USER);
 
-        Asset asset = assetService.checkAsset(assetId, user.getUserId());
+        Asset asset = assetService.check(assetId, user.getUserId());
         if(asset == null) {
             return "/error";
         }
@@ -105,7 +105,7 @@ public class AssetController {
 
         User user = (User) session.getAttribute(SessionConst.LOGIN_USER);
 
-        Asset asset = assetService.checkAsset(assetId, user.getUserId());
+        Asset asset = assetService.check(assetId, user.getUserId());
         if(asset == null) {
             return "/error";
         }
@@ -127,7 +127,7 @@ public class AssetController {
 
         User user = (User) session.getAttribute(SessionConst.LOGIN_USER);
 
-        Asset asset = assetService.checkAsset(assetId, user.getUserId());
+        Asset asset = assetService.check(assetId, user.getUserId());
         if(asset == null) {
             return ResponseEntity.notFound().build();
         }
@@ -188,7 +188,7 @@ public class AssetController {
             return "/asset/change/add";
         }
 
-        Asset asset = assetService.checkAsset(assetChangeForm.getAssetId(), user.getUserId());
+        Asset asset = assetService.check(assetChangeForm.getAssetId(), user.getUserId());
         if(asset == null) {
             return "/error";
         }
@@ -206,7 +206,7 @@ public class AssetController {
             return "/error";
         }
 
-        Asset asset = assetService.checkAsset(assetChange.getAsset().getAssetId(), user.getUserId());
+        Asset asset = assetService.check(assetChange.getAsset().getAssetId(), user.getUserId());
         if(asset == null) {
             return "/error";
         }
@@ -231,12 +231,11 @@ public class AssetController {
             return "/error";
         }
         if(!Objects.equals(assetChange.getAsset().getAssetId(), assetChangeForm.getAssetId())) {
-            log.error("assetId 불일치 : assetChange.assetId - {}, req.assetId - {}",
-                    assetChange.getAsset().getAssetId(), assetChangeForm.getAssetId());
+            log.error("자산 ID 불일치 : asset - {}, req.assetId - {}", assetChange.getAsset(), assetChangeForm.getAssetId());
             return "/error";
         }
 
-        Asset asset = assetService.checkAsset(assetChangeForm.getAssetId(), user.getUserId());
+        Asset asset = assetService.check(assetChangeForm.getAssetId(), user.getUserId());
         if(asset == null) {
             return "/error";
         }
@@ -263,7 +262,7 @@ public class AssetController {
             return ResponseEntity.notFound().build();
         }
 
-        Asset asset = assetService.checkAsset(assetChange.getAsset().getAssetId(), user.getUserId());
+        Asset asset = assetService.check(assetChange.getAsset().getAssetId(), user.getUserId());
         if(asset == null) {
             return ResponseEntity.badRequest().build();
         }

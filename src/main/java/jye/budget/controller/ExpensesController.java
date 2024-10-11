@@ -122,13 +122,8 @@ public class ExpensesController {
             return "/expenses/form";
         }
 
-        Optional<Category> categoryOptional = categories.stream().filter(category -> Objects.equals(category.getCategoryId(), expensesForm.getCategoryId())).findFirst();
-        if(categoryOptional.isEmpty()) {
-            log.error("카테고리 정보 없음 : {}", expensesForm.getCategoryId());
-            bindingResult.rejectValue("categoryId", "category.notFound");
-            model.addAttribute("categories", categories);
-            return "/expenses/form";
-        }
+        Optional<Category> categoryOptional = getCategory(expensesForm.getCategoryId(), bindingResult, model, categories);
+        if (categoryOptional.isEmpty()) return "/expenses/form";
         expensesService.save(user.getUserId(), expensesForm, categoryOptional.get());
 
         return "redirect:/expenses";
@@ -140,12 +135,8 @@ public class ExpensesController {
 
         User user = (User) session.getAttribute(SessionConst.LOGIN_USER);
 
-        Expenses expenses = expensesService.findById(expenseId);
+        Expenses expenses = expensesService.check(expenseId, user.getUserId());
         if(expenses == null) {
-            return "/error";
-        }
-        if(!Objects.equals(expenses.getUserId(), user.getUserId())) {
-            log.error("회원 ID 불일치 : expenses - {}, user - {}", expenses.getUserId(), user.getUserId());
             return "/error";
         }
         List<Category> categories = categoryMapper.findByUserIdAndType(user.getUserId(), CategoryType.EXPENSE);
@@ -170,22 +161,13 @@ public class ExpensesController {
             return "/expenses/form";
         }
 
-        Expenses expenses = expensesService.findById(expenseId);
+        Expenses expenses = expensesService.check(expenseId, user.getUserId());
         if(expenses == null) {
             return "/error";
         }
-        if(!Objects.equals(expenses.getUserId(), user.getUserId())) {
-            log.error("회원 ID 불일치 : expenses - {}, user - {}", expenses.getUserId(), user.getUserId());
-            return "/error";
-        }
 
-        Optional<Category> categoryOptional = categories.stream().filter(category -> Objects.equals(category.getCategoryId(), expensesForm.getCategoryId())).findFirst();
-        if(categoryOptional.isEmpty()) {
-            log.error("카테고리 정보 없음 : {}", expensesForm.getCategoryId());
-            bindingResult.rejectValue("categoryId", "category.notFound");
-            model.addAttribute("categories", categories);
-            return "/expenses/form";
-        }
+        Optional<Category> categoryOptional = getCategory(expensesForm.getCategoryId(), bindingResult, model, categories);
+        if (categoryOptional.isEmpty()) return "/expenses/form";
         expensesService.update(expenseId, expensesForm, categoryOptional.get());
 
         return "redirect:/expenses";
@@ -198,15 +180,21 @@ public class ExpensesController {
 
         User user = (User) session.getAttribute(SessionConst.LOGIN_USER);
 
-        Expenses expenses = expensesService.findById(expenseId);
+        Expenses expenses = expensesService.check(expenseId, user.getUserId());
         if(expenses == null) {
             return ResponseEntity.notFound().build();
         }
-        if(!Objects.equals(expenses.getUserId(), user.getUserId())) {
-            log.error("회원 ID 불일치 : expenses - {}, user - {}", expenses.getUserId(), user.getUserId());
-            return ResponseEntity.badRequest().build();
-        }
         expensesService.delete(expenseId);
         return ResponseEntity.noContent().build();
+    }
+
+    private static Optional<Category> getCategory(Long categoryId, BindingResult bindingResult, Model model, List<Category> categories) {
+        Optional<Category> categoryOptional = categories.stream().filter(category -> Objects.equals(category.getCategoryId(), categoryId)).findFirst();
+        if(categoryOptional.isEmpty()) {
+            log.error("카테고리 정보 없음 : {}", categoryId);
+            bindingResult.rejectValue("categoryId", "category.notFound");
+            model.addAttribute("categories", categories);
+        }
+        return categoryOptional;
     }
 }

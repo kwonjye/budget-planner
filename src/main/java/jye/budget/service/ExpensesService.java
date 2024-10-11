@@ -43,14 +43,22 @@ public class ExpensesService {
     }
 
     @Transactional(readOnly = true)
-    public Expenses findById(Long expenseId) {
+    public Expenses check(Long expenseId, Long userId) {
         Expenses expenses = expensesMapper.findById(expenseId);
-        if(expenses == null) log.error("지출 정보 없음 : {}", expenseId);
+        if(expenses == null) {
+            log.error("지출 정보 없음 : {}", expenseId);
+            return null;
+        }
+        if(!expenses.getUserId().equals(userId)) {
+            log.error("회원 ID 불일치 : expenses - {}, user - {}", expenses, userId);
+            return null;
+        }
         return expenses;
     }
 
     @Transactional
     public void delete(Long expenseId) {
+        log.info("delete expenses : {}", expenseId);
         expensesMapper.delete(expenseId);
     }
 
