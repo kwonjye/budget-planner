@@ -6,11 +6,9 @@ import jye.budget.entity.Category;
 import jye.budget.entity.EtcBudget;
 import jye.budget.entity.User;
 import jye.budget.login.SessionConst;
-import jye.budget.mapper.CategoryMapper;
 import jye.budget.req.EtcBudgetReq;
 import jye.budget.service.EtcBudgetService;
 import jye.budget.type.CalcType;
-import jye.budget.type.CategoryType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -33,7 +31,6 @@ import java.util.stream.Collectors;
 public class EtcBudgetController {
 
     private final EtcBudgetService etcBudgetService;
-    private final CategoryMapper categoryMapper;
 
     @GetMapping
     public String view(@ModelAttribute("req") EtcBudgetReq req, HttpSession session, Model model) {
@@ -50,7 +47,7 @@ public class EtcBudgetController {
                 .collect(Collectors.groupingBy(EtcBudget::getEtcBudgetDate));
         model.addAttribute("groupedByEtcBudgetDate", groupedByEtcBudgetDate);
 
-        List<Category> categories = categoryMapper.findByUserIdAndType(user.getUserId(), CategoryType.ETC_BUDGET);
+        List<Category> categories = etcBudgetService.findCategoryBySearchDateAndUserId(req.getSearchDate(), user.getUserId());
         model.addAttribute("categories", categories);
 
         model.addAttribute("calcTypeValues", CalcType.values());

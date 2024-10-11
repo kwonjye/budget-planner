@@ -1,5 +1,6 @@
 package jye.budget.service;
 
+import jye.budget.entity.Category;
 import jye.budget.entity.EtcBudget;
 import jye.budget.mapper.EtcBudgetMapper;
 import jye.budget.req.EtcBudgetReq;
@@ -20,5 +21,10 @@ public class EtcBudgetService {
     @Transactional(readOnly = true)
     public List<EtcBudget> findByReqAndUserId(EtcBudgetReq req, Long userId) {
         return etcBudgetMapper.findByReqAndUserId(req, userId);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Category> findCategoryBySearchDateAndUserId(String searchDate, Long userId) {
+        return etcBudgetMapper.findCategoryBySearchDateAndUserId(searchDate, userId);
     }
 }

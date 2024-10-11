@@ -63,4 +63,18 @@
         </if>
         ORDER BY eb.etc_budget_date DESC
     </select>
+    <select id="findCategoryBySearchDateAndUserId" resultMap="jye.budget.mapper.CategoryMapper.category">
+        SELECT DISTINCT c.category_id,
+                        c.user_id,
+                        c.category_type,
+                        c.category_name,
+                        c.category_color,
+                        c.is_used,
+                        c.created_at,
+                        c.updated_at
+        FROM etc_budget eb
+        JOIN category c ON eb.category_id = c.category_id
+        WHERE eb.user_id = #{userId}
+          AND DATE_FORMAT(eb.etc_budget_date, '%Y-%m') = #{searchDate}
+    </select>
 </mapper>
