@@ -106,7 +106,7 @@
                     <div th:each="groupedByEtcBudgetDate : ${groupedByEtcBudgetDate}" class="mtb50">
                         <div th:text="${T(jye.budget.util.DateFormatterUtil).formatLocalDateWithDay(groupedByEtcBudgetDate.key)}" class="bold mtb20"></div>
                         <div class="etc-budget space-between mtb20 h-weight"
-                             th:data-change-id="${etcBudget.etcBudgetId}"
+                             th:data-etc-budget-id="${etcBudget.etcBudgetId}"
                              th:each="etcBudget : ${groupedByEtcBudgetDate.value}"
                              th:onclick="|location.href='@{/etc-budget/}| + ${etcBudget.etcBudgetId} + |'|">
                             <span th:text="${etcBudget.category.categoryName}"></span>

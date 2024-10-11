@@ -101,6 +101,9 @@ i:not(.menu i) {
 .w100p {
     width: 100%;
 }
+.w25p-60 {
+    width: CALC(25% - 60px);
+}
 .w150 {
     width: 150px;
 }
@@ -452,6 +455,12 @@ header {
 }
 .h-scale:hover {
     transform: scale(1.03);
+}
+.h-opacity {
+    transition: opacity 0.3s ease;
+}
+.h-opacity:hover {
+    opacity: 0.7;
 }
 
 /* none */

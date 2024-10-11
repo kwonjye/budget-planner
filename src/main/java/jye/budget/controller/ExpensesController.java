@@ -62,6 +62,7 @@ public class ExpensesController {
                 .sorted(Comparator.comparing(etcBudget -> etcBudget.getCategory().getCreatedAt()))
                 .collect(Collectors.groupingBy(
                         EtcBudget::getCategory,
+                        LinkedHashMap::new,
                         Collectors.reducing(0,
                                 etcBudget -> etcBudget.getCalcType().apply(0, etcBudget.getAmount()),
                                 Integer::sum

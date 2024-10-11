@@ -31,7 +31,9 @@
                c.category_type AS c_category_type,
                c.category_name AS c_category_name,
                c.category_color AS c_category_color,
-               c.created_at AS c_created_at
+               c.is_used AS c_is_used,
+               c.created_at AS c_created_at,
+               c.updated_at AS c_updated_at
         FROM expenses e
         JOIN category c ON e.category_id = c.category_id
     </sql>

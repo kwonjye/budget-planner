@@ -81,7 +81,7 @@
         <i class="fi fi-rr-discover h30" onclick="search()"></i>
       </div>
       <div class="mt80 fs20 space-evenly">
-        <div class="plr30 min-w250 flex-grow">
+        <div class="plr30 min-w250 w25p-60">
           <div class="bold ptb05">
             <div class="space-between mtb15">
               <span>예산</span>
@@ -128,18 +128,27 @@
           </div>
         </div>
         <div class="bl mlr30"></div>
-        <div class="plr30 min-w250 flex-grow">
+        <div class="plr30 min-w250 w25p-60">
           <div class="ptb05">
-            <div class="space-between mt15 cursor h-weight" th:data-searchDate="*{searchDate}" onclick="location.href='/budget?searchDate=' + this.getAttribute('data-searchDate')">
-              <span>생활비</span>
-              <span th:text="${#numbers.formatInteger(livingExpenseBudget, 1, 'COMMA')}"></span>
+            <div class="space-between mt15">
+              <span class="cursor h-opacity w50p"
+                    th:data-searchDate="*{searchDate}"
+                    onclick="location.href='/budget?searchDate=' + this.getAttribute('data-searchDate')">생활비</span>
+              <span class="cursor h-opacity w50p ta-right"
+                    th:data-searchDate="*{searchDate}"
+                    th:text="${#numbers.formatInteger(livingExpenseBudget, 1, 'COMMA')}"
+                    onclick="location.href='/budget/edit?searchDate=' + this.getAttribute('data-searchDate')"></span>
             </div>
-            <div class="space-between mtb20 cursor h-weight"
-                 th:each="categoryAmountMap : ${categoryAmountMap}"
-                 th:data-category-id="${categoryAmountMap.key.categoryId}"
-                 onclick="location.href='/etc-budget/add?categoryId=' + this.getAttribute('data-category-id')">
-              <span th:text="${categoryAmountMap.key.categoryName}"></span>
-              <span th:text="${#numbers.formatInteger(categoryAmountMap.value, 1, 'COMMA')}"></span>
+            <div class="space-between mtb20" th:each="categoryAmountMap : ${categoryAmountMap}">
+              <span class="cursor h-opacity w50p"
+                    th:data-category-id="${categoryAmountMap.key.categoryId}"
+                    th:text="${categoryAmountMap.key.categoryName}"
+                    onclick="location.href='/etc-budget?categoryId=' + this.getAttribute('data-category-id')"></span>
+              <span class="w50p ta-right"
+                    th:classappend="${categoryAmountMap.key.isUsed} ? 'h-opacity cursor' : ''"
+                    th:data-category-id="${categoryAmountMap.key.categoryId}"
+                    th:text="${#numbers.formatInteger(categoryAmountMap.value, 1, 'COMMA')}"
+                    th:onclick="${categoryAmountMap.key.isUsed} ? 'location.href=\'/etc-budget/add?categoryId=\' + this.getAttribute(\'data-category-id\')' : ''"></span>
             </div>
           </div>
         </div>
