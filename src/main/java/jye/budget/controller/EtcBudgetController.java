@@ -128,7 +128,7 @@ public class EtcBudgetController {
         }
         etcBudgetService.save(user.getUserId(), etcBudgetForm);
 
-        return "redirect:/etc-budget/view?categoryId=" + etcBudgetForm.getCategoryId();
+        return "redirect:/etc-budget?categoryId=" + etcBudgetForm.getCategoryId();
     }
 
     private String handleAddFormError(Model model, List<Category> categories, List<Asset> assets) {

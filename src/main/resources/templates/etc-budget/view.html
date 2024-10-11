@@ -45,6 +45,15 @@
     function search() {
         $("#form").submit();
     }
+
+    function goAddForm(el) {
+        const categoryId = $(el).data('category-id');
+        let url = "/etc-budget/add";
+        if(categoryId != null) {
+            url += "?categoryId=" + categoryId;
+        }
+        location.href = url;
+    }
 </script>
 <body>
 <div th:insert="~{fragment/header :: header}"></div>
@@ -111,9 +120,9 @@
                 </div>
                 <div class="ta-right">
                     <button class="btn-gradient w200" type="button"
-                            th:if="${category.used}"
+                            th:if="${category == null || category.used}"
                             th:data-category-id="${req.categoryId}"
-                            onclick="location.href='/etc-budget/add?categoryId=' + this.getAttribute('data-category-id')">추가</button>
+                            onclick="goAddForm(this)">추가</button>
                 </div>
             </div>
         </form>
