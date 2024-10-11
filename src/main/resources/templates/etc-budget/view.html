@@ -5,7 +5,7 @@
 </head>
 <script>
     $(document).ready(function() {
-        $(".asset-change").on('contextmenu', function(e) {
+        $(".etc-budget").on('contextmenu', function(e) {
             e.preventDefault(); // 기본 우클릭 메뉴 방지
 
             const etdBudgetId = $(this).data('etc-budget-id');
@@ -96,7 +96,7 @@
                 <div class="fs20">
                     <div th:each="groupedByEtcBudgetDate : ${groupedByEtcBudgetDate}" class="mtb50">
                         <div th:text="${T(jye.budget.util.DateFormatterUtil).formatLocalDateWithDay(groupedByEtcBudgetDate.key)}" class="bold mtb20"></div>
-                        <div class="asset-change space-between mtb20 h-weight"
+                        <div class="etc-budget space-between mtb20 h-weight"
                              th:data-change-id="${etcBudget.etcBudgetId}"
                              th:each="etcBudget : ${groupedByEtcBudgetDate.value}"
                              th:onclick="|location.href='@{/etc-budget/}| + ${etcBudget.etcBudgetId} + |'|">

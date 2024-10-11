@@ -86,6 +86,7 @@
         <result column="change_detail" property="changeDetail" />
         <result column="change_date" property="changeDate" />
         <result column="created_at" property="createdAt" />
+        <result column="updated_at" property="updatedAt" />
         <association property="asset" resultMap="asset" columnPrefix="a_"/>
     </resultMap>
     <sql id="assetChange">
@@ -95,6 +96,7 @@
                ac.change_detail,
                ac.change_date,
                ac.created_at,
+               ac.updated_at,
                a.asset_id AS a_asset_id,
                a.user_id AS a_user_id,
                a.asset_name AS a_asset_name,

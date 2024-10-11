@@ -11,7 +11,7 @@
         <result column="created_at" property="createdAt" />
         <result column="updated_at" property="updatedAt" />
         <association property="category" resultMap="jye.budget.mapper.CategoryMapper.category" columnPrefix="c_"/>
-        <association property="asset" resultMap="jye.budget.mapper.AssetMapper.asset" columnPrefix="a_"/>
+        <association property="assetChange" resultMap="jye.budget.mapper.AssetMapper.assetChange" columnPrefix="ac_"/>
     </resultMap>
     <sql id="etcBudget">
         SELECT eb.etc_budget_id,
@@ -27,17 +27,25 @@
                c.category_name AS c_category_name,
                c.category_color AS c_category_color,
                c.created_at AS c_created_at,
-               a.asset_id AS a_asset_id,
-               a.user_id AS a_user_id,
-               a.asset_name AS a_asset_name,
-               a.initial_amount AS a_initial_amount,
-               a.current_amount AS a_current_amount,
-               a.is_allocated AS a_is_allocated,
-               a.created_at AS a_created_at,
-               a.updated_at AS a_updated_at
+               ac.change_id AS ac_change_id,
+               ac.calc_type AS ac_calc_type,
+               ac.amount AS ac_amount,
+               ac.change_detail AS ac_change_detail,
+               ac.change_date AS ac_change_date,
+               ac.created_at AS ac_created_at,
+               ac.updated_at AS ac_updated_at,
+               a.asset_id AS ac_a_asset_id,
+               a.user_id AS ac_a_user_id,
+               a.asset_name AS ac_a_asset_name,
+               a.initial_amount AS ac_a_initial_amount,
+               a.current_amount AS ac_a_current_amount,
+               a.is_allocated AS ac_a_is_allocated,
+               a.created_at AS ac_a_created_at,
+               a.updated_at AS ac_a_updated_at
         FROM etc_budget eb
         JOIN category c ON eb.category_id = c.category_id
-        LEFT JOIN asset a ON eb.asset_id = a.asset_id
+        LEFT JOIN asset_change ac ON eb.change_id = ac.change_id
+        LEFT JOIN asset a ON ac.asset_id = a.asset_id
     </sql>
     <select id="findByReqAndUserId" resultMap="etcBudget">
         <include refid="etcBudget"/>

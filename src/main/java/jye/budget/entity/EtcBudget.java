@@ -17,7 +17,7 @@ public class EtcBudget {
     private Long etcBudgetId;
     private Long userId;
     private Category category;
-    private Asset asset;
+    private AssetChange assetChange;
     private CalcType calcType;
     private int amount;
     private String etcBudgetDetail;

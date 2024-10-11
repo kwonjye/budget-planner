@@ -4,14 +4,13 @@ import com.google.gson.Gson;
 import io.micrometer.common.util.StringUtils;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
-import jye.budget.entity.Budget;
-import jye.budget.entity.Category;
-import jye.budget.entity.Expenses;
-import jye.budget.entity.User;
+import jye.budget.entity.*;
 import jye.budget.form.ExpensesForm;
 import jye.budget.login.SessionConst;
 import jye.budget.mapper.BudgetMapper;
 import jye.budget.mapper.CategoryMapper;
+import jye.budget.mapper.EtcBudgetMapper;
+import jye.budget.req.EtcBudgetReq;
 import jye.budget.req.ExpensesReq;
 import jye.budget.service.ExpensesService;
 import jye.budget.type.CategoryType;
@@ -37,6 +36,7 @@ public class ExpensesController {
     private final ExpensesService expensesService;
     private final BudgetMapper budgetMapper;
     private final CategoryMapper categoryMapper;
+    private final EtcBudgetMapper etcBudgetMapper;
 
     @GetMapping
     public String view(@ModelAttribute("req") ExpensesReq req, HttpSession session, Model model) {
@@ -56,6 +56,17 @@ public class ExpensesController {
 
         Budget budget = budgetMapper.findByYearMonth(req.getSearchDate(), user.getUserId());
         model.addAttribute("livingExpenseBudget", budget == null ? 0 : budget.getLivingExpenseBudget());
+
+        List<EtcBudget> etcBudgets = etcBudgetMapper.findByReqAndUserId(EtcBudgetReq.builder().searchDate(req.getSearchDate()).build(), user.getUserId());
+        Map<Category, Integer> categoryAmountMap = etcBudgets.stream()
+                .collect(Collectors.groupingBy(
+                        EtcBudget::getCategory,
+                        Collectors.reducing(0,
+                                etcBudget -> etcBudget.getCalcType().apply(0, etcBudget.getAmount()),
+                                Integer::sum
+                        )
+                ));
+        model.addAttribute("categoryAmountMap", categoryAmountMap);
 
         return "/expenses/view";
     }

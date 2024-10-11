@@ -130,9 +130,17 @@
         <div class="bl mlr30"></div>
         <div class="plr30 min-w250 flex-grow">
           <div class="ptb05">
-            <div class="space-between mtb15">
+            <div class="space-between mt15 cursor h-weight" th:data-searchDate="*{searchDate}" onclick="location.href='/budget?searchDate=' + this.getAttribute('data-searchDate')">
               <span>생활비</span>
               <span th:text="${#numbers.formatInteger(livingExpenseBudget, 1, 'COMMA')}"></span>
+            </div>
+            <div class="space-between mtb20 cursor h-weight"
+                 th:each="categoryAmountMap : ${categoryAmountMap}"
+                 th:data-searchDate="*{searchDate}"
+                 th:data-categoryId="${categoryAmountMap.key.categoryId}"
+                 onclick="location.href='/etc-budget?searchDate=' + this.getAttribute('data-searchDate') + '&categoryId=' + this.getAttribute('data-categoryId')">
+              <span th:text="${categoryAmountMap.key.categoryName}"></span>
+              <span th:text="${#numbers.formatInteger(categoryAmountMap.value, 1, 'COMMA')}"></span>
             </div>
           </div>
         </div>
