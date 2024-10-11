@@ -110,7 +110,10 @@
                     </div>
                 </div>
                 <div class="ta-right">
-                    <button class="btn-gradient w200" type="button" th:onclick="|location.href='@{/etc-budget/add}'|">추가</button>
+                    <button class="btn-gradient w200" type="button"
+                            th:if="${category.used}"
+                            th:data-category-id="${req.categoryId}"
+                            onclick="location.href='/etc-budget/add?categoryId=' + this.getAttribute('data-category-id')">추가</button>
                 </div>
             </div>
         </form>

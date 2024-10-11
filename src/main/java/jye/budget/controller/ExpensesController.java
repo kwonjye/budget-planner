@@ -59,6 +59,7 @@ public class ExpensesController {
 
         List<EtcBudget> etcBudgets = etcBudgetMapper.findByReqAndUserId(EtcBudgetReq.builder().searchDate(req.getSearchDate()).build(), user.getUserId());
         Map<Category, Integer> categoryAmountMap = etcBudgets.stream()
+                .sorted(Comparator.comparing(etcBudget -> etcBudget.getCategory().getCreatedAt()))
                 .collect(Collectors.groupingBy(
                         EtcBudget::getCategory,
                         Collectors.reducing(0,
@@ -83,7 +84,8 @@ public class ExpensesController {
 
         List<Expenses> expenses = expensesService.findByReqAndUserId(req, user.getUserId());
         Map<Category, Integer> groupedByCategoryTotals = expenses.stream()
-                        .collect(Collectors.groupingBy(Expenses::getCategory, Collectors.summingInt(Expenses::getAmount)));
+                .sorted(Comparator.comparing(etcBudget -> etcBudget.getCategory().getCreatedAt()))
+                .collect(Collectors.groupingBy(Expenses::getCategory, Collectors.summingInt(Expenses::getAmount)));
 
         List<String> labels = groupedByCategoryTotals.keySet().stream().map(Category::getCategoryName).toList();
         List<Integer> data = new ArrayList<>(groupedByCategoryTotals.values());

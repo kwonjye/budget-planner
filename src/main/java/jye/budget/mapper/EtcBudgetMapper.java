@@ -15,4 +15,6 @@ public interface EtcBudgetMapper {
 
     List<Category> findCategoryBySearchDateAndUserId(@Param("searchDate") String searchDate,
                                                      @Param("userId") Long userId);
+
+    void save(EtcBudget etcBudget);
 }

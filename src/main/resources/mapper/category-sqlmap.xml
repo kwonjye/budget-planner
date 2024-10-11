@@ -11,7 +11,7 @@
         <result column="created_at" property="createdAt" />
         <result column="updated_at" property="updatedAt" />
     </resultMap>
-    <select id="findByUserIdAndType" resultMap="category">
+    <sql id="category">
         SELECT category_id,
                user_id,
                category_type,
@@ -21,8 +21,15 @@
                created_at,
                updated_at
         FROM category
+    </sql>
+    <select id="findByUserIdAndType" resultMap="category">
+        <include refid="category"/>
         WHERE user_id = #{userId}
             AND is_used = true
             AND category_type = #{categoryType}
+    </select>
+    <select id="findById" resultMap="category">
+        <include refid="category"/>
+        WHERE category_id = #{categoryId}
     </select>
 </mapper>

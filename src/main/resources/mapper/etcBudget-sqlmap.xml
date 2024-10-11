@@ -76,5 +76,29 @@
         JOIN category c ON eb.category_id = c.category_id
         WHERE eb.user_id = #{userId}
           AND DATE_FORMAT(eb.etc_budget_date, '%Y-%m') = #{searchDate}
+        ORDER BY c.created_at
     </select>
+    <insert id="save" useGeneratedKeys="true" keyColumn="etc_budget_id" keyProperty="etcBudgetId">
+        INSERT INTO etc_budget (
+                                user_id,
+                                category_id,
+                                change_id,
+                                calc_type,
+                                amount,
+                                etc_budget_detail,
+                                etc_budget_date,
+                                created_at,
+                                updated_at
+        ) VALUES (
+                  #{userId},
+                  #{category.categoryId},
+                  #{assetChange.changeId},
+                  #{calcType},
+                  #{amount},
+                  #{etcBudgetDetail},
+                  #{etcBudgetDate},
+                  NOW(),
+                  NOW()
+                         )
+    </insert>
 </mapper>
