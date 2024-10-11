@@ -19,7 +19,7 @@ public class HomeController {
         // 세션에 회원 데이터 있으면 메인 페이지로 이동
         if (user != null) {
             model.addAttribute("user", user);
-            return "main";
+            return "redirect:/expenses";
         }
 
         return "redirect:/login";
