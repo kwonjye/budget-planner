@@ -136,9 +136,8 @@
             </div>
             <div class="space-between mtb20 cursor h-weight"
                  th:each="categoryAmountMap : ${categoryAmountMap}"
-                 th:data-searchDate="*{searchDate}"
                  th:data-category-id="${categoryAmountMap.key.categoryId}"
-                 onclick="location.href='/etc-budget?searchDate=' + this.getAttribute('data-searchDate') + '&categoryId=' + this.getAttribute('data-category-id')">
+                 onclick="location.href='/etc-budget/add?categoryId=' + this.getAttribute('data-category-id')">
               <span th:text="${categoryAmountMap.key.categoryName}"></span>
               <span th:text="${#numbers.formatInteger(categoryAmountMap.value, 1, 'COMMA')}"></span>
             </div>
