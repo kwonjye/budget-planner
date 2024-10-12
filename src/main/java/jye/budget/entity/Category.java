@@ -1,10 +1,7 @@
 package jye.budget.entity;
 
 import jye.budget.type.CategoryType;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -12,7 +9,9 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Category {
+    @EqualsAndHashCode.Include
     private Long categoryId;
     private Long userId;
     private CategoryType categoryType;

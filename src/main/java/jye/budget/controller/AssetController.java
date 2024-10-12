@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -83,7 +84,7 @@ public class AssetController {
 
         User user = (User) session.getAttribute(SessionConst.LOGIN_USER);
 
-        Asset asset = assetService.checkAsset(assetId, user.getUserId());
+        Asset asset = assetService.check(assetId, user.getUserId());
         if(asset == null) {
             return "/error";
         }
@@ -104,7 +105,7 @@ public class AssetController {
 
         User user = (User) session.getAttribute(SessionConst.LOGIN_USER);
 
-        Asset asset = assetService.checkAsset(assetId, user.getUserId());
+        Asset asset = assetService.check(assetId, user.getUserId());
         if(asset == null) {
             return "/error";
         }
@@ -126,9 +127,9 @@ public class AssetController {
 
         User user = (User) session.getAttribute(SessionConst.LOGIN_USER);
 
-        Asset asset = assetService.checkAsset(assetId, user.getUserId());
+        Asset asset = assetService.check(assetId, user.getUserId());
         if(asset == null) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.notFound().build();
         }
 
         assetService.delete(assetId);
@@ -149,6 +150,7 @@ public class AssetController {
         }
         List<AssetChange> assetChanges = assetService.findChangeByReqAndUserId(req, user.getUserId());
         Map<LocalDate, List<AssetChange>> groupedByChangeDate = assetChanges.stream()
+                .sorted(Comparator.comparing(AssetChange::getCreatedAt).reversed())
                 .collect(Collectors.groupingBy(AssetChange::getChangeDate));
         model.addAttribute("groupedByChangeDate", groupedByChangeDate);
 
@@ -186,7 +188,7 @@ public class AssetController {
             return "/asset/change/add";
         }
 
-        Asset asset = assetService.checkAsset(assetChangeForm.getAssetId(), user.getUserId());
+        Asset asset = assetService.check(assetChangeForm.getAssetId(), user.getUserId());
         if(asset == null) {
             return "/error";
         }
@@ -204,7 +206,7 @@ public class AssetController {
             return "/error";
         }
 
-        Asset asset = assetService.checkAsset(assetChange.getAsset().getAssetId(), user.getUserId());
+        Asset asset = assetService.check(assetChange.getAsset().getAssetId(), user.getUserId());
         if(asset == null) {
             return "/error";
         }
@@ -229,12 +231,11 @@ public class AssetController {
             return "/error";
         }
         if(!Objects.equals(assetChange.getAsset().getAssetId(), assetChangeForm.getAssetId())) {
-            log.error("assetId 불일치 : assetChange.assetId - {}, req.assetId - {}",
-                    assetChange.getAsset().getAssetId(), assetChangeForm.getAssetId());
+            log.error("자산 ID 불일치 : asset - {}, req.assetId - {}", assetChange.getAsset(), assetChangeForm.getAssetId());
             return "/error";
         }
 
-        Asset asset = assetService.checkAsset(assetChangeForm.getAssetId(), user.getUserId());
+        Asset asset = assetService.check(assetChangeForm.getAssetId(), user.getUserId());
         if(asset == null) {
             return "/error";
         }
@@ -258,10 +259,10 @@ public class AssetController {
 
         AssetChange assetChange = assetService.findChangeById(changeId);
         if(assetChange == null) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.notFound().build();
         }
 
-        Asset asset = assetService.checkAsset(assetChange.getAsset().getAssetId(), user.getUserId());
+        Asset asset = assetService.check(assetChange.getAsset().getAssetId(), user.getUserId());
         if(asset == null) {
             return ResponseEntity.badRequest().build();
         }

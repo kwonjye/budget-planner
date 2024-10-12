@@ -37,11 +37,12 @@ public class BudgetController {
     public String view(@ModelAttribute("req") BudgetReq req, HttpSession session, Model model) {
         User user = (User) session.getAttribute(SessionConst.LOGIN_USER);
 
-        log.info("예산 조회 : {}", req);
-
         if(StringUtils.isBlank(req.getSearchDate())) {
             req.setSearchDate(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM")));
         }
+
+        log.info("예산 조회 : {}", req);
+
         BudgetDto data = budgetService.findByYearMonthAndUserId(req.getSearchDate(), user.getUserId(), false);
         model.addAttribute("data", data);
 
@@ -79,7 +80,7 @@ public class BudgetController {
         }
 
         if(!Objects.equals(budgetDto.getBudget().getBudgetId(), reqDto.getBudget().getBudgetId())) {
-            log.error("budgetId 불일치 : budgetId - {}, req.budgetId - {}", budgetDto.getBudget().getBudgetId(), reqDto.getBudget().getBudgetId());
+            log.error("예산 ID 불일치 : budget - {}, req.budgetId - {}", budgetDto.getBudget(), reqDto.getBudget().getBudgetId());
             return "/error";
         }
 
@@ -94,7 +95,7 @@ public class BudgetController {
                                                         Objects.equals(budgetAllocation.getAsset().getAssetId(), reqBudgetAllocation.getAsset().getAssetId())));
 
                 if (hasNonMatchingBudgetAllocationIds) {
-                    log.error("예산 배분 budgetAllocationId, assetId 불일치 : budgetDto - {}, reqDto - {}", budgetDto.getBudgetAllocations(), reqDto.getBudgetAllocations());
+                    log.error("예산 배분 - 예산 배분 or 자산 ID 불일치 : budgetDto - {}, reqDto - {}", budgetDto.getBudgetAllocations(), reqDto.getBudgetAllocations());
                     return "/error";
                 }
             }
@@ -108,7 +109,7 @@ public class BudgetController {
                                                         Objects.equals(fixedExpense.getCategory().getCategoryId(), reqFixedExpense.getCategory().getCategoryId())));
 
                 if (hasNonMatchingFixedExpenseIds) {
-                    log.error("고정 지출 fixedExpenseId, categoryId 불일치 : budgetDto - {}, reqDto - {}", budgetDto.getFixedExpenses(), reqDto.getFixedExpenses());
+                    log.error("고정 지출 - 고정 지출 or 카테고리 ID 불일치 : budgetDto - {}, reqDto - {}", budgetDto.getFixedExpenses(), reqDto.getFixedExpenses());
                     return "/error";
                 }
             }
@@ -125,7 +126,7 @@ public class BudgetController {
                                                 Objects.equals(budgetAllocation.getAsset().getAssetId(), reqBudgetAllocation.getAsset().getAssetId())));
 
                 if (hasNonMatchingAssetIds) {
-                    log.error("예산 배분 assetId 불일치 : budgetDto - {}, reqDto - {}", budgetDto.getBudgetAllocations(), reqDto.getBudgetAllocations());
+                    log.error("예산 배분 - 자산 ID 불일치 : budgetDto - {}, reqDto - {}", budgetDto.getBudgetAllocations(), reqDto.getBudgetAllocations());
                     return "/error";
                 }
             }
@@ -138,7 +139,7 @@ public class BudgetController {
                                                 Objects.equals(fixedExpense.getCategory().getCategoryId(), reqFixedExpense.getCategory().getCategoryId())));
 
                 if (hasNonMatchingCategoryIds) {
-                    log.error("고정 지출 categoryId 불일치 : budgetDto - {}, reqDto - {}", budgetDto.getFixedExpenses(), reqDto.getFixedExpenses());
+                    log.error("고정 지출 - 카테고리 ID 불일치 : budgetDto - {}, reqDto - {}", budgetDto.getFixedExpenses(), reqDto.getFixedExpenses());
                     return "/error";
                 }
             }

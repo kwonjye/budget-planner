@@ -75,7 +75,7 @@ public class BudgetService {
 
     private void saveBudgetAllocation(BudgetDto req, Long userId, BudgetAllocation budgetAllocation) {
         if(budgetAllocation.getAmount() > 0) {
-            Asset asset = assetService.checkAsset(budgetAllocation.getAsset().getAssetId(), userId);
+            Asset asset = assetService.check(budgetAllocation.getAsset().getAssetId(), userId);
             AssetChangeForm assetChangeForm = AssetChangeForm.builder()
                     .assetId(asset.getAssetId())
                     .calcType(CalcType.ADD)
@@ -100,7 +100,7 @@ public class BudgetService {
             req.getBudgetAllocations().forEach(budgetAllocation -> {
                 if(budgetAllocation.getBudgetAllocationId() != null) {
                     Long changeId = budgetMapper.findChangeIdByBudgetAllocationId(budgetAllocation.getBudgetAllocationId());
-                    Asset asset = assetService.checkAsset(budgetAllocation.getAsset().getAssetId(), userId);
+                    Asset asset = assetService.check(budgetAllocation.getAsset().getAssetId(), userId);
                     AssetChangeForm assetChangeForm = AssetChangeForm.builder()
                             .assetId(asset.getAssetId())
                             .calcType(CalcType.ADD)

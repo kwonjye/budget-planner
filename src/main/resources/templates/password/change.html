@@ -5,9 +5,9 @@
 </head>
 <body>
 <div th:insert="~{fragment/header :: header}"></div>
-<div class="container ai-center">
-  <div class="content-01 w500">
-    <div class="header-01">
+<div class="container center ai-center">
+  <div class="content w500">
+    <div class="header">
       <h2>비밀번호 변경</h2>
     </div>
     <form th:action="@{/password/change}" th:object="${changePasswordForm}" method="post">
@@ -39,7 +39,7 @@
                placeholder="새 비밀번호 재입력">
         <div class="field-error" th:errors="*{changePasswordConfirm}"></div>
       </div>
-      <div class="center">
+      <div class="ta-center">
         <button class="btn-gradient w100p" type="submit">변경하기</button>
       </div>
     </form>

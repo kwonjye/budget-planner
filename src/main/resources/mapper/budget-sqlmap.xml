@@ -56,11 +56,9 @@
                a.is_used AS a_is_used,
                a.created_at AS a_created_at,
                a.updated_at AS a_updated_at
-        FROM budget_allocation ba
-        RIGHT JOIN asset a ON ba.asset_id = a.asset_id
-        WHERE a.user_id = #{userId}
-          AND ((ba.budget_allocation_id IS NULL AND a.is_allocated = true AND a.is_used = true)
-            OR (ba.budget_allocation_id IS NOT NULL AND ba.budget_id = #{budgetId}))
+        FROM asset a
+        LEFT JOIN budget_allocation ba ON ba.asset_id = a.asset_id AND ba.budget_id = #{budgetId}
+        WHERE a.user_id = #{userId} AND a.is_allocated = true AND a.is_used = true
         FOR UPDATE
     </select>
     <resultMap id="fixedExpenses" type="jye.budget.entity.FixedExpenses">
@@ -77,7 +75,9 @@
                c.category_type AS c_category_type,
                c.category_name AS c_category_name,
                c.category_color AS c_category_color,
-               c.created_at AS c_created_at
+               c.is_used AS c_is_used,
+               c.created_at AS c_created_at,
+               c.updated_at AS c_updated_at
         FROM fixed_expenses fe
         JOIN category c ON fe.category_id = c.category_id
         WHERE budget_id = #{budgetId}
@@ -93,11 +93,9 @@
                c.category_color AS c_category_color,
                c.is_used AS c_is_used,
                c.created_at AS c_created_at
-        FROM fixed_expenses fe
-        RIGHT JOIN category c ON fe.category_id = c.category_id
-        WHERE c.user_id = #{userId}
-          AND ((fe.fixed_expense_id IS NULL AND c.is_used = true)
-            OR (fe.fixed_expense_id IS NOT NULL AND fe.budget_id = #{budgetId}))
+        FROM category c
+        LEFT JOIN fixed_expenses fe ON fe.category_id = c.category_id AND fe.budget_id = #{budgetId}
+        WHERE c.user_id = #{userId} AND c.category_type = 'FIXED_EXPENSE' AND c.is_used = true
         FOR UPDATE
     </select>
     <insert id="save" useGeneratedKeys="true" keyColumn="budget_id" keyProperty="budgetId">

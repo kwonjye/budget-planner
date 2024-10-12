@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jye.budget.mapper.EtcBudgetMapper">
+    <resultMap id="etcBudget" type="jye.budget.entity.EtcBudget">
+        <id column="etc_budget_id" property="etcBudgetId" />
+        <result column="user_id" property="userId" />
+        <result column="calc_type" property="calcType" />
+        <result column="amount" property="amount" />
+        <result column="etc_budget_detail" property="etcBudgetDetail" />
+        <result column="etc_budget_date" property="etcBudgetDate" />
+        <result column="created_at" property="createdAt" />
+        <result column="updated_at" property="updatedAt" />
+        <association property="category" resultMap="jye.budget.mapper.CategoryMapper.category" columnPrefix="c_"/>
+        <association property="assetChange" resultMap="jye.budget.mapper.AssetMapper.assetChange" columnPrefix="ac_"/>
+    </resultMap>
+    <sql id="etcBudget">
+        SELECT eb.etc_budget_id,
+               eb.user_id,
+               eb.calc_type,
+               eb.amount,
+               eb.etc_budget_detail,
+               eb.etc_budget_date,
+               eb.created_at,
+               eb.updated_at,
+               c.category_id AS c_category_id,
+               c.category_type AS c_category_type,
+               c.category_name AS c_category_name,
+               c.category_color AS c_category_color,
+               c.is_used AS c_is_used,
+               c.created_at AS c_created_at,
+               c.updated_at AS c_updated_at,
+               ac.change_id AS ac_change_id,
+               ac.calc_type AS ac_calc_type,
+               ac.amount AS ac_amount,
+               ac.change_detail AS ac_change_detail,
+               ac.change_date AS ac_change_date,
+               ac.created_at AS ac_created_at,
+               ac.updated_at AS ac_updated_at,
+               a.asset_id AS ac_a_asset_id,
+               a.user_id AS ac_a_user_id,
+               a.asset_name AS ac_a_asset_name,
+               a.initial_amount AS ac_a_initial_amount,
+               a.current_amount AS ac_a_current_amount,
+               a.is_allocated AS ac_a_is_allocated,
+               a.created_at AS ac_a_created_at,
+               a.updated_at AS ac_a_updated_at
+        FROM etc_budget eb
+        JOIN category c ON eb.category_id = c.category_id
+        LEFT JOIN asset_change ac ON eb.change_id = ac.change_id
+        LEFT JOIN asset a ON ac.asset_id = a.asset_id
+    </sql>
+    <select id="findByReqAndUserId" resultMap="etcBudget">
+        <include refid="etcBudget"/>
+        WHERE eb.user_id = #{userId}
+            AND eb.amount > 0
+            AND DATE_FORMAT(eb.etc_budget_date, '%Y-%m') = #{req.searchDate}
+        <if test="req.categoryId != null">
+            AND c.category_id = #{req.categoryId}
+        </if>
+        <if test="req.calcType != null">
+            AND eb.calc_type = #{req.calcType}
+        </if>
+        <if test='req.searchText != null and req.searchText != ""'>
+            AND eb.etc_budget_detail LIKE CONCAT('%', #{req.searchText}, '%')
+        </if>
+        ORDER BY eb.etc_budget_date DESC
+    </select>
+    <select id="findCategoryBySearchDateAndUserId" resultMap="jye.budget.mapper.CategoryMapper.category">
+        SELECT DISTINCT c.category_id,
+                        c.user_id,
+                        c.category_type,
+                        c.category_name,
+                        c.category_color,
+                        c.is_used,
+                        c.created_at,
+                        c.updated_at
+        FROM etc_budget eb
+        JOIN category c ON eb.category_id = c.category_id
+        WHERE eb.user_id = #{userId}
+          AND DATE_FORMAT(eb.etc_budget_date, '%Y-%m') = #{searchDate}
+        ORDER BY c.created_at
+    </select>
+    <insert id="save" useGeneratedKeys="true" keyColumn="etc_budget_id" keyProperty="etcBudgetId">
+        INSERT INTO etc_budget (
+                                user_id,
+                                category_id,
+                                change_id,
+                                calc_type,
+                                amount,
+                                etc_budget_detail,
+                                etc_budget_date,
+                                created_at,
+                                updated_at
+        ) VALUES (
+                  #{userId},
+                  #{category.categoryId},
+                  #{assetChange.changeId},
+                  #{calcType},
+                  #{amount},
+                  #{etcBudgetDetail},
+                  #{etcBudgetDate},
+                  NOW(),
+                  NOW()
+                         )
+    </insert>
+    <select id="findById" resultMap="etcBudget">
+        <include refid="etcBudget"/>
+        WHERE eb.etc_budget_id = #{etcBudgetId}
+    </select>
+    <delete id="delete">
+        DELETE FROM etc_budget
+        WHERE etc_budget_id = #{etcBudgetId}
+    </delete>
+    <update id="update">
+        UPDATE etc_budget
+        SET category_id = #{category.categoryId},
+            <if test="assetChange != null">
+                change_id = #{assetChange.changeId},
+            </if>
+            calc_type = #{calcType},
+            amount = #{amount},
+            etc_budget_detail = #{etcBudgetDetail},
+            etc_budget_date = #{etcBudgetDate},
+            updated_at = NOW()
+        WHERE etc_budget_id = #{etcBudgetId}
+    </update>
+</mapper>

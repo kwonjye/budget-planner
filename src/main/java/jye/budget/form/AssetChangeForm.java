@@ -39,4 +39,12 @@ public class AssetChangeForm {
         this.changeDetail = assetChange.getChangeDetail();
         this.changeDate = assetChange.getChangeDate();
     }
+
+    public AssetChangeForm(EtcBudgetForm etcBudgetForm) {
+        this.assetId = etcBudgetForm.getAssetId();
+        this.calcType = etcBudgetForm.getCalcType() == CalcType.ADD ? CalcType.SUB : CalcType.ADD;
+        this.amount = etcBudgetForm.getAmount();
+        this.changeDetail = etcBudgetForm.getEtcBudgetDetail();
+        this.changeDate = etcBudgetForm.getEtcBudgetDate();
+    }
 }

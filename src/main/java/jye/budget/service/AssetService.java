@@ -29,15 +29,14 @@ public class AssetService {
     }
 
     @Transactional(readOnly = true)
-    public Asset checkAsset(Long assetId, Long userId) {
+    public Asset check(Long assetId, Long userId) {
         Asset asset = findById(assetId);
         if(asset == null) {
             log.error("자산 정보 없음 : {}", assetId);
             return null;
         }
         if(!asset.getUserId().equals(userId)) {
-            log.error("자산 userId 불일치 : assetId - {}, asset.userId - {}, userId - {}",
-                    asset.getAssetId(), asset.getUserId(), userId);
+            log.error("회원 ID 불일치 : asset - {}, userId - {}", asset, userId);
             return null;
         }
         return asset;
@@ -83,6 +82,7 @@ public class AssetService {
 
     @Transactional
     public void delete(Long assetId) {
+        log.info("delete asset : {}", assetId);
         assetMapper.delete(assetId);
     }
 
@@ -156,6 +156,7 @@ public class AssetService {
 
     @Transactional
     public void deleteChange(Long changeId, Asset asset) {
+        log.info("delete assetChange : {}", changeId);
         assetMapper.deleteChange(changeId);
         updateCurrentAmount(asset);
     }

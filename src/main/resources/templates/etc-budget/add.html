@@ -8,20 +8,38 @@
 <div class="container center">
     <div>
         <div class="fix-top-left">
-            <i class="fi fi-rr-menu-burger" th:onclick="|location.href='@{/asset/change}'|"></i>
+            <i class="fi fi-rr-menu-burger" th:data-category-id="${etcBudgetForm.categoryId}"
+               onclick="location.href='/etc-budget?categoryId=' + this.getAttribute('data-category-id')"></i>
         </div>
         <div class="w550">
             <div class="fs35 space-between mt70 mb30">
-                <h2>자산 변동 상세</h2>
+                <h2>기타 예산 추가</h2>
             </div>
             <div class="fs20">
-                <form th:action th:object="${assetChangeForm}" method="post">
+                <form th:action th:object="${etcBudgetForm}" method="post">
+                    <div class="mtb50">
+                        <div class="space-between">
+                            <label for="categoryId">카테고리</label>
+                            <div class="div-underline">
+                                <select id="categoryId" th:field="*{categoryId}" class="input-none w100p">
+                                    <option th:each="category : ${categories}"
+                                            th:value="${category.categoryId}"
+                                            th:text="${category.categoryName}"></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="field-error mt05 ta-right" th:errors="*{categoryId}"></div>
+                    </div>
                     <div class="mtb50">
                         <div class="space-between">
                             <label for="assetId">자산</label>
                             <div class="div-underline">
-                                <input id="assetId" type="hidden" th:field="*{assetId}" th:value="${asset.assetId}">
-                                <span th:text="${asset.assetName}" class="gray"></span>
+                                <select id="assetId" th:field="*{assetId}" class="input-none w100p">
+                                    <option value="">선택</option>
+                                    <option th:each="asset : ${assets}"
+                                            th:value="${asset.assetId}"
+                                            th:text="${asset.assetName}"></option>
+                                </select>
                             </div>
                         </div>
                         <div class="field-error mt05 ta-right" th:errors="*{assetId}"></div>
@@ -41,7 +59,7 @@
                     </div>
                     <div class="mtb50">
                         <div class="space-between">
-                            <label for="amount">변동 금액</label>
+                            <label for="amount">금액</label>
                             <div class="div-underline">
                                 <input type="number" id="amount" min="0" class="input-none w100p"
                                        th:field="*{amount}">원
@@ -51,24 +69,23 @@
                     </div>
                     <div class="mtb50">
                         <div class="space-between">
-                            <label for="changeDetail">변동 내용</label>
+                            <label for="etcBudgetDetail">내용</label>
                             <div class="div-underline">
-                                <input type="text" id="changeDetail" class="input-none w100p"
-                                       th:field="*{changeDetail}">
+                                <input type="text" id="etcBudgetDetail" class="input-none w100p"
+                                       th:field="*{etcBudgetDetail}">
                             </div>
                         </div>
-                        <div class="field-error mt05 ta-right" th:errors="*{changeDetail}"></div>
+                        <div class="field-error mt05 ta-right" th:errors="*{etcBudgetDetail}"></div>
                     </div>
                     <div class="mtb50">
                         <div class="space-between">
-                            <label for="changeDate">변동일</label>
+                            <label for="etcBudgetDate">날짜</label>
                             <div class="div-underline">
-                                <input type="date" id="changeDate" class="input-none w100p"
-                                       th:field="*{changeDate}"
-                                       th:errorclass="input-border-error">
+                                <input type="date" id="etcBudgetDate" class="input-none w100p"
+                                       th:field="*{etcBudgetDate}">
                             </div>
                         </div>
-                        <div class="field-error mt05 ta-right" th:errors="*{changeDate}"></div>
+                        <div class="field-error mt05 ta-right" th:errors="*{etcBudgetDate}"></div>
                     </div>
                     <div class="ta-right">
                         <button class="btn-gradient w200" type="submit">저장</button>
