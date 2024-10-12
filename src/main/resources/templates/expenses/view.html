@@ -86,25 +86,25 @@
       <div class="mt80 fs20 space-evenly">
         <div class="plr30 min-w250 w25p-60">
           <div class="bold ptb05">
-            <div class="space-between mtb15">
+            <div class="space-between">
               <span>예산</span>
               <span th:text="${#numbers.formatInteger(totalBudget, 1, 'COMMA')}"></span>
             </div>
-            <div class="space-between red mtb15">
+            <div class="space-between red mtb20">
               <span>합계</span>
               <span th:text="${#numbers.formatInteger(totalExpenses, 1, 'COMMA')}"></span>
             </div>
-            <div class="space-between green mtb15">
+            <div class="space-between green mtb20">
               <span>필요</span>
               <span th:text="${#numbers.formatInteger(totalNecessary, 1, 'COMMA')}"></span>
             </div>
-            <div class="space-between blue mtb15">
+            <div class="space-between blue mtb20">
               <span>잔액</span>
               <span th:text="${#numbers.formatInteger(balance, 1, 'COMMA')}"></span>
             </div>
           </div>
           <div class="bt mtb30"></div>
-          <div class="ptb05">
+          <div class="ptb05 mt05">
             <div class="space-between mtb15 cursor h-opacity" th:each="expensesAmountMap : ${expensesAmountMap}"
                  th:data-search-date="${req.searchDate}"
                  th:data-category-id="${expensesAmountMap.key.categoryId}"
@@ -146,7 +146,7 @@
         <div class="bl mlr30"></div>
         <div class="plr30 min-w250 w25p-60">
           <div class="ptb05">
-            <div class="space-between mt15">
+            <div class="space-between">
               <span class="cursor h-opacity w50p"
                     th:data-search-date="*{searchDate}"
                     onclick="location.href='/budget?searchDate=' + this.getAttribute('data-search-date')">생활비</span>
@@ -169,19 +169,19 @@
           </div>
           <div class="bt mtb30"></div>
           <div class="bold ptb05">
-            <div class="space-between mtb15">
+            <div class="space-between mtb20">
               <span>합계</span>
               <span th:text="${#numbers.formatInteger(totalExpensesReq, 1, 'COMMA')}"></span>
             </div>
-            <div class="space-between mtb15">
+            <div class="space-between mtb20">
               <span>개수</span>
               <span th:text="${#numbers.formatInteger(countExpensesReq, 1, 'COMMA')}"></span>
             </div>
-            <div class="space-between mtb15">
+            <div class="space-between mtb20">
               <span>최대값</span>
               <span th:text="${#numbers.formatInteger(maxExpensesReq, 1, 'COMMA')}"></span>
             </div>
-            <div class="space-between orange mtb15">
+            <div class="space-between orange mtb20">
               <span>불필요</span>
               <span th:text="${#numbers.formatInteger(totalUnNecessary, 1, 'COMMA')}"></span>
             </div>
