@@ -58,7 +58,10 @@
   <div>
     <form id="form" th:action="@{/expenses}" th:object="${req}" method="get">
       <div class="fix-top-left">
-        <i class="fi fi-rr-chart-pie" th:data-searchDate="*{searchDate}" onclick="location.href='/expenses/chart?searchDate=' + this.getAttribute('data-searchDate')"></i>
+        <i class="fi fi-rr-chart-pie" th:data-search-date="*{searchDate}" onclick="location.href='/expenses/chart?searchDate=' + this.getAttribute('data-search-date')"></i>
+      </div>
+      <div class="fix-top-center-w600-left">
+        <i class="fi fi-rr-filter-slash h30 pl20" th:data-search-date="*{searchDate}" onclick="location.href='/expenses?searchDate=' + this.getAttribute('data-search-date')"></i>
       </div>
       <div class="w600 ta-center fix-top-center-w600">
         <div class="h30" onclick="changeMonth(-1)">
@@ -85,19 +88,31 @@
           <div class="bold ptb05">
             <div class="space-between mtb15">
               <span>예산</span>
-              <span>500,000</span>
+              <span th:text="${#numbers.formatInteger(totalBudget, 1, 'COMMA')}"></span>
             </div>
             <div class="space-between red mtb15">
               <span>합계</span>
-              <span>500,000</span>
+              <span th:text="${#numbers.formatInteger(totalExpenses, 1, 'COMMA')}"></span>
             </div>
             <div class="space-between green mtb15">
               <span>필요</span>
-              <span>500,000</span>
+              <span th:text="${#numbers.formatInteger(totalNecessary, 1, 'COMMA')}"></span>
             </div>
             <div class="space-between blue mtb15">
               <span>잔액</span>
-              <span>500,000</span>
+              <span th:text="${#numbers.formatInteger(balance, 1, 'COMMA')}"></span>
+            </div>
+          </div>
+          <div class="bt mtb30"></div>
+          <div class="ptb05">
+            <div class="space-between mtb15 cursor h-opacity" th:each="expensesAmountMap : ${expensesAmountMap}"
+                 th:data-search-date="${req.searchDate}"
+                 th:data-category-id="${expensesAmountMap.key.categoryId}"
+                 onclick="location.href='/expenses?searchDate=' + this.getAttribute('data-search-date') + '&categoryId=' + this.getAttribute('data-category-id')">
+              <span th:text="${expensesAmountMap.key.categoryName}"
+                    class="ptb05 w150 ta-center br05"
+                    th:style="'background-color: ' + ${expensesAmountMap.key.categoryColor}"></span>
+              <span th:text="${#numbers.formatInteger(expensesAmountMap.value, 1, 'COMMA')}"></span>
             </div>
           </div>
         </div>
@@ -118,7 +133,8 @@
               <a class="flex-grow ta-center none-underline black"
                  th:href="${expenses.relatedUrl != null && expenses.relatedUrl != '' ? expenses.relatedUrl : '/expenses/' + expenses.expenseId}"
                  th:attr="target=${expenses.relatedUrl != null && expenses.relatedUrl != '' ? '_blank' : ''}"
-                 th:classappend="${expenses.relatedUrl != null && expenses.relatedUrl != '' ? 'h-underline' : ''}">
+                 th:classappend="${expenses.relatedUrl != null && expenses.relatedUrl != '' ? 'h-underline' : ''}"
+                 th:title="${expenses.memo}">
                 <span th:text="${expenses.expenseDetail}"></span>
                 <span th:if="${!expenses.necessary}" class="orange">*</span>
               </a>
@@ -132,23 +148,42 @@
           <div class="ptb05">
             <div class="space-between mt15">
               <span class="cursor h-opacity w50p"
-                    th:data-searchDate="*{searchDate}"
-                    onclick="location.href='/budget?searchDate=' + this.getAttribute('data-searchDate')">생활비</span>
+                    th:data-search-date="*{searchDate}"
+                    onclick="location.href='/budget?searchDate=' + this.getAttribute('data-search-date')">생활비</span>
               <span class="cursor h-opacity w50p ta-right"
-                    th:data-searchDate="*{searchDate}"
+                    th:data-search-date="*{searchDate}"
                     th:text="${#numbers.formatInteger(livingExpenseBudget, 1, 'COMMA')}"
-                    onclick="location.href='/budget/edit?searchDate=' + this.getAttribute('data-searchDate')"></span>
+                    onclick="location.href='/budget/edit?searchDate=' + this.getAttribute('data-search-date')"></span>
             </div>
-            <div class="space-between mtb20" th:each="categoryAmountMap : ${categoryAmountMap}">
+            <div class="space-between mtb20" th:each="etcBudgetAmountMap : ${etcBudgetAmountMap}">
               <span class="cursor h-opacity w50p"
-                    th:data-category-id="${categoryAmountMap.key.categoryId}"
-                    th:text="${categoryAmountMap.key.categoryName}"
+                    th:data-category-id="${etcBudgetAmountMap.key.categoryId}"
+                    th:text="${etcBudgetAmountMap.key.categoryName}"
                     onclick="location.href='/etc-budget?categoryId=' + this.getAttribute('data-category-id')"></span>
               <span class="w50p ta-right"
-                    th:classappend="${categoryAmountMap.key.isUsed} ? 'h-opacity cursor' : ''"
-                    th:data-category-id="${categoryAmountMap.key.categoryId}"
-                    th:text="${#numbers.formatInteger(categoryAmountMap.value, 1, 'COMMA')}"
-                    th:onclick="${categoryAmountMap.key.isUsed} ? 'location.href=\'/etc-budget/add?categoryId=\' + this.getAttribute(\'data-category-id\')' : ''"></span>
+                    th:classappend="${etcBudgetAmountMap.key.isUsed} ? 'h-opacity cursor' : ''"
+                    th:data-category-id="${etcBudgetAmountMap.key.categoryId}"
+                    th:text="${#numbers.formatInteger(etcBudgetAmountMap.value, 1, 'COMMA')}"
+                    th:onclick="${etcBudgetAmountMap.key.isUsed} ? 'location.href=\'/etc-budget/add?categoryId=\' + this.getAttribute(\'data-category-id\')' : ''"></span>
+            </div>
+          </div>
+          <div class="bt mtb30"></div>
+          <div class="bold ptb05">
+            <div class="space-between mtb15">
+              <span>합계</span>
+              <span th:text="${#numbers.formatInteger(totalExpensesReq, 1, 'COMMA')}"></span>
+            </div>
+            <div class="space-between mtb15">
+              <span>개수</span>
+              <span th:text="${#numbers.formatInteger(countExpensesReq, 1, 'COMMA')}"></span>
+            </div>
+            <div class="space-between mtb15">
+              <span>최대값</span>
+              <span th:text="${#numbers.formatInteger(maxExpensesReq, 1, 'COMMA')}"></span>
+            </div>
+            <div class="space-between orange mtb15">
+              <span>불필요</span>
+              <span th:text="${#numbers.formatInteger(totalUnNecessary, 1, 'COMMA')}"></span>
             </div>
           </div>
         </div>

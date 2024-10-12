@@ -48,17 +48,32 @@ public class ExpensesController {
 
         log.info("지출 조회 : {}", req);
 
-        List<Expenses> expenses = expensesService.findByReqAndUserId(req, user.getUserId());
-        Map<LocalDate, List<Expenses>> groupedByExpenseDate = expenses.stream()
+        List<Expenses> expensesReq = expensesService.findByReqAndUserId(req, user.getUserId());
+        Map<LocalDate, List<Expenses>> groupedByExpenseDate = expensesReq.stream()
                 .sorted(Comparator.comparing(Expenses::getCreatedAt).reversed())
                 .collect(Collectors.groupingBy(Expenses::getExpenseDate));
+        log.info("검색 조건 날짜별 지출 : {}", groupedByExpenseDate);
         model.addAttribute("groupedByExpenseDate", groupedByExpenseDate);
 
+        int totalExpensesReq = expensesReq.stream().mapToInt(Expenses::getAmount).sum();
+        int countExpensesReq = expensesReq.size();
+        int maxExpensesReq = expensesReq.stream().mapToInt(Expenses::getAmount).max().orElse(0);
+
+        log.info("검색 조건 합계 : {}", totalExpensesReq);
+        log.info("검색 조건 개수 : {}", countExpensesReq);
+        log.info("검색 조건 최대값 : {}", maxExpensesReq);
+
+        model.addAttribute("totalExpensesReq", totalExpensesReq);
+        model.addAttribute("countExpensesReq", countExpensesReq);
+        model.addAttribute("maxExpensesReq", maxExpensesReq);
+
         Budget budget = budgetMapper.findByYearMonth(req.getSearchDate(), user.getUserId());
-        model.addAttribute("livingExpenseBudget", budget == null ? 0 : budget.getLivingExpenseBudget());
+        int livingExpenseBudget = budget == null ? 0 : budget.getLivingExpenseBudget();
+        log.info("생활비 : {}", livingExpenseBudget);
+        model.addAttribute("livingExpenseBudget", livingExpenseBudget);
 
         List<EtcBudget> etcBudgets = etcBudgetMapper.findByReqAndUserId(EtcBudgetReq.builder().searchDate(req.getSearchDate()).build(), user.getUserId());
-        Map<Category, Integer> categoryAmountMap = etcBudgets.stream()
+        Map<Category, Integer> etcBudgetAmountMap = etcBudgets.stream()
                 .sorted(Comparator.comparing(etcBudget -> etcBudget.getCategory().getCreatedAt()))
                 .collect(Collectors.groupingBy(
                         EtcBudget::getCategory,
@@ -68,7 +83,45 @@ public class ExpensesController {
                                 Integer::sum
                         )
                 ));
-        model.addAttribute("categoryAmountMap", categoryAmountMap);
+        log.info("기타 예산 : {}", etcBudgetAmountMap);
+        model.addAttribute("etcBudgetAmountMap", etcBudgetAmountMap);
+
+        List<Expenses> expenses = expensesService.findByReqAndUserId(ExpensesReq.builder().searchDate(req.getSearchDate()).build(), user.getUserId());
+        Map<Category, Integer> expensesAmountMap = expenses.stream()
+                .collect(Collectors.groupingBy(Expenses::getCategory, Collectors.summingInt(Expenses::getAmount)));
+
+        List<Category> categories = categoryMapper.findByUserIdAndType(user.getUserId(), CategoryType.EXPENSE);
+        categories.forEach(category -> expensesAmountMap.putIfAbsent(category, 0));
+        Map<Category, Integer> sortedExpensesAmountMap = expensesAmountMap.entrySet()
+                .stream()
+                .sorted(Map.Entry.<Category, Integer>comparingByValue().reversed())
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (e1, e2) -> e1,
+                        LinkedHashMap::new
+                ));
+
+        log.info("카테고리별 지출 합계 : {}", sortedExpensesAmountMap);
+        model.addAttribute("expensesAmountMap", sortedExpensesAmountMap);
+
+        int totalBudget = livingExpenseBudget + etcBudgetAmountMap.values().stream().mapToInt(Integer::intValue).sum();
+        int totalExpenses = expenses.stream().mapToInt(Expenses::getAmount).sum();
+        int totalNecessary = expenses.stream().filter(Expenses::isNecessary).mapToInt(Expenses::getAmount).sum();
+        int totalUnNecessary = expenses.stream().filter(expense -> !expense.isNecessary()).mapToInt(Expenses::getAmount).sum();
+        int balance = totalBudget - totalExpenses;
+
+        log.info("예산 : {}", totalBudget);
+        log.info("합계 : {}", totalExpenses);
+        log.info("필요 : {}", totalNecessary);
+        log.info("불필요 : {}", totalUnNecessary);
+        log.info("잔액 : {}", balance);
+
+        model.addAttribute("totalBudget", totalBudget);
+        model.addAttribute("totalExpenses", totalExpenses);
+        model.addAttribute("totalNecessary", totalNecessary);
+        model.addAttribute("totalUnNecessary", totalUnNecessary);
+        model.addAttribute("balance", balance);
 
         return "/expenses/view";
     }
@@ -85,7 +138,7 @@ public class ExpensesController {
 
         List<Expenses> expenses = expensesService.findByReqAndUserId(req, user.getUserId());
         Map<Category, Integer> groupedByCategoryTotals = expenses.stream()
-                .sorted(Comparator.comparing(etcBudget -> etcBudget.getCategory().getCreatedAt()))
+                .sorted(Comparator.comparing(expense -> expense.getCategory().getCreatedAt()))
                 .collect(Collectors.groupingBy(Expenses::getCategory, Collectors.summingInt(Expenses::getAmount)));
 
         List<String> labels = groupedByCategoryTotals.keySet().stream().map(Category::getCategoryName).toList();

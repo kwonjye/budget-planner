@@ -72,7 +72,7 @@
     <form th:action="@{/budget/edit}" th:object="${budgetDto}" method="post">
       <input type="hidden" th:field="*{budget.budgetId}">
       <div class="fix-top-left">
-        <i class="fi fi-rr-menu-burger" th:data-searchDate="*{budget.yearMonth}" onclick="location.href='/budget?searchDate=' + this.getAttribute('data-searchDate')"></i>
+        <i class="fi fi-rr-menu-burger" th:data-search-date="*{budget.yearMonth}" onclick="location.href='/budget?searchDate=' + this.getAttribute('data-search-date')"></i>
       </div>
       <div class="w600 mt60">
         <div class="fs30 space-between ai-flex-end">

@@ -64,6 +64,11 @@ i:not(.menu i) {
     top: 20px;
     left: CALC(50% + 300px);
 }
+.fix-top-center-w600-left {
+    position: absolute;
+    top: 20px;
+    right: CALC(50% + 300px);
+}
 .fix-top-right-w600-h38 {
     display: flex;
     align-items: center;
@@ -310,6 +315,9 @@ i:not(.menu i) {
 .pb15 {
     padding-bottom: 15px;
 }
+.pl20 {
+    padding-left: 20px;
+}
 .ptb05 {
     padding: 5px 0;
 }
@@ -326,6 +334,9 @@ i:not(.menu i) {
 }
 .br {
     border-right: 1px solid #ccc;
+}
+.bt {
+    border-top: 1px solid #ccc;
 }
 
 /* error */

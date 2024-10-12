@@ -61,7 +61,7 @@
     <div>
         <form id="form" th:action="@{/etc-budget}" th:object="${req}" method="get">
             <div class="fix-top-left">
-                <i class="fi fi-rr-menu-burger" th:data-searchDate="*{searchDate}" onclick="location.href='/expenses?searchDate=' + this.getAttribute('data-searchDate')"></i>
+                <i class="fi fi-rr-menu-burger" th:data-search-date="*{searchDate}" onclick="location.href='/expenses?searchDate=' + this.getAttribute('data-search-date')"></i>
             </div>
             <div class="w600 ta-center fix-top-center-w600">
                 <div class="h30" onclick="changeMonth(-1)">

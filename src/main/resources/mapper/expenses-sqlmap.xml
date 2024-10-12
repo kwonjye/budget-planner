@@ -45,6 +45,9 @@
             AND (e.expense_name LIKE CONCAT('%', #{req.searchText}, '%')
               OR e.expense_detail LIKE CONCAT('%', #{req.searchText}, '%'))
         </if>
+        <if test="req.categoryId != null">
+            AND e.category_id = #{req.categoryId}
+        </if>
     </select>
     <insert id="save" useGeneratedKeys="true" keyColumn="expense_id" keyProperty="expenseId">
         INSERT INTO expenses (
