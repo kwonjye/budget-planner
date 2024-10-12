@@ -74,36 +74,37 @@ public class ExpensesController {
 
         List<EtcBudget> etcBudgets = etcBudgetMapper.findByReqAndUserId(EtcBudgetReq.builder().searchDate(req.getSearchDate()).build(), user.getUserId());
         Map<Category, Integer> etcBudgetAmountMap = etcBudgets.stream()
-                .sorted(Comparator.comparing(etcBudget -> etcBudget.getCategory().getCreatedAt()))
                 .collect(Collectors.groupingBy(
                         EtcBudget::getCategory,
-                        LinkedHashMap::new,
                         Collectors.reducing(0,
                                 etcBudget -> etcBudget.getCalcType().apply(0, etcBudget.getAmount()),
                                 Integer::sum
                         )
                 ));
-        log.info("기타 예산 : {}", etcBudgetAmountMap);
-        model.addAttribute("etcBudgetAmountMap", etcBudgetAmountMap);
+
+        List<Category> etcBudgetCategories = categoryMapper.findByUserIdAndType(user.getUserId(), CategoryType.ETC_BUDGET);
+        etcBudgetCategories.forEach(category -> etcBudgetAmountMap.putIfAbsent(category, 0));
+        List<Map.Entry<Category, Integer>> sortedEtcBudgetAmountList = etcBudgetAmountMap.entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByKey(Comparator.comparing(Category::getCreatedAt)))
+                .toList();
+
+        log.info("기타 예산 : {}", sortedEtcBudgetAmountList);
+        model.addAttribute("etcBudgetAmountList", sortedEtcBudgetAmountList);
 
         List<Expenses> expenses = expensesService.findByReqAndUserId(ExpensesReq.builder().searchDate(req.getSearchDate()).build(), user.getUserId());
         Map<Category, Integer> expensesAmountMap = expenses.stream()
                 .collect(Collectors.groupingBy(Expenses::getCategory, Collectors.summingInt(Expenses::getAmount)));
 
-        List<Category> categories = categoryMapper.findByUserIdAndType(user.getUserId(), CategoryType.EXPENSE);
-        categories.forEach(category -> expensesAmountMap.putIfAbsent(category, 0));
-        Map<Category, Integer> sortedExpensesAmountMap = expensesAmountMap.entrySet()
+        List<Category> expenseCategories = categoryMapper.findByUserIdAndType(user.getUserId(), CategoryType.EXPENSE);
+        expenseCategories.forEach(category -> expensesAmountMap.putIfAbsent(category, 0));
+        List<Map.Entry<Category, Integer>> sortedExpensesAmountList = expensesAmountMap.entrySet()
                 .stream()
                 .sorted(Map.Entry.<Category, Integer>comparingByValue().reversed())
-                .collect(Collectors.toMap(
-                        Map.Entry::getKey,
-                        Map.Entry::getValue,
-                        (e1, e2) -> e1,
-                        LinkedHashMap::new
-                ));
+                .toList();
 
-        log.info("카테고리별 지출 합계 : {}", sortedExpensesAmountMap);
-        model.addAttribute("expensesAmountMap", sortedExpensesAmountMap);
+        log.info("카테고리별 지출 합계 : {}", sortedExpensesAmountList);
+        model.addAttribute("expensesAmountList", sortedExpensesAmountList);
 
         int totalBudget = livingExpenseBudget + etcBudgetAmountMap.values().stream().mapToInt(Integer::intValue).sum();
         int totalExpenses = expenses.stream().mapToInt(Expenses::getAmount).sum();

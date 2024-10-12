@@ -52,8 +52,15 @@ public class EtcBudgetController {
                 .collect(Collectors.groupingBy(EtcBudget::getEtcBudgetDate));
         model.addAttribute("groupedByEtcBudgetDate", groupedByEtcBudgetDate);
 
-        List<Category> categories = etcBudgetService.findCategoryBySearchDateAndUserId(req.getSearchDate(), user.getUserId());
-        model.addAttribute("categories", categories);
+        List<Category> categoriesForSearchDate = etcBudgetService.findCategoryBySearchDateAndUserId(req.getSearchDate(), user.getUserId());
+        List<Category> categories = categoryService.findByUserIdAndType(user.getUserId(), CategoryType.ETC_BUDGET);
+        categories.forEach(category -> {
+           if (!categoriesForSearchDate.contains(category)) {
+               categoriesForSearchDate.add(category);
+           }
+        });
+        log.info("{} 기타 예산 카테고리 : {}", req.getSearchDate(), categoriesForSearchDate);
+        model.addAttribute("categories", categoriesForSearchDate);
 
         if(req.getCategoryId() != null) {
             Category category = categoryService.check(req.getCategoryId(), user.getUserId());

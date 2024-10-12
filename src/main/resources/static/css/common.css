@@ -30,7 +30,7 @@ button, i, .cursor {
 }
 
 /* icon */
-i:not(.menu i) {
+i:not(.menu i, .arrow i) {
     font-size: 24px;
 }
 .fix-top-right-15 {

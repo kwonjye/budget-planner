@@ -105,14 +105,14 @@
           </div>
           <div class="bt mtb30"></div>
           <div class="ptb05 mt05">
-            <div class="space-between mtb15 cursor h-opacity" th:each="expensesAmountMap : ${expensesAmountMap}"
+            <div class="space-between mtb15 cursor h-opacity" th:each="expensesAmount : ${expensesAmountList}"
                  th:data-search-date="${req.searchDate}"
-                 th:data-category-id="${expensesAmountMap.key.categoryId}"
+                 th:data-category-id="${expensesAmount.key.categoryId}"
                  onclick="location.href='/expenses?searchDate=' + this.getAttribute('data-search-date') + '&categoryId=' + this.getAttribute('data-category-id')">
-              <span th:text="${expensesAmountMap.key.categoryName}"
+              <span th:text="${expensesAmount.key.categoryName}"
                     class="ptb05 w150 ta-center br05"
-                    th:style="'background-color: ' + ${expensesAmountMap.key.categoryColor}"></span>
-              <span th:text="${#numbers.formatInteger(expensesAmountMap.value, 1, 'COMMA')}"></span>
+                    th:style="'background-color: ' + ${expensesAmount.key.categoryColor}"></span>
+              <span th:text="${#numbers.formatInteger(expensesAmount.value, 1, 'COMMA')}"></span>
             </div>
           </div>
         </div>
@@ -155,16 +155,16 @@
                     th:text="${#numbers.formatInteger(livingExpenseBudget, 1, 'COMMA')}"
                     onclick="location.href='/budget/edit?searchDate=' + this.getAttribute('data-search-date')"></span>
             </div>
-            <div class="space-between mtb20" th:each="etcBudgetAmountMap : ${etcBudgetAmountMap}">
+            <div class="space-between mtb20" th:each="etcBudgetAmount : ${etcBudgetAmountList}">
               <span class="cursor h-opacity w50p"
-                    th:data-category-id="${etcBudgetAmountMap.key.categoryId}"
-                    th:text="${etcBudgetAmountMap.key.categoryName}"
+                    th:data-category-id="${etcBudgetAmount.key.categoryId}"
+                    th:text="${etcBudgetAmount.key.categoryName}"
                     onclick="location.href='/etc-budget?categoryId=' + this.getAttribute('data-category-id')"></span>
               <span class="w50p ta-right"
-                    th:classappend="${etcBudgetAmountMap.key.isUsed} ? 'h-opacity cursor' : ''"
-                    th:data-category-id="${etcBudgetAmountMap.key.categoryId}"
-                    th:text="${#numbers.formatInteger(etcBudgetAmountMap.value, 1, 'COMMA')}"
-                    th:onclick="${etcBudgetAmountMap.key.isUsed} ? 'location.href=\'/etc-budget/add?categoryId=\' + this.getAttribute(\'data-category-id\')' : ''"></span>
+                    th:classappend="${etcBudgetAmount.key.isUsed} ? 'h-opacity cursor' : ''"
+                    th:data-category-id="${etcBudgetAmount.key.categoryId}"
+                    th:text="${#numbers.formatInteger(etcBudgetAmount.value, 1, 'COMMA')}"
+                    th:onclick="${etcBudgetAmount.key.isUsed} ? 'location.href=\'/etc-budget/add?categoryId=\' + this.getAttribute(\'data-category-id\')' : ''"></span>
             </div>
           </div>
           <div class="bt mtb30"></div>
