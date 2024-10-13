@@ -14,4 +14,6 @@ public interface CategoryMapper {
                                        @Param("categoryType") CategoryType categoryType);
 
     Category findById(@NotNull @Param("categoryId") Long categoryId);
+
+    void delete(@Param("categoryId") Long categoryId);
 }

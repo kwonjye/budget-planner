@@ -32,4 +32,10 @@
         <include refid="category"/>
         WHERE category_id = #{categoryId}
     </select>
+    <update id="delete">
+        UPDATE category
+        SET is_used = false,
+            updated_at = NOW()
+        WHERE category_id = #{categoryId}
+    </update>
 </mapper>

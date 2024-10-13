@@ -35,4 +35,10 @@ public class CategoryService {
     public List<Category> findByUserIdAndType(Long userId, CategoryType categoryType) {
         return categoryMapper.findByUserIdAndType(userId, categoryType);
     }
+
+    @Transactional
+    public void delete(Long categoryId) {
+        log.info("delete category - {}", categoryId);
+        categoryMapper.delete(categoryId);
+    }
 }

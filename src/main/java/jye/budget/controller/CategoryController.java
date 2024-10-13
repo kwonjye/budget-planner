@@ -8,9 +8,12 @@ import jye.budget.service.CategoryService;
 import jye.budget.type.CategoryType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
@@ -42,5 +45,21 @@ public class CategoryController {
         model.addAttribute("expenseList", expenseList);
 
         return "/category/view";
+    }
+
+    @DeleteMapping("{categoryId}")
+    public ResponseEntity<Void> delete(@PathVariable Long categoryId, HttpSession session) {
+
+        log.info("카테고리 삭제 : {}", categoryId);
+
+        User user = (User) session.getAttribute(SessionConst.LOGIN_USER);
+
+        Category category = categoryService.check(categoryId, user.getUserId());
+        if(category == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        categoryService.delete(categoryId);
+        return ResponseEntity.noContent().build();
     }
 }
