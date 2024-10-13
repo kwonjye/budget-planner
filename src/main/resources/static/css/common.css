@@ -479,6 +479,12 @@ header {
 .h-opacity:hover {
     opacity: 0.7;
 }
+.h-rotate {
+    transition: transform 0.3s;
+}
+.h-rotate:hover {
+    transform: rotate(2deg);
+}
 
 /* none */
 .select-none {

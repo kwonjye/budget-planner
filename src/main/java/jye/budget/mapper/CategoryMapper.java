@@ -18,4 +18,6 @@ public interface CategoryMapper {
     void delete(@Param("categoryId") Long categoryId);
 
     void update(Category category);
+
+    void save(Category category);
 }

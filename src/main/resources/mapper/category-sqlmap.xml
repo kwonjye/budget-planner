@@ -45,4 +45,21 @@
             updated_at = NOW()
         WHERE category_id = #{categoryId}
     </update>
+    <insert id="save" useGeneratedKeys="true" keyColumn="category_id" keyProperty="categoryId">
+        INSERT INTO category (
+                              user_id,
+                              category_type,
+                              category_name,
+                              category_color,
+                              created_at,
+                              updated_at
+        ) VALUE (
+                 #{userId},
+                 #{categoryType},
+                 #{categoryName},
+                 #{categoryColor},
+                 NOW(),
+                 NOW()
+                )
+    </insert>
 </mapper>

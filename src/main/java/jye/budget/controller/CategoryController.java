@@ -98,4 +98,34 @@ public class CategoryController {
         categoryService.update(categoryId, categoryForm);
         return "redirect:/category";
     }
+
+    @GetMapping("/add")
+    public String addForm(@ModelAttribute("categoryForm") CategoryForm categoryForm, Model model) {
+        model.addAttribute("categoryTypeValues", CategoryType.values());
+        return "/category/add";
+    }
+
+    @PostMapping("/add")
+    public String add(@Valid @ModelAttribute("categoryForm") CategoryForm categoryForm, BindingResult bindingResult,
+                      HttpSession session, Model model) {
+
+        log.info("카테고리 추가 : {}", categoryForm);
+
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("categoryTypeValues", CategoryType.values());
+            return "/category/add";
+        }
+        if(categoryForm.getCategoryType() == null) {
+            log.error("카테고리 유형 없음");
+            bindingResult.rejectValue("categoryType", "category.type.notFound");
+            model.addAttribute("categoryTypeValues", CategoryType.values());
+            return "/category/add";
+        }
+
+        User user = (User) session.getAttribute(SessionConst.LOGIN_USER);
+
+        categoryService.save(user.getUserId(), categoryForm);
+
+        return "redirect:/category";
+    }
 }

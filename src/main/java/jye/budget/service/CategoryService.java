@@ -40,7 +40,7 @@ public class CategoryService {
 
     @Transactional
     public void delete(Long categoryId) {
-        log.info("delete category - {}", categoryId);
+        log.info("delete category : {}", categoryId);
         categoryMapper.delete(categoryId);
     }
 
@@ -51,6 +51,19 @@ public class CategoryService {
                 .categoryName(categoryForm.getCategoryName())
                 .categoryColor(categoryForm.getCategoryColor())
                 .build();
+        log.info("update category : {}", category);
         categoryMapper.update(category);
+    }
+
+    @Transactional
+    public void save(Long userId, @Valid CategoryForm categoryForm) {
+        Category category = Category.builder()
+                .userId(userId)
+                .categoryType(categoryForm.getCategoryType())
+                .categoryName(categoryForm.getCategoryName())
+                .categoryColor(categoryForm.getCategoryColor())
+                .build();
+        log.info("save category : {}", category);
+        categoryMapper.save(category);
     }
 }

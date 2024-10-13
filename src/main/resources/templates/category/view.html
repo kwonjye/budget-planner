@@ -34,7 +34,7 @@
   <div>
     <div class="mt50 space-evenly h100vh-160">
       <div class="plr30">
-        <div class="fs35 mb50 ta-center">
+        <div class="fs35 mb50 ta-center cursor h-rotate" th:onclick="|location.href='@{/category/add?categoryType=FIXED_EXPENSE}'|">
           <h2>고정 지출</h2>
         </div>
         <div th:each="fixExpense : ${fixExpenseList}" class="center mtb15">
@@ -48,7 +48,7 @@
       </div>
       <div class="br mlr50"></div>
       <div class="plr30">
-        <div class="fs35 mb50 ta-center">
+        <div class="fs35 mb50 ta-center cursor h-rotate" th:onclick="|location.href='@{/category/add?categoryType=ETC_BUDGET}'|">
           <h2>기타 예산</h2>
         </div>
         <div th:each="etcBudget : ${etcBudgetList}" class="center mtb15">
@@ -62,7 +62,7 @@
       </div>
       <div class="bl mlr50"></div>
       <div class="plr30">
-        <div class="fs35 mb50 ta-center">
+        <div class="fs35 mb50 ta-center cursor h-rotate" th:onclick="|location.href='@{/category/add?categoryType=EXPENSE}'|">
           <h2>지출</h2>
         </div>
         <div th:each="expense : ${expenseList}" class="center mtb15">
