@@ -30,7 +30,6 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class BudgetController {
 
-
     private final BudgetService budgetService;
 
     @GetMapping

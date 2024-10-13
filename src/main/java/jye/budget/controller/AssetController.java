@@ -78,7 +78,7 @@ public class AssetController {
         return "redirect:/asset";
     }
 
-    @GetMapping("/edit/{assetId}")
+    @GetMapping("/{assetId}")
     public String editForm(@PathVariable Long assetId,
                            HttpSession session, Model model) {
 
@@ -93,7 +93,7 @@ public class AssetController {
         return "/asset/edit";
     }
 
-    @PostMapping("/edit/{assetId}")
+    @PostMapping("/{assetId}")
     public String edit(@PathVariable Long assetId, @Valid @ModelAttribute("assetForm") AssetForm assetForm, BindingResult bindingResult,
                        HttpSession session) {
 

@@ -1,6 +1,8 @@
 package jye.budget.service;
 
+import jakarta.validation.Valid;
 import jye.budget.entity.Category;
+import jye.budget.form.CategoryForm;
 import jye.budget.mapper.CategoryMapper;
 import jye.budget.type.CategoryType;
 import lombok.RequiredArgsConstructor;
@@ -34,5 +36,34 @@ public class CategoryService {
     @Transactional(readOnly = true)
     public List<Category> findByUserIdAndType(Long userId, CategoryType categoryType) {
         return categoryMapper.findByUserIdAndType(userId, categoryType);
+    }
+
+    @Transactional
+    public void delete(Long categoryId) {
+        log.info("delete category : {}", categoryId);
+        categoryMapper.delete(categoryId);
+    }
+
+    @Transactional
+    public void update(Long categoryId, @Valid CategoryForm categoryForm) {
+        Category category = Category.builder()
+                .categoryId(categoryId)
+                .categoryName(categoryForm.getCategoryName())
+                .categoryColor(categoryForm.getCategoryColor())
+                .build();
+        log.info("update category : {}", category);
+        categoryMapper.update(category);
+    }
+
+    @Transactional
+    public void save(Long userId, @Valid CategoryForm categoryForm) {
+        Category category = Category.builder()
+                .userId(userId)
+                .categoryType(categoryForm.getCategoryType())
+                .categoryName(categoryForm.getCategoryName())
+                .categoryColor(categoryForm.getCategoryColor())
+                .build();
+        log.info("save category : {}", category);
+        categoryMapper.save(category);
     }
 }

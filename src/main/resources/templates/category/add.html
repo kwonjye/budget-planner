@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head th:replace="~{fragment/head :: head}">
+  <title>나만의 가계부</title>
+</head>
+<script>
+  $(document).ready(function() {
+    toggleColorVisibility();
+  });
+
+  function toggleColorVisibility() {
+    const categoryType = $("#categoryType").val();
+    if(categoryType === 'EXPENSE') {
+      $("#categoryColor").val(getRandomPastelColor());
+      $("#color").show();
+    } else {
+      $("#color").hide();
+    }
+  }
+
+  function getRandomPastelColor() {
+    // 연한 색상을 만들기 위해 RGB 값 조정
+    const r = Math.floor(Math.random() * 127) + 127; // 127에서 255 사이
+    const g = Math.floor(Math.random() * 127) + 127; // 127에서 255 사이
+    const b = Math.floor(Math.random() * 127) + 127; // 127에서 255 사이
+
+    // RGB 값을 HEX 형식으로 변환
+    const toHex = (c) => {
+      const clamped = Math.max(0, Math.min(255, c)); // RGB 값 클램프
+      return clamped.toString(16).padStart(2, '0'); // 두 자리로 유지
+    };
+
+    return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+  }
+</script>
+<body>
+<div th:insert="~{fragment/header :: header}"></div>
+<div class="container center">
+  <div>
+    <div class="fix-top-left">
+      <i class="fi fi-rr-menu-burger" th:onclick="|location.href='@{/category}'|"></i>
+    </div>
+    <div class="w550">
+      <div class="fs35 mt70 mb30">
+        <h2>카테고리 추가</h2>
+      </div>
+      <div class="fs20">
+        <form th:action="@{/category/add}" th:object="${categoryForm}" method="post">
+          <div class="mtb50">
+            <div class="space-between">
+              <label for="categoryType">유형</label>
+              <div class="div-underline">
+                <select id="categoryType" th:field="*{categoryType}" class="input-none w100p" onchange="toggleColorVisibility()">
+                  <option th:each="categoryType : ${categoryTypeValues}"
+                          th:value="${categoryType.name()}"
+                          th:text="${categoryType.description}"></option>
+                </select>
+              </div>
+            </div>
+            <div class="field-error mt05 ta-right" th:errors="*{categoryType}"></div>
+          </div>
+          <div class="mtb50">
+            <div class="space-between">
+              <label for="categoryName">이름</label>
+              <div class="div-underline">
+                <input type="text" id="categoryName" class="input-none w100p"
+                       th:field="*{categoryName}">
+              </div>
+            </div>
+            <div class="field-error mt05 ta-right" th:errors="*{categoryName}"></div>
+          </div>
+          <div id="color" class="mtb50">
+            <div class="space-between">
+              <label for="categoryColor">색상</label>
+              <div class="div-underline">
+                <input type="color" id="categoryColor" class="input-none w100p"
+                       th:field="*{categoryColor}">
+              </div>
+            </div>
+            <div class="field-error mt05 ta-right" th:errors="*{categoryColor}"></div>
+          </div>
+          <div class="ta-right">
+            <button class="btn-gradient w200" type="submit">저장</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

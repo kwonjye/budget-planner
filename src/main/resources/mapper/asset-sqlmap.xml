@@ -73,12 +73,12 @@
             updated_at = NOW()
         WHERE asset_id = #{assetId}
     </update>
-    <delete id="delete">
+    <update id="delete">
         UPDATE asset
         SET is_used = false,
             updated_at = NOW()
         WHERE asset_id = #{assetId}
-    </delete>
+    </update>
     <resultMap id="assetChange" type="jye.budget.entity.AssetChange">
         <id column="change_id" property="changeId" />
         <result column="calc_type" property="calcType" />
