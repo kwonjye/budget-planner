@@ -42,7 +42,8 @@
                   th:data-category-id="${fixExpense.categoryId}"
                   th:data-category-type="${fixExpense.categoryType.description}"
                   th:data-category-name="${fixExpense.categoryName}"
-                  th:text="${fixExpense.categoryName}"></button>
+                  th:text="${fixExpense.categoryName}"
+                  th:onclick="|location.href='@{/category/}| + ${fixExpense.categoryId} + |'|"></button>
         </div>
       </div>
       <div class="br mlr50"></div>
@@ -55,7 +56,8 @@
                   th:data-category-id="${etcBudget.categoryId}"
                   th:data-category-type="${etcBudget.categoryType.description}"
                   th:data-category-name="${etcBudget.categoryName}"
-                  th:text="${etcBudget.categoryName}"></button>
+                  th:text="${etcBudget.categoryName}"
+                  th:onclick="|location.href='@{/category/}| + ${etcBudget.categoryId} + |'|"></button>
         </div>
       </div>
       <div class="bl mlr50"></div>
@@ -69,7 +71,8 @@
                   th:data-category-type="${expense.categoryType.description}"
                   th:data-category-name="${expense.categoryName}"
                   th:text="${expense.categoryName}"
-                  th:style="'background-color: ' + ${expense.categoryColor}"></button>
+                  th:style="'background-color: ' + ${expense.categoryColor}"
+                  th:onclick="|location.href='@{/category/}| + ${expense.categoryId} + |'|"></button>
         </div>
       </div>
     </div>

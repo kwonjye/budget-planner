@@ -1,6 +1,8 @@
 package jye.budget.service;
 
+import jakarta.validation.Valid;
 import jye.budget.entity.Category;
+import jye.budget.form.CategoryForm;
 import jye.budget.mapper.CategoryMapper;
 import jye.budget.type.CategoryType;
 import lombok.RequiredArgsConstructor;
@@ -40,5 +42,15 @@ public class CategoryService {
     public void delete(Long categoryId) {
         log.info("delete category - {}", categoryId);
         categoryMapper.delete(categoryId);
+    }
+
+    @Transactional
+    public void update(Long categoryId, @Valid CategoryForm categoryForm) {
+        Category category = Category.builder()
+                .categoryId(categoryId)
+                .categoryName(categoryForm.getCategoryName())
+                .categoryColor(categoryForm.getCategoryColor())
+                .build();
+        categoryMapper.update(category);
     }
 }

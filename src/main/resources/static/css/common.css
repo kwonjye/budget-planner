@@ -488,6 +488,7 @@ header {
 }
 .input-none {
     border: none;
+    background: none;
     font-size: 20px;
     text-align: center;
 }

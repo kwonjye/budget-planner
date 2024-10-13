@@ -38,4 +38,11 @@
             updated_at = NOW()
         WHERE category_id = #{categoryId}
     </update>
+    <update id="update">
+        UPDATE category
+        SET category_name = #{categoryName},
+            category_color = #{categoryColor},
+            updated_at = NOW()
+        WHERE category_id = #{categoryId}
+    </update>
 </mapper>

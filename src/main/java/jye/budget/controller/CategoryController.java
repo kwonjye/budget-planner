@@ -1,8 +1,10 @@
 package jye.budget.controller;
 
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import jye.budget.entity.Category;
 import jye.budget.entity.User;
+import jye.budget.form.CategoryForm;
 import jye.budget.login.SessionConst;
 import jye.budget.service.CategoryService;
 import jye.budget.type.CategoryType;
@@ -11,10 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -47,7 +47,7 @@ public class CategoryController {
         return "/category/view";
     }
 
-    @DeleteMapping("{categoryId}")
+    @DeleteMapping("/{categoryId}")
     public ResponseEntity<Void> delete(@PathVariable Long categoryId, HttpSession session) {
 
         log.info("카테고리 삭제 : {}", categoryId);
@@ -61,5 +61,41 @@ public class CategoryController {
 
         categoryService.delete(categoryId);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{categoryId}")
+    public String editForm(@PathVariable Long categoryId, HttpSession session, Model model) {
+
+        User user = (User) session.getAttribute(SessionConst.LOGIN_USER);
+
+        Category category = categoryService.check(categoryId, user.getUserId());
+        if(category == null) {
+            return "/error";
+        }
+
+        model.addAttribute("categoryForm", new CategoryForm(category));
+        return "/category/edit";
+    }
+
+    @PostMapping("/{categoryId}")
+    public String edit(@PathVariable Long categoryId, @Valid @ModelAttribute CategoryForm categoryForm, BindingResult bindingResult,
+                       HttpSession session) {
+
+        log.info("카테고리 수정 : {}", categoryForm);
+
+        User user = (User) session.getAttribute(SessionConst.LOGIN_USER);
+
+        Category category = categoryService.check(categoryId, user.getUserId());
+        if(category == null) {
+            return "/error";
+        }
+
+        if(bindingResult.hasErrors()) {
+            categoryForm.setCategoryType(category.getCategoryType());
+            return "/category/edit";
+        }
+
+        categoryService.update(categoryId, categoryForm);
+        return "redirect:/category";
     }
 }

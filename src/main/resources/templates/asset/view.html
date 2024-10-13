@@ -40,7 +40,7 @@
            th:data-asset-id="${asset.assetId}"
            th:data-asset-name="${asset.assetName}"
            th:each="asset : ${assets}"
-           th:onclick="|location.href='@{/asset/edit/}| + ${asset.assetId} + |'|">
+           th:onclick="|location.href='@{/asset/}| + ${asset.assetId} + |'|">
         <div class="fs20">
           <span th:text="${asset.assetName}">자산명</span>
           <span th:if="${asset.allocated}">*</span>
