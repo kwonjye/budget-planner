@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head th:replace="~{fragment/head :: head}">
+  <title>나만의 가계부</title>
+</head>
+<script>
+  $(document).ready(function() {
+    $(".btn-category").on('contextmenu', function(e) {
+      e.preventDefault(); // 기본 우클릭 메뉴 방지
+
+      const categoryId = $(this).data('category-id');
+      const categoryType = $(this).data('category-type');
+      const categoryName = $(this).data('category-name');
+
+      if (confirm(categoryType + "의 '" + categoryName + "' 카테고리를 삭제하시겠습니까?")) {
+        $.ajax({
+          url: '/category/' + categoryId,
+          type: 'DELETE',
+          success: function() {
+            alert("삭제되었습니다.");
+            location.reload();
+          },
+          error: function() {
+            alert("삭제할 수 없습니다.");
+          }
+        });
+      }
+    });
+  });
+</script>
+<body>
+<div th:insert="~{fragment/header :: header}"></div>
+<div class="container min-w1220">
+  <div>
+    <div class="mt50 space-evenly h100vh-160">
+      <div class="plr30">
+        <div class="fs35 mb50 ta-center">
+          <h2>고정 지출</h2>
+        </div>
+        <div th:each="fixExpense : ${fixExpenseList}" class="center mtb15">
+          <button type="button" class="btn-category category-none"
+                  th:data-category-id="${fixExpense.categoryId}"
+                  th:data-category-type="${fixExpense.categoryType.description}"
+                  th:data-category-name="${fixExpense.categoryName}"
+                  th:text="${fixExpense.categoryName}"></button>
+        </div>
+      </div>
+      <div class="br mlr50"></div>
+      <div class="plr30">
+        <div class="fs35 mb50 ta-center">
+          <h2>기타 예산</h2>
+        </div>
+        <div th:each="etcBudget : ${etcBudgetList}" class="center mtb15">
+          <button type="button" class="btn-category category-none"
+                  th:data-category-id="${etcBudget.categoryId}"
+                  th:data-category-type="${etcBudget.categoryType.description}"
+                  th:data-category-name="${etcBudget.categoryName}"
+                  th:text="${etcBudget.categoryName}"></button>
+        </div>
+      </div>
+      <div class="bl mlr50"></div>
+      <div class="plr30">
+        <div class="fs35 mb50 ta-center">
+          <h2>지출</h2>
+        </div>
+        <div th:each="expense : ${expenseList}" class="center mtb15">
+          <button type="button" class="btn-category category-color"
+                  th:data-category-id="${expense.categoryId}"
+                  th:data-category-type="${expense.categoryType.description}"
+                  th:data-category-name="${expense.categoryName}"
+                  th:text="${expense.categoryName}"
+                  th:style="'background-color: ' + ${expense.categoryColor}"></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

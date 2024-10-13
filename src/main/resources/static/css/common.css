@@ -147,6 +147,9 @@ i:not(.menu i, .arrow i) {
 .h35 {
     height: 35px;
 }
+.h100vh-160 {
+    height: CALC(100vh - 160px);
+}
 
 /* align-items */
 .ai-center {
@@ -327,6 +330,9 @@ i:not(.menu i, .arrow i) {
 .plr30 {
     padding: 0 30px;
 }
+.plr50 {
+    padding: 0 50px;
+}
 
 /* border */
 .bl {
@@ -501,6 +507,23 @@ header {
     background: none;
     border: none;
     font-size: 16px;
+}
+.btn-category {
+    font-size: 20px;
+    border-radius: 5px;
+    height: 45px;
+    width: 200px;
+    transition: transform 0.3s ease;
+}
+.btn-category:hover {
+    transform: scale(1.1);
+}
+.category-none {
+    border: 1px solid #292931;
+    background: white;
+}
+.category-color {
+    border: none;
 }
 
 /* etc */
