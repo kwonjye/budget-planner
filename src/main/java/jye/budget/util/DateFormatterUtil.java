@@ -3,10 +3,11 @@ package jye.budget.util;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 public class DateFormatterUtil {
     public static String formatLocalDateWithDay(LocalDate date) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M월 d일(EEE)");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M월 d일(EEE)", Locale.KOREAN);
         return date.format(formatter);
     }
     public static String formatYearMonth(String yearMonthStr) {
