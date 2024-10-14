@@ -18,4 +18,12 @@
             AND subscription_type = #{subscriptionType}
         ORDER BY subscription_date
     </select>
+    <select id="findById" resultType="jye.budget.entity.Subscription">
+        <include refid="subscription"/>
+        WHERE subscription_id = #{subscriptionId}
+    </select>
+    <delete id="delete">
+        DELETE FROM subscription
+        WHERE subscription_id = #{subscriptionId}
+    </delete>
 </mapper>

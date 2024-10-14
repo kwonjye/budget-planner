@@ -21,4 +21,29 @@ public class SubscriptionService {
     public List<Subscription> findByTypeAndUserId(Long userId, SubscriptionType subscriptionType) {
         return subscriptionMapper.findByTypeAndUserId(userId, subscriptionType);
     }
+
+    @Transactional(readOnly = true)
+    public Subscription check(Long subscriptionId, Long userId) {
+        Subscription subscription = findById(subscriptionId);
+        if(subscription == null) {
+            log.error("구독 정보 없음 : {}", subscriptionId);
+            return null;
+        }
+        if(!subscription.getUserId().equals(userId)) {
+            log.error("회원 ID 불일치 : subscription - {}, userId - {}", subscription, userId);
+            return null;
+        }
+        return subscription;
+    }
+
+    @Transactional(readOnly = true)
+    public Subscription findById(Long subscriptionId) {
+        return subscriptionMapper.findById(subscriptionId);
+    }
+
+    @Transactional
+    public void delete(Long subscriptionId) {
+        log.info("delete subscription : {}", subscriptionId);
+        subscriptionMapper.delete(subscriptionId);
+    }
 }

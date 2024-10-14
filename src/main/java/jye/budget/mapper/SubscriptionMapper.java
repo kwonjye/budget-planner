@@ -11,4 +11,8 @@ import java.util.List;
 public interface SubscriptionMapper {
     List<Subscription> findByTypeAndUserId(@Param("userId") Long userId,
                                            @Param("subscriptionType") SubscriptionType subscriptionType);
+
+    Subscription findById(@Param("subscriptionId") Long subscriptionId);
+
+    void delete(@Param("subscriptionId") Long subscriptionId);
 }
