@@ -39,4 +39,8 @@ public interface BudgetMapper {
     Budget findRecent(@Param("userId") Long userId);
 
     Long findChangeIdByBudgetAllocationId(@Param("budgetAllocationId") Long budgetAllocationId);
+
+    Budget findById(@Param("budgetId") Long budgetId);
+
+    void delete(@Param("budgetId") Long budgetId);
 }

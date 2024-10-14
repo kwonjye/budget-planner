@@ -69,13 +69,19 @@ i:not(.menu i, .arrow i, .circle i) {
     top: 20px;
     right: CALC(50% + 300px);
 }
-.fix-top-right-w600-h38 {
+.fix-top-h38 {
     display: flex;
     align-items: center;
     position: absolute;
     top: 20px;
-    right: CALC(50% - 300px);
     height: 38px;
+    z-index: 100;
+}
+.left-w600 {
+    left: CALC(50% - 300px);
+}
+.right-w600 {
+    right: CALC(50% - 300px);
 }
 .fix-top-right-h38 {
     display: flex;

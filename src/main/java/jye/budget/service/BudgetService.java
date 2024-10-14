@@ -165,4 +165,29 @@ public class BudgetService {
                 .fixedExpenses(fixedExpenses)
                 .build();
     }
+
+    @Transactional(readOnly = true)
+    public Budget check(Long budgetId, Long userId) {
+        Budget budget = findById(budgetId);
+        if(budget == null) {
+            log.info("예산 정보 없음 : {}", budgetId);
+            return null;
+        }
+        if(!budget.getUserId().equals(userId)) {
+            log.error("회원 ID 불일치 : budget - {}, userId - {}", budget, userId);
+            return null;
+        }
+        return budget;
+    }
+
+    @Transactional(readOnly = true)
+    public Budget findById(Long budgetId) {
+        return budgetMapper.findById(budgetId);
+    }
+
+    @Transactional
+    public void delete(Long budgetId) {
+        log.info("delete budget : {}", budgetId);
+        budgetMapper.delete(budgetId);
+    }
 }

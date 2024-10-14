@@ -21,12 +21,33 @@
         input.val(year + '-' + month);
         input.trigger('change');
     }
+
+    function deleteBudget(el) {
+        const budgetId = $(el).data('budget-id');
+
+        if (confirm("예산을 삭제하시겠습니까?")) {
+            $.ajax({
+                url: '/budget/' + budgetId,
+                type: 'DELETE',
+                success: function() {
+                    alert("삭제되었습니다.");
+                    location.reload();
+                },
+                error: function() {
+                    alert("삭제할 수 없습니다.");
+                }
+            });
+        }
+    }
 </script>
 <body>
 <div th:insert="~{fragment/header :: header}"></div>
 <div class="container center">
     <div>
         <form th:action="@{/budget}" th:object="${req}" method="get">
+            <div class="fix-top-h38 left-w600" th:if="${data.budget.budgetId != null}">
+                <i class="fi fi-rs-trash h30" th:data-budget-id="${data.budget.budgetId}" onclick="deleteBudget(this)"></i>
+            </div>
             <div class="w600 ta-center fix-top-center-w600">
                 <div class="h30" onclick="changeMonth(-1)">
                     <i class="fi fi-rr-angle-left"></i>
@@ -38,7 +59,7 @@
                     <i class="fi fi-rr-angle-right"></i>
                 </div>
             </div>
-            <div class="fix-top-right-w600-h38">
+            <div class="fix-top-h38 right-w600">
                 <i class="fi fi-rs-edit h30" th:data-search-date="${req.searchDate}" onclick="location.href='/budget/edit?searchDate=' + this.getAttribute('data-search-date')"></i>
             </div>
             <div class="w600 mt90">

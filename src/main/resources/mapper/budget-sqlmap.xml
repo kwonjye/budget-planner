@@ -173,4 +173,12 @@
         FROM budget_allocation
         WHERE budget_allocation_id = #{budgetAllocationId}
     </select>
+    <select id="findById" resultType="jye.budget.entity.Budget">
+        <include refid="budget"/>
+        WHERE budget_id = #{budgetId}
+    </select>
+    <delete id="delete">
+        DELETE FROM budget
+        WHERE budget_id = #{budgetId}
+    </delete>
 </mapper>

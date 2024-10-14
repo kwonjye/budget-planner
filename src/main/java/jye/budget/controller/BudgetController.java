@@ -3,6 +3,7 @@ package jye.budget.controller;
 import io.micrometer.common.util.StringUtils;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
+import jye.budget.entity.Budget;
 import jye.budget.entity.User;
 import jye.budget.login.SessionConst;
 import jye.budget.req.BudgetReq;
@@ -15,10 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -163,5 +161,21 @@ public class BudgetController {
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
+    }
+
+    @DeleteMapping("/{budgetId}")
+    public ResponseEntity<Void> delete(@PathVariable Long budgetId, HttpSession session) {
+
+        log.info("예산 삭제 : {}", budgetId);
+
+        User user = (User) session.getAttribute(SessionConst.LOGIN_USER);
+
+        Budget budget = budgetService.check(budgetId, user.getUserId());
+        if(budget == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        budgetService.delete(budgetId);
+        return ResponseEntity.noContent().build();
     }
 }
