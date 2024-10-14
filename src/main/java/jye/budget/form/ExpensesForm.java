@@ -39,6 +39,7 @@ public class ExpensesForm {
     @Builder.Default
     private LocalDate expenseDate = LocalDate.now();
 
+    @Builder.Default
     private boolean isNecessary = true;
 
     public ExpensesForm(Expenses expenses) {
