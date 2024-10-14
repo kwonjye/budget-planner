@@ -96,4 +96,26 @@ public class SubscriptionController {
         subscriptionService.update(subscriptionId, subscriptionForm);
         return "redirect:/subscription";
     }
+
+    @GetMapping("/add")
+    public String addForm(@ModelAttribute("subscriptionForm") SubscriptionForm subscriptionForm, Model model) {
+        model.addAttribute("subscriptionTypeValues", SubscriptionType.values());
+        return "subscription/form";
+    }
+
+    @PostMapping("/add")
+    public String add(@Valid @ModelAttribute("subscriptionForm") SubscriptionForm subscriptionForm, BindingResult bindingResult,
+                      HttpSession session, Model model) {
+
+        log.info("구독 추가 : {}", subscriptionForm);
+
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("subscriptionTypeValues", SubscriptionType.values());
+            return "subscription/form";
+        }
+
+        User user = (User) session.getAttribute(SessionConst.LOGIN_USER);
+        subscriptionService.save(user.getUserId(), subscriptionForm);
+        return "redirect:/subscription";
+    }
 }

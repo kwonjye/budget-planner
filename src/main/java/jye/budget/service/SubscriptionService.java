@@ -61,4 +61,17 @@ public class SubscriptionService {
         log.info("update subscription : {}", subscription);
         subscriptionMapper.update(subscription);
     }
+
+    @Transactional
+    public void save(Long userId, @Valid SubscriptionForm subscriptionForm) {
+        Subscription subscription = Subscription.builder()
+                .userId(userId)
+                .subscriptionName(subscriptionForm.getSubscriptionName())
+                .subscriptionType(subscriptionForm.getSubscriptionType())
+                .subscriptionDate(subscriptionForm.getSubscriptionDate())
+                .subscriptionCost(subscriptionForm.getSubscriptionCost())
+                .build();
+        log.info("save subscription : {}", subscription);
+        subscriptionMapper.save(subscription);
+    }
 }

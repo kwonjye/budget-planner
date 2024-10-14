@@ -35,4 +35,23 @@
             updated_at = NOW()
         WHERE subscription_id = #{subscriptionId}
     </update>
+    <insert id="save" useGeneratedKeys="true" keyColumn="subscription_id" keyProperty="subscriptionId">
+        INSERT INTO subscription (
+                                  user_id,
+                                  subscription_name,
+                                  subscription_type,
+                                  subscription_date,
+                                  subscription_cost,
+                                  created_at,
+                                  updated_at
+        ) VALUES (
+                  #{userId},
+                  #{subscriptionName},
+                  #{subscriptionType},
+                  #{subscriptionDate},
+                  #{subscriptionCost},
+                  NOW(),
+                  NOW()
+                         )
+    </insert>
 </mapper>

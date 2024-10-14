@@ -17,4 +17,6 @@ public interface SubscriptionMapper {
     void delete(@Param("subscriptionId") Long subscriptionId);
 
     void update(Subscription subscription);
+
+    void save(Subscription subscription);
 }
