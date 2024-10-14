@@ -36,6 +36,7 @@ public class ExpensesForm {
 
     @NotNull
     @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @Builder.Default
     private LocalDate expenseDate = LocalDate.now();
 
     private boolean isNecessary = true;

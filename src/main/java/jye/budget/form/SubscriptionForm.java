@@ -26,6 +26,7 @@ public class SubscriptionForm {
 
     @NotNull
     @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @Builder.Default
     private LocalDate subscriptionDate = LocalDate.now();
 
     @Min(0)

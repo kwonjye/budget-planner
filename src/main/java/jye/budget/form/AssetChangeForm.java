@@ -30,6 +30,7 @@ public class AssetChangeForm {
 
     @NotNull
     @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @Builder.Default
     private LocalDate changeDate = LocalDate.now();
 
     public AssetChangeForm(AssetChange assetChange) {

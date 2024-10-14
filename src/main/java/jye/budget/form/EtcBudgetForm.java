@@ -32,6 +32,7 @@ public class EtcBudgetForm {
 
     @NotNull
     @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @Builder.Default
     private LocalDate etcBudgetDate = LocalDate.now();
 
     public EtcBudgetForm(EtcBudget etcBudget) {
