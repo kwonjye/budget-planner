@@ -19,9 +19,13 @@ a {
     color: inherit;
     text-decoration: none;
 }
-button {
+button, input, select {
     color: inherit;
     background-color: transparent;
+}
+select {
+    text-align: center;
+    text-align-last: center;
 }
 *:not(h2) {
     font-family: 'Noto Sans KR', sans-serif;
