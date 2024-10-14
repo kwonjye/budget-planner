@@ -26,4 +26,13 @@
         DELETE FROM subscription
         WHERE subscription_id = #{subscriptionId}
     </delete>
+    <update id="update">
+        UPDATE subscription
+        SET subscription_name = #{subscriptionName},
+            subscription_type = #{subscriptionType},
+            subscription_date = #{subscriptionDate},
+            subscription_cost = #{subscriptionCost},
+            updated_at = NOW()
+        WHERE subscription_id = #{subscriptionId}
+    </update>
 </mapper>

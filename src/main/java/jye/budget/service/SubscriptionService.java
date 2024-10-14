@@ -1,6 +1,8 @@
 package jye.budget.service;
 
+import jakarta.validation.Valid;
 import jye.budget.entity.Subscription;
+import jye.budget.form.SubscriptionForm;
 import jye.budget.mapper.SubscriptionMapper;
 import jye.budget.type.SubscriptionType;
 import lombok.RequiredArgsConstructor;
@@ -45,5 +47,18 @@ public class SubscriptionService {
     public void delete(Long subscriptionId) {
         log.info("delete subscription : {}", subscriptionId);
         subscriptionMapper.delete(subscriptionId);
+    }
+
+    @Transactional
+    public void update(Long subscriptionId, @Valid SubscriptionForm subscriptionForm) {
+        Subscription subscription = Subscription.builder()
+                .subscriptionId(subscriptionId)
+                .subscriptionName(subscriptionForm.getSubscriptionName())
+                .subscriptionType(subscriptionForm.getSubscriptionType())
+                .subscriptionDate(subscriptionForm.getSubscriptionDate())
+                .subscriptionCost(subscriptionForm.getSubscriptionCost())
+                .build();
+        log.info("update subscription : {}", subscription);
+        subscriptionMapper.update(subscription);
     }
 }

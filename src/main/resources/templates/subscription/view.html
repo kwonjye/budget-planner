@@ -37,10 +37,11 @@
           <h2>연간 구독</h2>
         </div>
         <div>
-          <div class="subscription space-between mtb15 h-opacity"
+          <div class="subscription space-between mtb20 h-scale"
                th:each="annualSubscription : ${annualSubscriptions}"
                th:data-subscription-id="${annualSubscription.subscriptionId}"
-               th:data-subscription-name="${annualSubscription.subscriptionName}">
+               th:data-subscription-name="${annualSubscription.subscriptionName}"
+               th:onclick="|location.href='@{/subscription/}| + ${annualSubscription.subscriptionId} + |'|">
             <div class="w40p circle">
               <i class="fi fi-rr-circle mr30"></i>
               <span th:text="${annualSubscription.subscriptionName}" class="fs20"></span>
@@ -56,10 +57,11 @@
           <h2>월간 구독</h2>
         </div>
         <div>
-          <div class="subscription space-between mtb15 h-opacity"
+          <div class="subscription space-between mtb20 h-scale"
                th:each="monthlySubscription : ${monthlySubscriptions}"
                th:data-subscription-id="${monthlySubscription.subscriptionId}"
-               th:data-subscription-name="${monthlySubscription.subscriptionName}">
+               th:data-subscription-name="${monthlySubscription.subscriptionName}"
+               th:onclick="|location.href='@{/subscription/}| + ${monthlySubscription.subscriptionId} + |'|">
             <div class="w40p circle">
               <i class="fi fi-rr-circle mr30"></i>
               <span th:text="${monthlySubscription.subscriptionName}" class="fs20"></span>

@@ -15,4 +15,6 @@ public interface SubscriptionMapper {
     Subscription findById(@Param("subscriptionId") Long subscriptionId);
 
     void delete(@Param("subscriptionId") Long subscriptionId);
+
+    void update(Subscription subscription);
 }
