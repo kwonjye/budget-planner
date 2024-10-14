@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head th:replace="~{fragment/head :: head}">
+  <title>나만의 가계부</title>
+</head>
+<script>
+  $(document).ready(function() {
+    $(".subscription").on('contextmenu', function(e) {
+      e.preventDefault(); // 기본 우클릭 메뉴 방지
+
+      const subscriptionId = $(this).data('subscription-id');
+      const subscriptionName = $(this).data('subscription-name');
+
+      if (confirm("'" + subscriptionName + "' 구독을 삭제하시겠습니까?")) {
+        $.ajax({
+          url: '/subscription/' + subscriptionId,
+          type: 'DELETE',
+          success: function() {
+            alert("삭제되었습니다.");
+            location.reload();
+          },
+          error: function() {
+            alert("삭제할 수 없습니다.");
+          }
+        });
+      }
+    });
+  });
+</script>
+<body>
+<div th:insert="~{fragment/header :: header}"></div>
+<div class="container center">
+  <div class="w650">
+    <div class="mt50">
+      <div>
+        <div class="fs35 mt50 mb40">
+          <h2>연간 구독</h2>
+        </div>
+        <div>
+          <div th:each="annualSubscription : ${annualSubscriptions}" class="space-between mtb15">
+            <div class="w40p circle">
+              <i class="fi fi-rr-circle mr30"></i>
+              <span th:text="${annualSubscription.subscriptionName}" class="fs20"></span>
+            </div>
+            <span th:text="${T(jye.budget.util.DateFormatterUtil).formatAnnual(annualSubscription.subscriptionDate)}" class="fs20"></span>
+            <span th:text="${#numbers.formatInteger(annualSubscription.subscriptionCost, 1, 'COMMA')}" class="fs20 bold"></span>
+          </div>
+        </div>
+      </div>
+      <div class="bt mtb50"></div>
+      <div class="mt50 mb40">
+        <div class="fs35 mt50 mb40">
+          <h2>월간 구독</h2>
+        </div>
+        <div>
+          <div th:each="monthlySubscription : ${monthlySubscriptions}" class="space-between mtb15">
+            <div class="w40p circle">
+              <i class="fi fi-rr-circle mr30"></i>
+              <span th:text="${monthlySubscription.subscriptionName}" class="fs20"></span>
+            </div>
+            <span th:text="${T(jye.budget.util.DateFormatterUtil).formatMonthly(monthlySubscription.subscriptionDate)}" class="fs20"></span>
+            <span th:text="${#numbers.formatInteger(monthlySubscription.subscriptionCost, 1, 'COMMA')}" class="fs20 bold"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="ta-right">
+      <button class="btn-gradient w200" type="button" th:onclick="|location.href='@{/subscription/add}'|">추가</button>
+    </div>
+  </div>
+</div>
+</body>
+</html>
