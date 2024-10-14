@@ -188,6 +188,11 @@ public class BudgetService {
     @Transactional
     public void delete(Long budgetId) {
         log.info("delete budget : {}", budgetId);
+        List<BudgetAllocation> budgetAllocations = budgetMapper.findBudgetAllocationByBudgetId(budgetId);
+        budgetAllocations.forEach(budgetAllocation -> {
+            AssetChange assetChange = assetService.findChangeById(budgetAllocation.getChangeId());
+            assetService.deleteChange(assetChange.getChangeId(), assetChange.getAsset());
+        });
         budgetMapper.delete(budgetId);
     }
 }
