@@ -35,11 +35,22 @@ public class SubscriptionController {
         List<Subscription> annualSubscriptions = subscriptionService.findByTypeAndUserId(user.getUserId(), SubscriptionType.ANNUAL);
         List<Subscription> monthlySubscriptions = subscriptionService.findByTypeAndUserId(user.getUserId(), SubscriptionType.MONTHLY);
 
+        int annualTotalCost = annualSubscriptions.stream()
+                .mapToInt(Subscription::getSubscriptionCost)
+                .sum();
+        int monthlyTotalCost = monthlySubscriptions.stream()
+                .mapToInt(Subscription::getSubscriptionCost)
+                .sum();
+
         log.info("{} 구독 : {}", SubscriptionType.ANNUAL, annualSubscriptions);
+        log.info("{} 구독 합계 : {}", SubscriptionType.ANNUAL, annualTotalCost);
         log.info("{} 구독 : {}", SubscriptionType.MONTHLY, monthlySubscriptions);
+        log.info("{} 구독 합계 : {}", SubscriptionType.MONTHLY, monthlyTotalCost);
 
         model.addAttribute("annualSubscriptions", annualSubscriptions);
         model.addAttribute("monthlySubscriptions", monthlySubscriptions);
+        model.addAttribute("annualTotalCost", annualTotalCost);
+        model.addAttribute("monthlyTotalCost", monthlyTotalCost);
 
         return "subscription/view";
     }

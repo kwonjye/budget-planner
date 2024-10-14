@@ -33,8 +33,9 @@
   <div class="w650">
     <div class="mt50">
       <div>
-        <div class="fs35 mt50 mb40">
+        <div class="space-between fs35 mt50 mb40">
           <h2>연간 구독</h2>
+          <h2 th:text="${#numbers.formatInteger(annualTotalCost, 1, 'COMMA')}"></h2>
         </div>
         <div>
           <div class="subscription space-between mtb20 h-scale"
@@ -53,8 +54,9 @@
       </div>
       <div class="bt mtb50"></div>
       <div class="mt50 mb40">
-        <div class="fs35 mt50 mb40">
+        <div class="space-between fs35 mt50 mb40">
           <h2>월간 구독</h2>
+          <h2 th:text="${#numbers.formatInteger(monthlyTotalCost, 1, 'COMMA')}"></h2>
         </div>
         <div>
           <div class="subscription space-between mtb20 h-scale"
