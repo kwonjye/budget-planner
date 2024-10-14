@@ -65,13 +65,13 @@ public class EtcBudgetController {
         if(req.getCategoryId() != null) {
             Category category = categoryService.check(req.getCategoryId(), user.getUserId());
             if(category == null) {
-                return "/error";
+                return "error";
             }
             model.addAttribute("category", category);
         }
 
         model.addAttribute("calcTypeValues", CalcType.values());
-        return "/etc-budget/view";
+        return "etc-budget/view";
     }
 
     @GetMapping("/add")
@@ -85,7 +85,7 @@ public class EtcBudgetController {
         model.addAttribute("assets", assets);
 
         model.addAttribute("calcTypeValues", CalcType.values());
-        return "/etc-budget/add";
+        return "etc-budget/add";
     }
 
     @PostMapping("/add")
@@ -125,7 +125,7 @@ public class EtcBudgetController {
         model.addAttribute("categories", categories);
         model.addAttribute("assets", assets);
         model.addAttribute("calcTypeValues", CalcType.values());
-        return "/etc-budget/add";
+        return "etc-budget/add";
     }
 
     @DeleteMapping("/{etcBudgetId}")
@@ -150,7 +150,7 @@ public class EtcBudgetController {
 
         EtcBudget etcBudget = etcBudgetService.check(etcBudgetId, user.getUserId());
         if(etcBudget == null) {
-            return "/error";
+            return "error";
         }
 
         List<Category> categories = categoryService.findByUserIdAndType(user.getUserId(), CategoryType.ETC_BUDGET);
@@ -166,7 +166,7 @@ public class EtcBudgetController {
         model.addAttribute("categories", categories);
         model.addAttribute("calcTypeValues", CalcType.values());
         model.addAttribute("etcBudgetForm", new EtcBudgetForm(etcBudget));
-        return "/etc-budget/edit";
+        return "etc-budget/edit";
     }
 
     @PostMapping("/{etcBudgetId}")
@@ -180,7 +180,7 @@ public class EtcBudgetController {
 
         EtcBudget etcBudget = etcBudgetService.check(etcBudgetId, user.getUserId());
         if(etcBudget == null) {
-            return "/error";
+            return "error";
         }
 
         List<Category> categories = categoryService.findByUserIdAndType(user.getUserId(), CategoryType.ETC_BUDGET);
@@ -229,6 +229,6 @@ public class EtcBudgetController {
         model.addAttribute("assets", assets);
         model.addAttribute("categories", categories);
         model.addAttribute("calcTypeValues", CalcType.values());
-        return "/etc-budget/edit";
+        return "etc-budget/edit";
     }
 }

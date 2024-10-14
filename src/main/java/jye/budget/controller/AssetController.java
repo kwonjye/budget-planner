@@ -47,12 +47,12 @@ public class AssetController {
 
         model.addAttribute("assets", assets);
         model.addAttribute("totalAmount", totalAmount);
-        return "/asset/view";
+        return "asset/view";
     }
 
     @GetMapping("/add")
     public String addForm(@ModelAttribute("assetForm") AssetForm assetForm) {
-        return "/asset/add";
+        return "asset/add";
     }
 
     @PostMapping("/add")
@@ -62,7 +62,7 @@ public class AssetController {
         log.info("자산 추가 : {}", assetForm);
 
         if (bindingResult.hasErrors()) {
-            return "/asset/add";
+            return "asset/add";
         }
 
         User user = (User) session.getAttribute(SessionConst.LOGIN_USER);
@@ -70,7 +70,7 @@ public class AssetController {
         boolean existsByAssetName = assetService.existsByAssetName(user.getUserId(), assetForm.getAssetName(), null);
         if(existsByAssetName) {
             bindingResult.rejectValue("assetName", "asset.exists");
-            return "/asset/add";
+            return "asset/add";
         }
 
         assetService.save(user.getUserId(), assetForm);
@@ -86,11 +86,11 @@ public class AssetController {
 
         Asset asset = assetService.check(assetId, user.getUserId());
         if(asset == null) {
-            return "/error";
+            return "error";
         }
 
         model.addAttribute("assetForm", new AssetForm(asset));
-        return "/asset/edit";
+        return "asset/edit";
     }
 
     @PostMapping("/{assetId}")
@@ -100,20 +100,20 @@ public class AssetController {
         log.info("자산 수정 : {}", assetForm);
 
         if (bindingResult.hasErrors()) {
-            return "/asset/edit";
+            return "asset/edit";
         }
 
         User user = (User) session.getAttribute(SessionConst.LOGIN_USER);
 
         Asset asset = assetService.check(assetId, user.getUserId());
         if(asset == null) {
-            return "/error";
+            return "error";
         }
 
         boolean existsByAssetName = assetService.existsByAssetName(user.getUserId(), assetForm.getAssetName(), assetId);
         if(existsByAssetName) {
             bindingResult.rejectValue("assetName", "asset.exists");
-            return "/asset/edit";
+            return "asset/edit";
         }
 
         assetService.update(assetId, assetForm);
@@ -158,7 +158,7 @@ public class AssetController {
         model.addAttribute("assets", assets);
 
         model.addAttribute("calcTypeValues", CalcType.values());
-        return "/asset/change/view";
+        return "asset/change/view";
     }
 
     @GetMapping("/change/add")
@@ -169,7 +169,7 @@ public class AssetController {
         model.addAttribute("assets", assets);
 
         model.addAttribute("calcTypeValues", CalcType.values());
-        return "/asset/change/add";
+        return "asset/change/add";
     }
 
     @PostMapping("/change/add")
@@ -185,12 +185,12 @@ public class AssetController {
             model.addAttribute("assets", assets);
 
             model.addAttribute("calcTypeValues", CalcType.values());
-            return "/asset/change/add";
+            return "asset/change/add";
         }
 
         Asset asset = assetService.check(assetChangeForm.getAssetId(), user.getUserId());
         if(asset == null) {
-            return "/error";
+            return "error";
         }
         assetService.change(assetChangeForm, asset);
 
@@ -203,18 +203,18 @@ public class AssetController {
 
         AssetChange assetChange = assetService.findChangeById(changeId);
         if(assetChange == null) {
-            return "/error";
+            return "error";
         }
 
         Asset asset = assetService.check(assetChange.getAsset().getAssetId(), user.getUserId());
         if(asset == null) {
-            return "/error";
+            return "error";
         }
 
         model.addAttribute("asset", asset);
         model.addAttribute("calcTypeValues", CalcType.values());
         model.addAttribute("assetChangeForm", new AssetChangeForm(assetChange));
-        return "/asset/change/edit";
+        return "asset/change/edit";
     }
 
     @PostMapping("/change/{changeId}")
@@ -228,22 +228,22 @@ public class AssetController {
 
         AssetChange assetChange = assetService.findChangeById(changeId);
         if(assetChange == null) {
-            return "/error";
+            return "error";
         }
         if(!Objects.equals(assetChange.getAsset().getAssetId(), assetChangeForm.getAssetId())) {
             log.error("자산 ID 불일치 : asset - {}, req.assetId - {}", assetChange.getAsset(), assetChangeForm.getAssetId());
-            return "/error";
+            return "error";
         }
 
         Asset asset = assetService.check(assetChangeForm.getAssetId(), user.getUserId());
         if(asset == null) {
-            return "/error";
+            return "error";
         }
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("asset", asset);
             model.addAttribute("calcTypeValues", CalcType.values());
-            return "/asset/change/edit";
+            return "asset/change/edit";
         }
 
         assetService.updateChange(changeId, assetChangeForm, asset);

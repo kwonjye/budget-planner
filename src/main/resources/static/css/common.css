@@ -30,7 +30,7 @@ button, i, .cursor {
 }
 
 /* icon */
-i:not(.menu i, .arrow i) {
+i:not(.menu i, .arrow i, .circle i) {
     font-size: 24px;
 }
 .fix-top-right-15 {
@@ -270,6 +270,9 @@ i:not(.menu i, .arrow i) {
 }
 .mb30 {
     margin-bottom: 30px;
+}
+.mb40 {
+    margin-bottom: 40px;
 }
 .mb50 {
     margin-bottom: 50px;
@@ -543,19 +546,19 @@ header {
 }
 
 /* asset */
-.asset-button {
+.div-btn-gray {
     border-top: 1px solid #eeeeee;
     margin-top: 30px;
     padding-top: 20px;
 }
-.asset-button button {
+.div-btn-gray button {
     display: flex;
     background: #eeeeee;
     border-radius: 10px;
     border: none;
     padding: 20px 90px;
 }
-.asset-button button i {
+.div-btn-gray button i {
     height: 30px;
 }
 

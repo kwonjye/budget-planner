@@ -124,7 +124,7 @@ public class ExpensesController {
         model.addAttribute("totalUnNecessary", totalUnNecessary);
         model.addAttribute("balance", balance);
 
-        return "/expenses/view";
+        return "expenses/view";
     }
 
     @GetMapping("/chart")
@@ -151,7 +151,7 @@ public class ExpensesController {
         model.addAttribute("data", gson.toJson(data));
         model.addAttribute("backgroundColors", gson.toJson(backgroundColors));
 
-        return "/expenses/chart";
+        return "expenses/chart";
     }
 
     @GetMapping("/add")
@@ -159,7 +159,7 @@ public class ExpensesController {
         User user = (User) session.getAttribute(SessionConst.LOGIN_USER);
         List<Category> categories = categoryMapper.findByUserIdAndType(user.getUserId(), CategoryType.EXPENSE);
         model.addAttribute("categories", categories);
-        return "/expenses/form";
+        return "expenses/form";
     }
 
     @PostMapping("/add")
@@ -174,11 +174,11 @@ public class ExpensesController {
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("categories", categories);
-            return "/expenses/form";
+            return "expenses/form";
         }
 
         Optional<Category> categoryOptional = getCategory(expensesForm.getCategoryId(), bindingResult, model, categories);
-        if (categoryOptional.isEmpty()) return "/expenses/form";
+        if (categoryOptional.isEmpty()) return "expenses/form";
         expensesService.save(user.getUserId(), expensesForm, categoryOptional.get());
 
         return "redirect:/expenses";
@@ -192,12 +192,12 @@ public class ExpensesController {
 
         Expenses expenses = expensesService.check(expenseId, user.getUserId());
         if(expenses == null) {
-            return "/error";
+            return "error";
         }
         List<Category> categories = categoryMapper.findByUserIdAndType(user.getUserId(), CategoryType.EXPENSE);
         model.addAttribute("categories", categories);
         model.addAttribute("expensesForm", new ExpensesForm(expenses));
-        return "/expenses/form";
+        return "expenses/form";
     }
 
     @PostMapping("/{expenseId}")
@@ -213,16 +213,16 @@ public class ExpensesController {
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("categories", categories);
-            return "/expenses/form";
+            return "expenses/form";
         }
 
         Expenses expenses = expensesService.check(expenseId, user.getUserId());
         if(expenses == null) {
-            return "/error";
+            return "error";
         }
 
         Optional<Category> categoryOptional = getCategory(expensesForm.getCategoryId(), bindingResult, model, categories);
-        if (categoryOptional.isEmpty()) return "/expenses/form";
+        if (categoryOptional.isEmpty()) return "expenses/form";
         expensesService.update(expenseId, expensesForm, categoryOptional.get());
 
         return "redirect:/expenses";

@@ -68,7 +68,7 @@ public class BudgetController {
         log.info("예산 수정 : {}", reqDto);
 
         if(StringUtils.isBlank(reqDto.getBudget().getYearMonth())) {
-            return "/error";
+            return "error";
         }
 
         User user = (User) session.getAttribute(SessionConst.LOGIN_USER);
@@ -80,7 +80,7 @@ public class BudgetController {
 
         if(!Objects.equals(budgetDto.getBudget().getBudgetId(), reqDto.getBudget().getBudgetId())) {
             log.error("예산 ID 불일치 : budget - {}, req.budgetId - {}", budgetDto.getBudget(), reqDto.getBudget().getBudgetId());
-            return "/error";
+            return "error";
         }
 
         if(reqDto.getBudget().getBudgetId() != null) {
@@ -95,7 +95,7 @@ public class BudgetController {
 
                 if (hasNonMatchingBudgetAllocationIds) {
                     log.error("예산 배분 - 예산 배분 or 자산 ID 불일치 : budgetDto - {}, reqDto - {}", budgetDto.getBudgetAllocations(), reqDto.getBudgetAllocations());
-                    return "/error";
+                    return "error";
                 }
             }
 
@@ -109,7 +109,7 @@ public class BudgetController {
 
                 if (hasNonMatchingFixedExpenseIds) {
                     log.error("고정 지출 - 고정 지출 or 카테고리 ID 불일치 : budgetDto - {}, reqDto - {}", budgetDto.getFixedExpenses(), reqDto.getFixedExpenses());
-                    return "/error";
+                    return "error";
                 }
             }
 
@@ -126,7 +126,7 @@ public class BudgetController {
 
                 if (hasNonMatchingAssetIds) {
                     log.error("예산 배분 - 자산 ID 불일치 : budgetDto - {}, reqDto - {}", budgetDto.getBudgetAllocations(), reqDto.getBudgetAllocations());
-                    return "/error";
+                    return "error";
                 }
             }
 
@@ -139,7 +139,7 @@ public class BudgetController {
 
                 if (hasNonMatchingCategoryIds) {
                     log.error("고정 지출 - 카테고리 ID 불일치 : budgetDto - {}, reqDto - {}", budgetDto.getFixedExpenses(), reqDto.getFixedExpenses());
-                    return "/error";
+                    return "error";
                 }
             }
 

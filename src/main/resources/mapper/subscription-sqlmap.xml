@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jye.budget.mapper.SubscriptionMapper">
+    <sql id="subscription">
+        SELECT subscription_id,
+               user_id,
+               subscription_name,
+               subscription_type,
+               subscription_date,
+               subscription_cost,
+               created_at,
+               updated_at
+        FROM subscription
+    </sql>
+    <select id="findByTypeAndUserId" resultType="jye.budget.entity.Subscription">
+        <include refid="subscription"/>
+        WHERE user_id = #{userId}
+            AND subscription_type = #{subscriptionType}
+        ORDER BY subscription_date
+    </select>
+    <select id="findById" resultType="jye.budget.entity.Subscription">
+        <include refid="subscription"/>
+        WHERE subscription_id = #{subscriptionId}
+    </select>
+    <delete id="delete">
+        DELETE FROM subscription
+        WHERE subscription_id = #{subscriptionId}
+    </delete>
+    <update id="update">
+        UPDATE subscription
+        SET subscription_name = #{subscriptionName},
+            subscription_type = #{subscriptionType},
+            subscription_date = #{subscriptionDate},
+            subscription_cost = #{subscriptionCost},
+            updated_at = NOW()
+        WHERE subscription_id = #{subscriptionId}
+    </update>
+    <insert id="save" useGeneratedKeys="true" keyColumn="subscription_id" keyProperty="subscriptionId">
+        INSERT INTO subscription (
+                                  user_id,
+                                  subscription_name,
+                                  subscription_type,
+                                  subscription_date,
+                                  subscription_cost,
+                                  created_at,
+                                  updated_at
+        ) VALUES (
+                  #{userId},
+                  #{subscriptionName},
+                  #{subscriptionType},
+                  #{subscriptionDate},
+                  #{subscriptionCost},
+                  NOW(),
+                  NOW()
+                         )
+    </insert>
+</mapper>

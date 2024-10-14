@@ -110,7 +110,7 @@
                  th:data-category-id="${expensesAmount.key.categoryId}"
                  onclick="location.href='/expenses?searchDate=' + this.getAttribute('data-search-date') + '&categoryId=' + this.getAttribute('data-category-id')">
               <span th:text="${expensesAmount.key.categoryName}"
-                    class="ptb05 w150 ta-center br05"
+                    class="ptb05 w40p ta-center br05"
                     th:style="'background-color: ' + ${expensesAmount.key.categoryColor}"></span>
               <span th:text="${#numbers.formatInteger(expensesAmount.value, 1, 'COMMA')}"></span>
             </div>

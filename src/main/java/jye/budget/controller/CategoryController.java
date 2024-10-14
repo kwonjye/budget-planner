@@ -44,7 +44,7 @@ public class CategoryController {
         model.addAttribute("etcBudgetList", etcBudgetList);
         model.addAttribute("expenseList", expenseList);
 
-        return "/category/view";
+        return "category/view";
     }
 
     @DeleteMapping("/{categoryId}")
@@ -70,11 +70,11 @@ public class CategoryController {
 
         Category category = categoryService.check(categoryId, user.getUserId());
         if(category == null) {
-            return "/error";
+            return "error";
         }
 
         model.addAttribute("categoryForm", new CategoryForm(category));
-        return "/category/edit";
+        return "category/edit";
     }
 
     @PostMapping("/{categoryId}")
@@ -87,12 +87,12 @@ public class CategoryController {
 
         Category category = categoryService.check(categoryId, user.getUserId());
         if(category == null) {
-            return "/error";
+            return "error";
         }
 
         if(bindingResult.hasErrors()) {
             categoryForm.setCategoryType(category.getCategoryType());
-            return "/category/edit";
+            return "category/edit";
         }
 
         categoryService.update(categoryId, categoryForm);
@@ -102,7 +102,7 @@ public class CategoryController {
     @GetMapping("/add")
     public String addForm(@ModelAttribute("categoryForm") CategoryForm categoryForm, Model model) {
         model.addAttribute("categoryTypeValues", CategoryType.values());
-        return "/category/add";
+        return "category/add";
     }
 
     @PostMapping("/add")
@@ -113,13 +113,13 @@ public class CategoryController {
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("categoryTypeValues", CategoryType.values());
-            return "/category/add";
+            return "category/add";
         }
         if(categoryForm.getCategoryType() == null) {
             log.error("카테고리 유형 없음");
             bindingResult.rejectValue("categoryType", "category.type.notFound");
             model.addAttribute("categoryTypeValues", CategoryType.values());
-            return "/category/add";
+            return "category/add";
         }
 
         User user = (User) session.getAttribute(SessionConst.LOGIN_USER);

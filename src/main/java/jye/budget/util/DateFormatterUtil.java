@@ -14,4 +14,12 @@ public class DateFormatterUtil {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy년 M월");
         return yearMonth.format(formatter);
     }
+    public static String formatAnnual(LocalDate date) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M월 d일");
+        return date.format(formatter);
+    }
+    public static String formatMonthly(LocalDate date) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d일");
+        return date.format(formatter);
+    }
 }
